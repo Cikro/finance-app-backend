@@ -5,7 +5,7 @@
   1. [Introduction](#introduction)
   2. ~~[Setup and Running](#setup-and-running)~~
   3. ~~[Design](#design)~~
-  4. ~~[Choices of Technology](#choices-of-technology)~~
+  4. [Choices of Technology](#choices-of-technology)
 
 ## Introduction
 I needed something to replace my excel spreadsheet that I use to keep track of my income, spending and budget. I figure I can use this as an excuse to 
