@@ -1,10 +1,9 @@
 # Finance App Server
-potofingold
 
 ## Table of Contents
 
   1. [Introduction](#introduction)
-  2. ~~[Setup and Running](#setup-and-running)~~
+  2. [Setup and Running](#setup-and-running)
   3. [Design](#design)
   4. [Choices of Technology](#choices-of-technology)
 
@@ -14,8 +13,10 @@ learn about full-stack web development.
 
 This server will provide at a minimum a RESTful API for an accrual accounting-like system where users can debit and credit Asset, Liability, Expense and Income accounts that they created. Since I am planning to host this for myself and family, I plan to implement two-way SSL authentication on a reverse proxy server for added security.
 
-## ~~Setup and Running~~
-
+## Setup and Running
+### MariaDB
+#### Installation and Setup
+  Follow the instructions for "Installation", "Initial Setup", and "User Creation and Database Creation" here: https://fedoraproject.org/wiki/MariaDB
 
 ## Design
   See /design files for Database tables and ~~REST API design~~
@@ -34,3 +35,4 @@ Using a reverse proxy will also allow for the hosting of multiple web services f
 
 ### Docker
 I don't know if I will use Docker. It will probably help with deployment and would help the application scale (which I probably won't need)
+
