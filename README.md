@@ -1,10 +1,11 @@
 # Finance App Server
+potofingold
 
 ## Table of Contents
 
   1. [Introduction](#introduction)
   2. ~~[Setup and Running](#setup-and-running)~~
-  3. ~~[Design](#design)~~
+  3. [Design](#design)
   4. [Choices of Technology](#choices-of-technology)
 
 ## Introduction
@@ -16,8 +17,8 @@ This server will provide at a minimum a RESTful API for an accrual accounting-li
 ## ~~Setup and Running~~
 
 
-## ~~Design~~
-~~See /design files for Database tables and REST API design~~
+## Design
+  See /design files for Database tables and ~~REST API design~~
 
 ## Choices of Technology
 
