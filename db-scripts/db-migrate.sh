@@ -42,12 +42,17 @@ ls -1 *.sql | while read file; do
 done
 
 mysql -u "${mysql_user}" --database="${db_name}" -p < "${tempFile}"
-echo
-echo "${$?}"
-echo
-
+res=$?
+if [[ res -eq 0 ]]
+then
     # Append count to state file
     echo $migrationCount> "${migrationFile}"
+    echo "Success."
 
-shopt -u lastpipe
+else
+    echo "Error occured while migrating..."
+
+fi
+
 rm "${tempFile}" 2> /dev/null
+shopt -u lastpipe
