@@ -1,14 +1,16 @@
  
 # Database Tables
 ## TOC
-- [Database Tables](#Database-Tables)
-  - [TOC](#TOC)
-  - [Notes](#Notes)
-  - [Phase 1: MVP](#Phase-1-MVP)
-    - [Users Table](#Users-Table)
-    - [Accounts Table](#Accounts-Table)
-    - [Transactions Table](#Transactions-Table)
-    - [Journal Entries Table](#Journal-Entries-Table)
+- [Database Tables](#database-tables)
+  - [TOC](#toc)
+  - [Notes](#notes)
+  - [Phase 1: MVP](#phase-1-mvp)
+    - [Users Table](#users-table)
+    - [Currency table](#currency-table)
+    - [Account Types Table](#account-types-table)
+    - [Accounts Table](#accounts-table)
+    - [Transactions Table](#transactions-table)
+    - [Journal Entries Table](#journal-entries-table)
 ## Notes
 
 * Storing monetary values:
@@ -33,9 +35,29 @@ _Something like this will need to exist either on the server or on an authentica
 | date_created     | Timestamp                 | metadata                         | server generated |
 | date_last_edited | Timestamp                 | metadata                         | server generated |
 
+### Currency table
+_See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010dataUsersGuide/DataTypesAndFormats/currencyUnitCodes.html)_
+
+| Column Name      | Data Type                 | Description                                                              | Required?        |
+|------------------|---------------------------|--------------------------------------------------------------------------|------------------|
+| id               | Auto Incrementing Integer | Uniquely identifies table record                                         | server generated |
+| entity           | Varchar                   | The entity that manages the currency (i.e. country/republic/union etc)   |         Y        |
+| name             | Varchar                   | The name of the currency                                                 |         Y        |
+| code             | Char(3)                   | The unique three digit code for the currency                             |         Y        |
+| date_created     | Timestamp                 | metadata                                                                 | server generated |
+| date_last_edited | Timestamp                 | metadata                                                                 | server generated |
+
+### Account Types Table
+
+| Column Name      | Data Type                 | Description                      | Required?        |
+|------------------|---------------------------|----------------------------------|------------------|
+| id               | Auto Incrementing Integer | Uniquely identifies table record | server generated |
+| name             | Varchar                   | The name of the account type     |         Y        |
+| date_created     | Timestamp                 | metadata                         | server generated |
+| date_last_edited | Timestamp                 | metadata                         | server generated |
+
 
 ### Accounts Table
-_*[ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010dataUsersGuide/DataTypesAndFormats/currencyUnitCodes.html)_
 
 | Column Name      | Data Type                               | Description                                                                                         | Required?        |
 |------------------|-----------------------------------------|-----------------------------------------------------------------------------------------------------|------------------|
@@ -44,8 +66,8 @@ _*[ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010dataU
 | name             | Varchar                                 | The name of the account                                                                             | Y                |
 | description      | Varchar                                 | A brief description of the account                                                                  | N                |
 | balance          | Double                                  | The current balance of the account                                                                  | server generated |
-| Type             | Enum                                    | current-asset / current-liability /  non-current-asset / non-current-liability /  expense / revenue | Y                |
-| Currency_Code    | Char(3)                                 | ISO 4217* currency code for the type of currency that this account will hold.                       | Y                |
+| Type             | Foreign key to account_types table      | current-asset / current-liability /  non-current-asset / non-current-liability /  expense / revenue | Y                |
+| Currency_Code    | Foreign key to the currency table       | ISO 4217* currency code for the type of currency that this account will hold.                       | Y                |
 | parent_account   | Foreign key to this table               | Identifies this account as a sub-account of another account                                         | N                |
 | date_created     | Timestamp                               | metadata                                                                                            | server generated |
 | date_last_edited | Timestamp                               | metadata                                                                                            | server generated |
