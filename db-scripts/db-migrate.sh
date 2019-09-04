@@ -31,7 +31,7 @@ migrationCount=0
 
 
 # Append contents of .db files the occur after the current migration to a tempFile.
-ls -1 *.db | while read file; do
+ls -1 *.sql | while read file; do
 
     ((migrationCount++))
     if [[ $migrationCount -gt $currentMigration ]]
@@ -46,8 +46,8 @@ echo
 echo "${$?}"
 echo
 
-# Append count to state file
-echo $migrationCount> "${migrationFile}"
+    # Append count to state file
+    echo $migrationCount> "${migrationFile}"
 
 shopt -u lastpipe
 rm "${tempFile}" 2> /dev/null
