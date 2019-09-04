@@ -33,21 +33,18 @@ migrationCount=0
 # Append contents of .db files the occur after the current migration to a tempFile.
 ls -1 *.db | while read file; do
 
-    echo $migrationCount
     ((migrationCount++))
-    echo $migrationCount
     if [[ $migrationCount -gt $currentMigration ]]
     then
         cat $file >> "${tempFile}"
         echo "Migrating.... " $file
     fi
-
-    
-    echo $migrationCount > "${migrationFile}"
 done
 
-
-# mysql -u "${mysql_user}" --database="${db_name}" -p < "${tempFile}"
+mysql -u "${mysql_user}" --database="${db_name}" -p < "${tempFile}"
+echo
+echo "${$?}"
+echo
 
 # Append count to state file
 echo $migrationCount> "${migrationFile}"
