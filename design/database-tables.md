@@ -6,7 +6,7 @@
   - [Notes](#notes)
   - [Phase 1: MVP](#phase-1-mvp)
     - [Users Table](#users-table)
-    - [Currency table](#currency-table)
+    - [Currencies table](#currencies-table)
     - [Account Types Table](#account-types-table)
     - [Accounts Table](#accounts-table)
     - [Transaction Types Table](#transaction-types-table)
@@ -40,7 +40,7 @@ _Something like this will need to exist either on the server or on an authentica
 | date_created     | Timestamp                 | metadata                         | server generated |
 | date_last_edited | Timestamp                 | metadata                         | server generated |
 
-### Currency table
+### Currencies table
 _See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010dataUsersGuide/DataTypesAndFormats/currencyUnitCodes.html)_
 
 | Column Name      | Data Type                 | Description                                                              | Required?        |

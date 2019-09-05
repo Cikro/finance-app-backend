@@ -1,5 +1,5 @@
 /* See https://www2.1010data.com/documentationcenter/prime/1010dataUsersGuide/DataTypesAndFormats/currencyUnitCodes.html */
-CREATE TABLE IF NOT EXISTS currency 
+CREATE TABLE IF NOT EXISTS currencies
 (
     code char(3) PRIMARY KEY NOT NULL,
     name varchar(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS accounts
         ON DELETE CASCADE ON UPDATE RESTRICT,
     FOREIGN KEY (type) REFERENCES account_types(id)
         ON DELETE RESTRICT ON UPDATE RESTRICT,
-    FOREIGN KEY (currency_code) REFERENCES currency(code)
+    FOREIGN KEY (currency_code) REFERENCES currencies(code)
         ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (parent_account) REFERENCES accounts(id)
         ON DELETE RESTRICT ON UPDATE RESTRICT -- Stop DELETE if the account has children. If you need to delete the account, remove its children first. 
