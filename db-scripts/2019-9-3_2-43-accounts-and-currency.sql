@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS accounts
     description varchar(255),
     balance double default 0,
     type tinyint unsigned NOT NULL,
-    currency_id char(3) NOT NULL,
+    currency_code char(3) NOT NULL,
     parent_account int unsigned default NULL,
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS accounts
         ON DELETE CASCADE ON UPDATE RESTRICT,
     FOREIGN KEY (type) REFERENCES account_types(id)
         ON DELETE RESTRICT ON UPDATE RESTRICT,
-    FOREIGN KEY (currency_id) REFERENCES currency(code)
+    FOREIGN KEY (currency_code) REFERENCES currency(code)
         ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (parent_account) REFERENCES accounts(id)
         ON DELETE RESTRICT ON UPDATE RESTRICT -- Stop DELETE if the account has children. If you need to delete the account, remove its children first. 
