@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS journal_entries 
 (
-    id int PRIMARY KEY AUTO_INCREMENT,
-    user_id int NOT NULL,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
+    user_id int unsigned NOT NULL,
     amount double,
     corrected boolean default false,
     server_generated boolean default false,
