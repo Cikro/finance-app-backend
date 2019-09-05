@@ -45,10 +45,8 @@ _See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010d
 
 | Column Name      | Data Type                 | Description                                                              | Required?        |
 |------------------|---------------------------|--------------------------------------------------------------------------|------------------|
-| id               | Auto-inc Uint             | Uniquely identifies table record                                         | server generated |
-| entity           | Varchar                   | The entity that manages the currency (i.e. country/republic/union etc)   |         Y        |
-| name             | Varchar                   | The name of the currency                                                 |         Y        |
 | code             | Char(3)                   | The unique three digit code for the currency                             |         Y        |
+| name             | Varchar                   | The name of the currency                                                 |         Y        |
 | date_created     | Timestamp                 | metadata                                                                 | server generated |
 | date_last_edited | Timestamp                 | metadata                                                                 | server generated |
 
@@ -72,7 +70,7 @@ _* Unsigned tinyint supports 255 values. that should be more than enough for typ
 | description      | Varchar                                       | A brief description of the account                                                                  | N                |
 | balance          | Double                                        | The current balance of the account                                                                  | server generated |
 | type             | Utinyint: Foreign key to account_types table  | current-asset / current-liability /  non-current-asset / non-current-liability /  expense / revenue | Y                |
-| Currency_Code    | Uint: Foreign key to the currency table       | ISO 4217* currency code for the type of currency that this account will hold.                       | Y                |
+| Currency_Code    | Char(3): Foreign key to the currency table    | ISO 4217 currency code for the type of currency that this account will hold.                        | Y                |
 | parent_account   | Uint: Foreign key to this table               | Identifies this account as a sub-account of another account                                         | N                |
 | date_created     | Timestamp                                     | metadata                                                                                            | server generated |
 | date_last_edited | Timestamp                                     | metadata                                                                                            | server generated |
