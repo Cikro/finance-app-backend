@@ -1,8 +1,5 @@
 use financial_app
 
-/* A VARCHAR column is 1 length byte in size for numbers <= 255. 2 length bytes otherwise. 
-   https://mariadb.com/kb/en/library/varchar/
-*/
 
 CREATE TABLE IF NOT EXISTS users 
 (
