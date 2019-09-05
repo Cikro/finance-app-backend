@@ -1,7 +1,7 @@
 /* See https://www2.1010data.com/documentationcenter/prime/1010dataUsersGuide/DataTypesAndFormats/currencyUnitCodes.html */
 CREATE TABLE IF NOT EXISTS currency 
 (
-    id int PRIMARY KEY AUTO_INCREMENT,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
     entity varchar(255) NOT NULL, -- i.e country, republic, union etc.
     name varchar(255) NOT NULL,
     code char(3) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS currency
 
 CREATE TABLE IF NOT EXISTS account_types 
 (
-    id int PRIMARY KEY AUTO_INCREMENT,
+    id tinyint unsigned PRIMARY KEY AUTO_INCREMENT,
     name varchar(50) NOT NULL,
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP
@@ -19,14 +19,14 @@ CREATE TABLE IF NOT EXISTS account_types
 
 CREATE TABLE IF NOT EXISTS accounts 
 (
-    id int PRIMARY KEY AUTO_INCREMENT,
-    user_id int NOT NULL,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
+    user_id int unsigned NOT NULL,
     name varchar(50) NOT NULL UNIQUE,
     description varchar(255),
     balance double default 0,
-    type int NOT NULL,
-    currency_id int NOT NULL,
-    parent_account int default NULL,
+    type tinyint unsigned NOT NULL,
+    currency_id int unsigned NOT NULL,
+    parent_account int unsigned default NULL,
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
