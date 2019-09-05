@@ -33,7 +33,7 @@ _Something like this will need to exist either on the server or on an authentica
 
 | Column Name      | Data Type                 | Description                      | Required?        |
 |------------------|---------------------------|----------------------------------|------------------|
-| id               | Auto Incrementing Integer | Uniquely identifies table record | server generated |
+| id               | Auto-inc Uint             | Uniquely identifies table record | server generated |
 | user_name        | Varchar                   | Used to log into an account      | Y                |
 | email            | Varchar                   | Used to contact a user           | Y                |
 | password_hash    | Varchar                   | Used to log into an account      | Y                |
@@ -45,7 +45,7 @@ _See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010d
 
 | Column Name      | Data Type                 | Description                                                              | Required?        |
 |------------------|---------------------------|--------------------------------------------------------------------------|------------------|
-| id               | Auto Incrementing Integer | Uniquely identifies table record                                         | server generated |
+| id               | Auto-inc Uint             | Uniquely identifies table record                                         | server generated |
 | entity           | Varchar                   | The entity that manages the currency (i.e. country/republic/union etc)   |         Y        |
 | name             | Varchar                   | The name of the currency                                                 |         Y        |
 | code             | Char(3)                   | The unique three digit code for the currency                             |         Y        |
@@ -53,10 +53,10 @@ _See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010d
 | date_last_edited | Timestamp                 | metadata                                                                 | server generated |
 
 ### Account Types Table
-
+_* Unsigned tinyint supports 255 values. that should be more than enough for types of accounts._
 | Column Name      | Data Type                 | Description                      | Required?        |
 |------------------|---------------------------|----------------------------------|------------------|
-| id               | Auto Incrementing Integer | Uniquely identifies table record | server generated |
+| id               | Auto-inc Utinyint*        | Uniquely identifies table record | server generated |
 | name             | Varchar                   | The name of the account type     |         Y        |
 | date_created     | Timestamp                 | metadata                         | server generated |
 | date_last_edited | Timestamp                 | metadata                         | server generated |
@@ -64,24 +64,25 @@ _See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010d
 
 ### Accounts Table
 
-| Column Name      | Data Type                               | Description                                                                                         | Required?        |
-|------------------|-----------------------------------------|-----------------------------------------------------------------------------------------------------|------------------|
-| id               | Auto Incrementing Integer               |                                   Uniquely identifies table record                                  | server generated |
-| user_id          | Integer: Foreign key to the users table | The user who own this account                                                                       | Y                |
-| name             | Varchar                                 | The name of the account                                                                             | Y                |
-| description      | Varchar                                 | A brief description of the account                                                                  | N                |
-| balance          | Double                                  | The current balance of the account                                                                  | server generated |
-| type             | Foreign key to account_types table      | current-asset / current-liability /  non-current-asset / non-current-liability /  expense / revenue | Y                |
-| Currency_Code    | Foreign key to the currency table       | ISO 4217* currency code for the type of currency that this account will hold.                       | Y                |
-| parent_account   | Foreign key to this table               | Identifies this account as a sub-account of another account                                         | N                |
-| date_created     | Timestamp                               | metadata                                                                                            | server generated |
-| date_last_edited | Timestamp                               | metadata                                                                                            | server generated |
+| Column Name      | Data Type                                     | Description                                                                                         | Required?        |
+|------------------|-----------------------------------------------|-----------------------------------------------------------------------------------------------------|------------------|
+| id               | Auto-inc Uint                                 | Uniquely identifies table record                                                                    | server generated |
+| user_id          | Uint: Foreign key to the users table          | The user who own this account                                                                       | Y                |
+| name             | Varchar                                       | The name of the account                                                                             | Y                |
+| description      | Varchar                                       | A brief description of the account                                                                  | N                |
+| balance          | Double                                        | The current balance of the account                                                                  | server generated |
+| type             | Utinyint: Foreign key to account_types table  | current-asset / current-liability /  non-current-asset / non-current-liability /  expense / revenue | Y                |
+| Currency_Code    | Uint: Foreign key to the currency table       | ISO 4217* currency code for the type of currency that this account will hold.                       | Y                |
+| parent_account   | Uint: Foreign key to this table               | Identifies this account as a sub-account of another account                                         | N                |
+| date_created     | Timestamp                                     | metadata                                                                                            | server generated |
+| date_last_edited | Timestamp                                     | metadata                                                                                            | server generated |
 
 ### Transaction Types Table
+_* Unsigned tinyint supports 255 values. that should be more than enough for types of transactions._
 
 | Column Name      | Data Type                 | Description                      | Required?        |
 |------------------|---------------------------|----------------------------------|------------------|
-| id               | Auto Incrementing Integer | Uniquely identifies table record | server generated |
+| id               | Auto-inc Utinyint*        | Uniquely identifies table record | server generated |
 | name             | Varchar                   | The name of the account type     |         Y        |
 | date_created     | Timestamp                 | metadata                         | server generated |
 | date_last_edited | Timestamp                 | metadata                         | server generated |
@@ -91,13 +92,13 @@ _See: [ISO 4217 Codes](https://www2.1010data.com/documentationcenter/prime/1010d
 
 | Column Name      | Data Type                                           | Description                                                | Required?        |
 |------------------|-----------------------------------------------------|------------------------------------------------------------|------------------|
-| id               | Auto Incrementing Integer                           | Uniquely identifies table record                           | server generated |
-| user_id          | Integer: Foreign key to the Users table             | The user who is making the transaction                     | Y                |
-| account_id       | Integer: Foreign key to the Accounts table          | The account that the transaction is being applies to       | Y                |
-| type             | Integer: Foreign key to the transaction_types table | debit / credit                                             | Y                |
+| id               | Auto-inc Uint                                       | Uniquely identifies table record                           | server generated |
+| user_id          | Uint: Foreign key to the Users table                | The user who is making the transaction                     | Y                |
+| account_id       | Uint: Foreign key to the Accounts table             | The account that the transaction is being applies to       | Y                |
+| type             | Utinyint: Foreign key to the transaction_types table| debit / credit                                             | Y                |
 | amount           | Double                                              | The amount of the transaction                              | Y                |
 | notes            | Varchar                                             | Brief notes about the transaction                          | N                |
-| journal_entry    | Integer: Foreign key to the journal_entries table   | Identifies which journal entry the transaction belongs to  | Y                |
+| journal_entry    | Uint: Foreign key to the journal_entries table      | Identifies which journal entry the transaction belongs to  | Y                |
 | corrected        | Boolean                                             | Has this transaction been corrected by a user?             | N                |
 | server_generated | Boolean                                             | Was this transaction automatically generated by the server?| N                |
 | date_created     | Timestamp                                           | metadata                                                   | server generated |
@@ -110,8 +111,8 @@ for entries with a given value. The other option would be to have a consumer fet
 
 | Column Name      | Data Type                               | Description                                                 | Required?        |
 |------------------|-----------------------------------------|-------------------------------------------------------------|------------------|
-| id               | Auto Incrementing Integer               | Uniquely identifies table record                            | server generated |
-| user_id          | Integer: Foreign key to the Users table | The user who is creating the journal entry                  | Y                |
+| id               | Auto-inc Uint                           | Uniquely identifies table record                            | server generated |
+| user_id          | Uint: Foreign key to the Users table    | The user who is creating the journal entry                  | Y                |
 | amount*          | Double                                  | The amount of the entry = total debits = total credits      | N                |
 | corrected        | Boolean                                 | Has this transaction been corrected by a user?              | N                |
 | server_generated | Boolean                                 | Was this transaction automatically generated by the server? | N                |
