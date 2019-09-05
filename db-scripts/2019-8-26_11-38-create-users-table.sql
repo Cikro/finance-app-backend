@@ -1,6 +1,3 @@
-use financial_app
-
-
 CREATE TABLE IF NOT EXISTS users 
 (
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
