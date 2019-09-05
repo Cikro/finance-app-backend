@@ -6,7 +6,7 @@ use financial_app
 
 CREATE TABLE IF NOT EXISTS users 
 (
-    id int PRIMARY KEY AUTO_INCREMENT,
+    id int unsigned PRIMARY KEY AUTO_INCREMENT,
     user_name varchar(50) NOT NULL,
     email varchar(255) NOT NULL,
     password_hash varchar(255) NOT NULL,
