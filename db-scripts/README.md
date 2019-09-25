@@ -1,0 +1,2 @@
+## There are better solutions
+There are probably better ways to handle database migrations than this short bash script I've created. For now this will work. As things get more complex, I may need to figure out something better.
