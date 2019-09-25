@@ -23,10 +23,10 @@ This server will provide at a minimum a RESTful API for an accrual accounting-li
 
 ## Choices of Technology
 
-### Dot Net
-
+### Dotnet Core
+Version 2.2.6
 Since I know some ES6 JavaScript I initially I had planned to use Node Express for this server. There appears to be as more jobs in my area using other frameworks.
-Supported by Microsoft, I chose Dot Net. Dot Net has many useful standard libraries which may be beneficial as the project grows.
+Supported by Microsoft, I chose Dotnet Core. Dot Net has many useful standard libraries which may be beneficial as the project grows.
 
 ### NGINX
 It's apparently very common to use NGINX as a reverse proxy. It would be a good place to implement SSL authentication to decouple it from the actual program logic.
