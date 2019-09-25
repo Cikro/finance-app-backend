@@ -24,7 +24,6 @@ This server will provide at a minimum a RESTful API for an accrual accounting-li
 ## Choices of Technology
 
 ### Dotnet Core
-Version 2.2.6
 Since I know some ES6 JavaScript I initially I had planned to use Node Express for this server. There appears to be as more jobs in my area using other frameworks.
 Supported by Microsoft, I chose Dotnet Core. Dot Net has many useful standard libraries which may be beneficial as the project grows.
 
