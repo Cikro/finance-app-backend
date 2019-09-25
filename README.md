@@ -28,6 +28,10 @@ Version 2.2.6
 Since I know some ES6 JavaScript I initially I had planned to use Node Express for this server. There appears to be as more jobs in my area using other frameworks.
 Supported by Microsoft, I chose Dotnet Core. Dot Net has many useful standard libraries which may be beneficial as the project grows.
 
+### ReactJs
+I've have some experience working with the Angular2 framework. There are more jobs in my area which require React experience. This a good opportunity to learn a new 
+technology.
+
 ### NGINX
 It's apparently very common to use NGINX as a reverse proxy. It would be a good place to implement SSL authentication to decouple it from the actual program logic.
 Using a reverse proxy will also allow for the hosting of multiple web services from the same server.
