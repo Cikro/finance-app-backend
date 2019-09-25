@@ -23,11 +23,10 @@ This server will provide at a minimum a RESTful API for an accrual accounting-li
 
 ## Choices of Technology
 
-### Node Express
+### Dot Net
 
-I have a little bit of experience with ES6 JavaScript from a previous job and I want to create a front-end for this application sometime in the future. Node uses JavaScript. Not having to learn the syntax of another programming language will allow me to focus more on learning about server-side programming.
-
-JavaScript uses a single threaded event-loop and is not suited to do large computations. Since this will be a RESTful API which will deal with storing user input in a database and retrieving it, this should not be an issue for this application.
+Since I know some ES6 JavaScript I initially I had planned to use Node Express for this server. There appears to be as more jobs in my area using other frameworks.
+Supported by Microsoft, I chose Dot Net. Dot Net has many useful standard libraries which may be beneficial as the project grows.
 
 ### NGINX
 It's apparently very common to use NGINX as a reverse proxy. It would be a good place to implement SSL authentication to decouple it from the actual program logic.
