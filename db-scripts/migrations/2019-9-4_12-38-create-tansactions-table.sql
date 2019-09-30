@@ -29,3 +29,13 @@ CREATE TABLE IF NOT EXISTS transactions
     FOREIGN KEY (journal_entry) REFERENCES journal_entries(id)
         ON DELETE RESTRICT ON UPDATE RESTRICT
 );
+
+/* Check for valid transaction_date */
+CREATE TRIGGER IF NOT EXISTS validateTransactionDate
+    BEFORE INSERT ON transactions
+    FOR EACH ROW
+    BEGIN
+        IF NEW.transaction_date NOT LIKE '____-__-__' THEN
+          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'transaction_date must be in the form YYYY-MM-DD.'
+        END If;
+    END
