@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS transactions
     account_id int unsigned NOT NULL,
     type tinyint unsigned NOT NULL,
     amount double NOT NULL,
+    transaction_date date NOT NULL, # See https://mariadb.com/kb/en/library/date-and-time-literals/
     notes varchar(100) default NULL,
     journal_entry int unsigned NOT NULL,
     corrected boolean default false,
