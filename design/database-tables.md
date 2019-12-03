@@ -95,6 +95,7 @@ _* Unsigned tinyint supports 255 values. that should be more than enough for typ
 | account_id       | Uint: Foreign key to the Accounts table             | The account that the transaction is being applies to       | Y                |
 | type             | Utinyint: Foreign key to the transaction_types table| debit / credit                                             | Y                |
 | amount           | Double                                              | The amount of the transaction                              | Y                |
+| transation_date  | date                                                | The date the transaction occurred. YYYY-MM-DD.             | N                |
 | notes            | Varchar                                             | Brief notes about the transaction                          | N                |
 | journal_entry    | Uint: Foreign key to the journal_entries table      | Identifies which journal entry the transaction belongs to  | Y                |
 | corrected        | Boolean                                             | Has this transaction been corrected by a user?             | N                |
