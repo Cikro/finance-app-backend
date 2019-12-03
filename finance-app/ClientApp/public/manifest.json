@@ -1,6 +1,6 @@
 {
-  "short_name": "finance_app_backend",
-  "name": "finance_app_backend",
+  "short_name": "finance_app",
+  "name": "finance_app",
   "icons": [
     {
       "src": "favicon.ico",
