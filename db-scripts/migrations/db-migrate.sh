@@ -3,12 +3,12 @@
 mysql_user="$1"
 db_name="$2"
 
-migrationFile="current-migation.txt"
+migrationFile="current-migration.txt"
 
 if [[  "$#" -ne 2 ]] 
 then 
     echo "	Usage: ./db-migrate [mySQL_user] [db_name]"
-    echo "	Output: Runs migations in name ascending order. Files should be prefixed in the form"
+    echo "	Output: Runs migrations in name ascending order. Files should be prefixed in the form"
     echo "              yyyy-mm-dd_hh-mm. The most recent migration file will be read last."
     echo "   Note: State is stored in current-migration.txt."
     echo
@@ -51,6 +51,7 @@ then
 
 else
     echo "Error occured while migrating..."
+    cat "${tempFile}" > errored-sql.txt
 
 fi
 

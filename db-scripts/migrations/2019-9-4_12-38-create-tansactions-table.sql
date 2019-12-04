@@ -30,12 +30,17 @@ CREATE TABLE IF NOT EXISTS transactions
         ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
+/* Change the EOL delimiter to | so that the below trigger between BEGIN...END is considered
+to be in the same statment */
+DELIMITER |
 /* Check for valid transaction_date */
 CREATE TRIGGER IF NOT EXISTS validateTransactionDate
     BEFORE INSERT ON transactions
     FOR EACH ROW
     BEGIN
         IF NEW.transaction_date NOT LIKE '____-__-__' THEN
-          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'transaction_date must be in the form YYYY-MM-DD.'
+          SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'transaction_date must be in the form YYYY-MM-DD.';
+        
         END If;
-    END
+    END |
+DELIMITER ;
