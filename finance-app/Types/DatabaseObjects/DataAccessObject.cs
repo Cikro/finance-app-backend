@@ -1,8 +1,8 @@
 using System;
 
-namespace finance_app.DatabaseObjects
+namespace finance_app.DataAccessObjects
 {
-    public class DatabaseObject
+    public class DataAccessObject
     {
         public uint id { get; set; }
 
