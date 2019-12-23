@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace finance_app
 {
@@ -28,6 +29,7 @@ namespace finance_app
             {
                 configuration.RootPath = "ClientApp/build";
             });
+            services.AddTransient<FinanceAppDatabase>(_ => new FinanceAppDatabase(Configuration["ConnectionStrings:DefaultConnection"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
