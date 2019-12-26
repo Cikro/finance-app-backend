@@ -6,13 +6,13 @@ namespace finance_app.Types.EFModels
     public class Account : DatabaseObject
     {
         [Required]
-        public string name { get; set; }
-        public string description { get; set; }
-        public double balance { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public double Balance { get; set; }
         [Required]
-        public uint type { get; set; }
+        public uint Type { get; set; }
         [Required]
-        public string currencyCode { get; set; }
-        public Account parent_account { get; set; }
+        public string CurrencyCode { get; set; }
+        public Account Parent_Account { get; set; }
     }
 }
