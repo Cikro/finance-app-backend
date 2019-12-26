@@ -1,11 +1,8 @@
-using System;
-using Microsoft.EntityFrameworkCore;
-
-namespace finance_app.EFContexts
+namespace finance_app.Types.EFContexts
 {
-    public class AccountContext : DbContext
+    public class AccountContext : EFContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseMySql("Data Source=blogging.db");
+        public AccountContext(){}
+
     }
 }

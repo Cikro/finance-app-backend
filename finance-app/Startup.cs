@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+using finance_app.Types.EFContexts;
 
 namespace finance_app
 {
@@ -28,7 +31,8 @@ namespace finance_app
             {
                 configuration.RootPath = "ClientApp/build";
             });
-            services.AddTransient<FinanceAppDatabase>(_ => new FinanceAppDatabase(Configuration["ConnectionStrings:DefaultConnection"]));
+            services.AddDbContext<AccountContext>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

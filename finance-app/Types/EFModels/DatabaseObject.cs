@@ -1,6 +1,6 @@
 using System;
 
-namespace finance_app.EFModels
+namespace finance_app.Types.EFModels
 {
     public class DatabaseObject
     {
