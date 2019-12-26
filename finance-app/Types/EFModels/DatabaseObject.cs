@@ -1,8 +1,8 @@
 using System;
 
-namespace finance_app.DataAccessObjects
+namespace finance_app.EFModels
 {
-    public class DataAccessObject
+    public class DatabaseObject
     {
         public uint id { get; set; }
 
