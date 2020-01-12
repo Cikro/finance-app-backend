@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Configuration;
 
 namespace finance_app.Types.EFContexts
 {
