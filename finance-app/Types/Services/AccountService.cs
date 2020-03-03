@@ -1,31 +1,26 @@
-using finance_app.Types.EFModels;
 using finance_app.Types.Interfaces;
 
 namespace finance_app.Types.Services
 {
-    public class AccountService : ICrudService<Account>
+    public class AccountService : IAccountService
     {
-        public AccountService(){}
-
-        public Account CreateItems(Account account) {
-            return new Account();
-            
+        private readonly IAccountServiceDbo _accountServiceDbo;
+        public AccountService(IAccountServiceDbo accountServiceDbo){
+            _accountServiceDbo = accountServiceDbo;
         }
 
-        public Account GetItems(Account account) {
-            // Add options parameter
-            // 
-            return new Account();
+        public void GetAccounts(){
 
         }
 
-        public Account DeleteItems(int accountId) {
-            return new Account();
+        public void InsertAccounts(){
 
         }
 
-        public Account UpdateItems(Account account) {
-            return new Account();
+        public void UpdateAccounts(){
+
+        }
+        public void DeleteAccounts(){
 
         }
 

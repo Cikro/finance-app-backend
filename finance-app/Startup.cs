@@ -7,7 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+
+
 using finance_app.Types.EFContexts;
+using finance_app.Types.Interfaces;
+using finance_app.Types.Services;
 
 namespace finance_app
 {
@@ -32,6 +36,8 @@ namespace finance_app
                 configuration.RootPath = "ClientApp/build";
             });
             services.AddDbContext<AccountContext>();
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();
 
         }
 
