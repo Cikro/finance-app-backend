@@ -25,16 +25,21 @@ namespace finance_app
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(); 
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            if (env.IsDevelopment()) {
+                services.AddDbContext<AccountContext>(options => options.UseInMemoryDatabase(databaseName: "localHost"));
+            }
+
             services.AddDbContext<AccountContext>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();

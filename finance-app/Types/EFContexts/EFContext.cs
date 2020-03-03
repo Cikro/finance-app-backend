@@ -9,7 +9,10 @@ namespace finance_app.Types.EFContexts
         public EFContext(IConfiguration configuration){
             _configuration = configuration;
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseMySql(_configuration.GetConnectionString("MainDB"));
+        protected override void OnConfiguring(DbContextOptionsBuilder options) {
+            if (!options.IsConfigured){                
+                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+            }
+        }
     }
 }
