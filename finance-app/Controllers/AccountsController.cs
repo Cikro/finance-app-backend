@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using finance_app.DatabaseObjects;
+using finance_app.Types.EFModels;
+using finance_app.Types.Interfaces;
+
 
 namespace finance_app.Controllers
 {
@@ -14,17 +16,18 @@ namespace finance_app.Controllers
     {
         
         private readonly ILogger<AccountsController> _logger;
+        private readonly IAccountService _accountService;
 
-        public AccountsController(ILogger<AccountsController> logger)
+        public AccountsController(ILogger<AccountsController> logger, IAccountService accountService)
         {
             _logger = logger;
+            _accountService = accountService;
         }
 
         [HttpGet]
-        public IEnumerable<Account> Get()
+        public async Task<IEnumerable<Account>> Get()
         {
-            //
-            return [1,2,3,4];
+            return await _accountService.GetAccounts(5);
         }
     }
 }

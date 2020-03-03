@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using finance_app.Types.EFModels;
 
 namespace finance_app.Types.Interfaces
 {
     public interface IAccountService
     {
-        void GetAccounts();
+        Task<IEnumerable<Account>> GetAccounts(uint userId);
 
         void InsertAccounts();
 
