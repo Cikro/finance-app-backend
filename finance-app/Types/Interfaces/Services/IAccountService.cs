@@ -6,7 +6,7 @@ namespace finance_app.Types.Interfaces
 {
     public interface IAccountService
     {
-        Task<IEnumerable<Account>> GetAccounts(uint userId);
+        IEnumerable<Account> GetAccounts(uint userId);
 
         void InsertAccounts();
 

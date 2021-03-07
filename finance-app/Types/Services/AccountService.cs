@@ -12,8 +12,8 @@ namespace finance_app.Types.Services
             _accountServiceDbo = accountServiceDbo;
         }
 
-        public async Task<IEnumerable<Account>> GetAccounts(uint userId){
-            return await _accountServiceDbo.GetAllByUserId(userId);
+        public IEnumerable<Account> GetAccounts(uint userId){
+            return _accountServiceDbo.GetAllByUserId(userId);
 
         }
 

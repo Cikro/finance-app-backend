@@ -4,19 +4,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace finance_app.Types.EFModels
 {
-    [Table("Accounts")]
+    [Table("accounts")]
     public class Account : DatabaseObject
     {
         [Required]
         public string Name { get; set; }
         [Required]
-        public uint UserId { get; set; }
+        public uint User_Id { get; set; }
         public string Description { get; set; }
         public double Balance { get; set; }
         [Required]
         public uint Type { get; set; }
         [Required]
-        public string CurrencyCode { get; set; }
-        public Account Parent_Account { get; set; }
+        public string Currency_Code { get; set; }
+        //public Account Parent_Account { get; set; }
     }
 }

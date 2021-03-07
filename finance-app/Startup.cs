@@ -17,15 +17,18 @@ namespace finance_app
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+
+        public IConfiguration _configuration;
+        public IWebHostEnvironment _env;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _env = env;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllersWithViews(); 
@@ -36,11 +39,13 @@ namespace finance_app
                 configuration.RootPath = "ClientApp/build";
             });
 
-            if (env.IsDevelopment()) {
-                services.AddDbContext<AccountContext>(options => options.UseInMemoryDatabase(databaseName: "localHost"));
+            if (_env.IsDevelopment()) {
+                //services.AddDbContext<AccountContext>(options => options.UseInMemoryDatabase(databaseName: "localHost"));
             }
 
-            services.AddDbContext<AccountContext>();
+            services.AddDbContext<AccountContext>(options => {
+                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+            });
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();
 

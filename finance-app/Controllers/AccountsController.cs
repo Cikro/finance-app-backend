@@ -8,6 +8,7 @@ using finance_app.Types.EFModels;
 using finance_app.Types.Interfaces;
 
 
+
 namespace finance_app.Controllers
 {
     [ApiController]
@@ -27,7 +28,8 @@ namespace finance_app.Controllers
         [HttpGet]
         public async Task<IEnumerable<Account>> Get()
         {
-            return await _accountService.GetAccounts(5);
+            var x = _accountService.GetAccounts(1);
+            return x;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace finance_app.Types.Interfaces
 {
     public interface IAccountServiceDbo
     {
-        Task<IEnumerable<Account>> GetAllByUserId(uint userId) ;
+        IEnumerable<Account> GetAllByUserId(uint userId) ;
         
         Task CreateItem(Account account);
 

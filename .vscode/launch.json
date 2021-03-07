@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.2/finance-app-backend.dll",
+            "program": "${workspaceFolder}\\finance-app\\bin\\Debug/netcoreapp3.0\\finance-app.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

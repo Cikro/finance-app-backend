@@ -8,7 +8,7 @@ namespace finance_app.Types.EFModels
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public uint Id { get; set; }
 
-        public DateTime DateCreated { get; set; }
-        public DateTime DateLastEdited { get; set; }
+        public DateTime Date_Created { get; set; }
+        public DateTime Date_Last_Edited { get; set; }
     }
 }
