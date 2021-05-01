@@ -7,6 +7,7 @@ namespace finance_app.Types.Interfaces
     public interface IAccountService
     {
         IEnumerable<Account> GetAccounts(uint userId);
+        IEnumerable<Account> GetPaginatedAccounts(uint userId, int itemsPerPage, int pageNumber);
 
         void InsertAccounts();
 

@@ -15,8 +15,8 @@ namespace finance_app.Types.EFModels
         public double Balance { get; set; }
         [Required]
         public uint Type { get; set; }
-        [Required]
+        [Required] 
         public string Currency_Code { get; set; }
-        //public Account Parent_Account { get; set; }
+        public uint? Parent_Account_Id { get; set; }
     }
 }

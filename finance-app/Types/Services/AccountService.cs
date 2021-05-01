@@ -14,7 +14,20 @@ namespace finance_app.Types.Services
 
         public IEnumerable<Account> GetAccounts(uint userId){
             return _accountServiceDbo.GetAllByUserId(userId);
-
+        }
+        public IEnumerable<Account> GetPaginatedAccounts(uint userId, int itemsPerPage, int pageNumber)
+        {
+            if (pageNumber <= 0)
+            {
+                return null;
+            }
+            if (itemsPerPage < 0)
+            {
+                return null;
+            }
+            uint offset = (uint) pageNumber - 1;
+            
+            return _accountServiceDbo.GetPaginatedByUserId(userId, (uint) itemsPerPage, offset);
         }
 
         public void InsertAccounts(){

@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using finance_app.Types.EFModels;
 using finance_app.Types.Interfaces;
-
-
+using finance_app.Types;
 
 namespace finance_app.Controllers
 {
@@ -26,10 +25,23 @@ namespace finance_app.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Account>> Get()
+        public async Task<IEnumerable<Account>> Get([FromQuery] uint userId, [FromQuery] PaginationInfo pageInfo)
         {
-            var x = _accountService.GetAccounts(1);
-            return x;
+            //TODO: Add API return Class
+            // result
+            //  Message
+            //  Code
+            // Data<t>
+            // TODO: Figure out how to add search terms / filter terms?
+            IEnumerable<Account> ret;
+            if (pageInfo.PageNumber != null && pageInfo.ItemsPerPage != null) {
+                ret = _accountService.GetPaginatedAccounts(userId, (int) pageInfo.ItemsPerPage, (int) pageInfo.PageNumber);
+
+            } else {
+                ret = _accountService.GetAccounts(userId);
+            }
+            
+            return ret;
         }
     }
 }
