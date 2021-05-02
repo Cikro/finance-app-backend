@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using finance_app.Types.EFModels;
 using finance_app.Types.Interfaces;
 using finance_app.Types;
+using finance_app.Types.Responses;
+using finance_app.Types.Responses.Dtos;
 
 namespace finance_app.Controllers
 {
@@ -25,21 +27,20 @@ namespace finance_app.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Account>> Get([FromQuery] uint userId, [FromQuery] PaginationInfo pageInfo)
+        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery] uint userId, [FromQuery] PaginationInfo pageInfo)
         {
-            //TODO: Add API return Class
-            // result
-            //  Message
-            //  Code
-            // Data<t>
-            // TODO: Figure out how to add search terms / filter terms?
-            IEnumerable<Account> ret;
+            List<AccountDto> accounts;
             if (pageInfo.PageNumber != null && pageInfo.ItemsPerPage != null) {
-                ret = _accountService.GetPaginatedAccounts(userId, (int) pageInfo.ItemsPerPage, (int) pageInfo.PageNumber);
+                accounts = _accountService.GetPaginatedAccounts(userId, pageInfo);
 
             } else {
-                ret = _accountService.GetAccounts(userId);
+                accounts = _accountService.GetAccounts(userId);
             }
+
+            var ret = new ApiResponse<ListResponse<AccountDto>>();
+
+            ret.Data = new ListResponse<AccountDto>(accounts);
+            ret.ResponseMessage = "Success";
             
             return ret;
         }

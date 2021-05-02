@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Data.Common;
 
 namespace finance_app.Types.Services
 {
@@ -26,7 +27,7 @@ namespace finance_app.Types.Services
 
         }
 
-        public IEnumerable<Account> GetAllByUserId(uint userId) {
+        public List<Account> GetAllByUserId(uint userId) {
             
             var parameters = new object[]
             {
@@ -47,21 +48,13 @@ namespace finance_app.Types.Services
             var reader = command.ExecuteReader();            
             var accounts = new List<Account>();
             while (reader.Read()) {
-                accounts.Add(new Account{
-                    User_Id = (uint) reader.GetInt32("user_id"),
-                    Name = reader.IsDBNull("name") ? "" : reader.GetString("name"),
-                    Description = reader.IsDBNull("description") ? "" : reader.GetString("description"),
-                    Balance= reader.IsDBNull("balance") ? 0 : reader.GetDouble("balance"),
-                    Type = (uint) reader.GetInt32("type"),
-                    Currency_Code = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
-                    Parent_Account_Id = reader.IsDBNull("parent_account") ? null : (uint?) reader.GetInt32("parent_account")
-                });
+                accounts.Add(readAccount(reader));
             }
             connection.Close();
 
             return accounts;
         }
-        public IEnumerable<Account> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
+        public List<Account> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
         {
             var totalItems = new MySqlParameter("totalItems", MySqlDbType.UInt32, 4);
             totalItems.Direction = ParameterDirection.Output;
@@ -93,16 +86,7 @@ namespace finance_app.Types.Services
             
             while (reader.Read())
             {
-                accounts.Add(new Account
-                {
-                    User_Id = (uint)reader.GetInt32("user_id"),
-                    Name = reader.IsDBNull("name") ? "" : reader.GetString("name"),
-                    Description = reader.IsDBNull("description") ? "" : reader.GetString("description"),
-                    Balance = reader.IsDBNull("balance") ? 0 : reader.GetDouble("balance"),
-                    Type = (uint)reader.GetInt32("type"),
-                    Currency_Code = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
-                    Parent_Account_Id = reader.IsDBNull("parent_account") ? null : (uint?) reader.GetInt32("parent_account")
-                });
+                accounts.Add(readAccount(reader));
             }
             connection.Close();
 
@@ -124,6 +108,23 @@ namespace finance_app.Types.Services
 
         public void UpdateItem(Account account) {
             _context.Update(account);
+        }
+
+        private Account readAccount(DbDataReader reader)
+        {
+            return new Account
+            {
+                User_Id = (uint)reader.GetInt32("user_id"),
+                Name = reader.IsDBNull("name") ? "" : reader.GetString("name"),
+                Description = reader.IsDBNull("description") ? "" : reader.GetString("description"),
+                Balance = reader.IsDBNull("balance") ? 0 : reader.GetDecimal("balance"),
+                Type = Enum.IsDefined(typeof(AccountTypeEnum), reader.GetByte("type")) ? (AccountTypeEnum) reader.GetByte("type") : AccountTypeEnum.Unknown,
+                Currency_Code = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
+                Parent_Account_Id = reader.IsDBNull("parent_account") ? null : (uint?)reader.GetInt32("parent_account"),
+                Date_Created = reader.GetDateTime("date_created"),
+                Date_Last_Edited = reader.GetDateTime("date_last_edited")
+            };
+
         }
 
     }

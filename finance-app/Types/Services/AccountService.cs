@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using finance_app.Types.Interfaces;
 using finance_app.Types.EFModels;
+using finance_app.Types.Responses.Dtos;
+using finance_app.Types.Responses.Dtos.Enums;
+using finance_app.Types.Responses;
 
 namespace finance_app.Types.Services
 {
@@ -12,25 +15,48 @@ namespace finance_app.Types.Services
             _accountServiceDbo = accountServiceDbo;
         }
 
-        public IEnumerable<Account> GetAccounts(uint userId){
-            return _accountServiceDbo.GetAllByUserId(userId);
+        public List<AccountDto> GetAccounts(uint userId){
+            var accounts = _accountServiceDbo.GetAllByUserId(userId);
+            var accountDtos = new List<AccountDto>();
+
+            foreach(var a in accounts) {
+                accountDtos.Add(new AccountDto
+                {
+                    Id = a.Id,
+                    UserId = a.User_Id,
+                    Balance = a.Balance,
+                    Name = a.Name,
+                    CurrencyCode = a.Currency_Code,
+                    Description = a.Description,
+                    ParentAccountId = a.Parent_Account_Id,
+                    Type = new EnumDto<AccountTypeDtoEnum>(GetAccountType(a.Type)),
+                    DateCreated = a.Date_Created,
+                    DateLastEdited = a.Date_Last_Edited 
+                });
+            }
+            return accountDtos;
         }
-        public IEnumerable<Account> GetPaginatedAccounts(uint userId, int itemsPerPage, int pageNumber)
+        public List<AccountDto> GetPaginatedAccounts(uint userId, PaginationInfo pageInfo)
         {
-            if (pageNumber <= 0)
+            if (pageInfo.PageNumber <= 0)
             {
                 return null;
             }
-            if (itemsPerPage < 0)
+            if (pageInfo.ItemsPerPage < 0)
             {
                 return null;
             }
-            uint offset = (uint) pageNumber - 1;
+
+            uint offset = (uint)pageInfo.PageNumber - 1;
             
-            return _accountServiceDbo.GetPaginatedByUserId(userId, (uint) itemsPerPage, offset);
+            var accounts = _accountServiceDbo.GetPaginatedByUserId(userId, (uint)pageInfo.ItemsPerPage, offset);
+            var accountDtos = new List<AccountDto>();
+            foreach (var a in accounts) { accountDtos.Add(MapAccountDto(a)); }
+
+            return accountDtos;
         }
 
-        public void InsertAccounts(){
+        public void InsertAccount(){
 
         }
 
@@ -38,6 +64,45 @@ namespace finance_app.Types.Services
 
         }
         public void DeleteAccounts(){
+
+        }
+
+        private AccountTypeDtoEnum GetAccountType(AccountTypeEnum accountType)
+        {
+            AccountTypeDtoEnum type = AccountTypeDtoEnum.Unknown;
+            switch (accountType)
+            {
+                case AccountTypeEnum.Asset:
+                    type = AccountTypeDtoEnum.Asset;
+                break;
+                case AccountTypeEnum.Liability:
+                    type = AccountTypeDtoEnum.Liability;
+                break;
+                case AccountTypeEnum.Revenue:
+                    type = AccountTypeDtoEnum.Revenue;
+                break;
+                case AccountTypeEnum.Expense:
+                    type = AccountTypeDtoEnum.Expense;
+                break;
+
+            }
+            return type;
+        }
+        private AccountDto MapAccountDto(Account account)
+        {
+            return (new AccountDto
+            {
+                Id = account.Id,
+                UserId = account.User_Id,
+                Balance = account.Balance,
+                Name = account.Name,
+                CurrencyCode = account.Currency_Code,
+                Description = account.Description,
+                ParentAccountId = account.Parent_Account_Id,
+                Type = new EnumDto<AccountTypeDtoEnum>(GetAccountType(account.Type)),
+                DateCreated = account.Date_Created,
+                DateLastEdited = account.Date_Last_Edited
+            });
 
         }
 

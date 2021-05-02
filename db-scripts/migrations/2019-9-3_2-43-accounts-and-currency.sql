@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS accounts
     user_id int unsigned NOT NULL,
     name varchar(50) NOT NULL UNIQUE,
     description varchar(255),
-    balance double default 0,
+    balance DOUBLE default 0,
     type tinyint unsigned NOT NULL,
     currency_code char(3) NOT NULL,
     parent_account int unsigned default NULL,

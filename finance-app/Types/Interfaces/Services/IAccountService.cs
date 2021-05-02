@@ -1,15 +1,14 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using finance_app.Types.EFModels;
+using finance_app.Types.Responses.Dtos;
 
 namespace finance_app.Types.Interfaces
 {
     public interface IAccountService
     {
-        IEnumerable<Account> GetAccounts(uint userId);
-        IEnumerable<Account> GetPaginatedAccounts(uint userId, int itemsPerPage, int pageNumber);
+        List<AccountDto> GetAccounts(uint userId);
+        List<AccountDto> GetPaginatedAccounts(uint userId, PaginationInfo pageInfo);
 
-        void InsertAccounts();
+        void InsertAccount();
 
         void UpdateAccounts();
         void DeleteAccounts();
