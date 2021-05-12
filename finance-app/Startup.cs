@@ -6,12 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-
+using FluentValidation.AspNetCore;
 
 using finance_app.Types.EFContexts;
 using finance_app.Types.Interfaces;
 using finance_app.Types.Services;
+using finance_app.Types.Validators;
+using finance_app.Types.Validators.RequestValidators.Accounts;
+
 
 namespace finance_app
 {
@@ -31,6 +33,20 @@ namespace finance_app
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddMvc(setup => {})
+                .AddFluentValidation( fv =>
+                {
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                    fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
+                });
+
+            # region Validators
+            services.AddTransient<PaginationInfoValidator>();
+
+
+            # endregion Validators
+
+
             services.AddControllersWithViews(); 
 
             // In production, the React files will be served from this directory
@@ -49,6 +65,8 @@ namespace finance_app
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();
 
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +82,7 @@ namespace finance_app
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -9,6 +9,9 @@ using finance_app.Types.Interfaces;
 using finance_app.Types;
 using finance_app.Types.Responses;
 using finance_app.Types.Responses.Dtos;
+using FluentValidation;
+using finance_app.Types.Validators;
+using finance_app.Types.Requests.Accounts;
 
 namespace finance_app.Controllers
 {
@@ -27,14 +30,15 @@ namespace finance_app.Controllers
         }
 
         [HttpGet]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery] uint userId, [FromQuery] PaginationInfo pageInfo)
+        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery]GetAccountsRequests request)
         {
             List<AccountDto> accounts;
-            if (pageInfo.PageNumber != null && pageInfo.ItemsPerPage != null) {
-                accounts = _accountService.GetPaginatedAccounts(userId, pageInfo);
+            if (request.PageInfo != null) {
+                
+                accounts = _accountService.GetPaginatedAccounts(request.UserId, request.PageInfo);
 
             } else {
-                accounts = _accountService.GetAccounts(userId);
+                accounts = _accountService.GetAccounts(request.UserId);
             }
 
             var ret = new ApiResponse<ListResponse<AccountDto>>();
