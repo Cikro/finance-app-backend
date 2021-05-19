@@ -16,7 +16,7 @@ using finance_app.Types.Requests.Accounts;
 namespace finance_app.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("Users/{userId}/[controller]")]
     public class AccountsController : ControllerBase
     {
         

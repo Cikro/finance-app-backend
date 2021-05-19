@@ -8,7 +8,7 @@ namespace finance_app.Types.Requests.Accounts
 {
     public class GetAccountsRequests
     {
-        [FromQuery(Name = "userId")]
+        [FromRoute(Name ="userId")]
         public uint UserId { get; set; }
 
         

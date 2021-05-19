@@ -11,6 +11,7 @@ namespace finance_app.Types.Validators.RequestValidators.Accounts
     {
         public GetAccountsRequestsValidator()
         {
+            RuleFor(request => request.UserId).NotNull();
             RuleFor(request => request.PageInfo).SetValidator(new PaginationInfoValidator()).When(request => request.PageInfo != null);
         }
     }
