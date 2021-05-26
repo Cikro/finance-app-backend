@@ -13,7 +13,8 @@ using finance_app.Types.Interfaces;
 using finance_app.Types.Services;
 using finance_app.Types.Validators;
 using finance_app.Types.Validators.RequestValidators.Accounts;
-
+using finance_app.Middleware;
+using Microsoft.AspNetCore.Mvc;
 
 namespace finance_app
 {
@@ -33,12 +34,21 @@ namespace finance_app
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddMvc(setup => {})
-                .AddFluentValidation( fv =>
-                {
-                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                    fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
-                });
+            services.AddMvc(setup => {
+
+                setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
+                setup.Filters.Add(typeof(ValidationResponseMapperFilter));
+            })
+            .AddFluentValidation( fv =>
+            {
+                fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
+            });
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             # region Validators
             services.AddTransient<PaginationInfoValidator>();
@@ -62,6 +72,7 @@ namespace finance_app
             services.AddDbContext<AccountContext>(options => {
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
+
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();
 
