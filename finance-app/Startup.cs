@@ -33,11 +33,13 @@ namespace finance_app
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            #region MVC Pipline
             services.AddMvc(setup => {
 
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
+                setup.Filters.Add(typeof(UserAuthorizationFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
+
             })
             .AddFluentValidation( fv =>
             {
@@ -49,12 +51,11 @@ namespace finance_app
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+            #endregion MVC Pipline
 
-            # region Validators
+            #region Validators
             services.AddTransient<PaginationInfoValidator>();
-
-
-            # endregion Validators
+            #endregion Validators
 
 
             services.AddControllersWithViews(); 
@@ -73,8 +74,12 @@ namespace finance_app
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
 
+
+            #region Services
+            services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();
+            #endregion Services
 
 
 
