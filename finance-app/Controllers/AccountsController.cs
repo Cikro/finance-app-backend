@@ -4,13 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using finance_app.Types.EFModels;
 using finance_app.Types.Interfaces;
 using finance_app.Types;
 using finance_app.Types.Responses;
 using finance_app.Types.Responses.Dtos;
-using FluentValidation;
-using finance_app.Types.Validators;
 using finance_app.Types.Requests.Accounts;
 
 namespace finance_app.Controllers
@@ -41,11 +38,12 @@ namespace finance_app.Controllers
                 accounts = _accountService.GetAccounts(request.UserId);
             }
 
-            var ret = new ApiResponse<ListResponse<AccountDto>>();
+            var ret = new ApiResponse<ListResponse<AccountDto>>
+            {
+                Data = new ListResponse<AccountDto>(accounts),
+                ResponseMessage = "Success"
+            };
 
-            ret.Data = new ListResponse<AccountDto>(accounts);
-            ret.ResponseMessage = "Success";
-            
             return ret;
         }
     }
