@@ -1,9 +1,5 @@
-﻿using finance_app.Types.Requests.Accounts;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FluentValidation;
+using finance_app.Types.DataContracts.V1.Requests.Accounts;
 
 namespace finance_app.Types.Validators.RequestValidators.Accounts
 {
@@ -12,7 +8,7 @@ namespace finance_app.Types.Validators.RequestValidators.Accounts
         public GetAccountsRequestsValidator()
         {
             RuleFor(request => request.UserId).NotNull();
-            RuleFor(request => request.PageInfo).SetValidator(new PaginationInfoValidator()).When(request => request.PageInfo != null);
+            _ = RuleFor(request => request.PageInfo).SetValidator(new PaginationInfoValidator()).When(request => request.PageInfo != null);
         }
     }
 }

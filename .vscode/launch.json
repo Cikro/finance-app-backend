@@ -4,15 +4,29 @@
    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
    "version": "0.2.0",
    "configurations": [
+       {
+           "name": "client-dev-launch",
+           "request": "launch",
+           "runtimeArgs": [
+               "start",
+               "debug"
+           ],
+           "runtimeExecutable": "npm",
+           "skipFiles": [
+               "<node_internals>/**"
+           ],
+           "cwd": "${workspaceFolder}\\finance-app\\ClientApp",
+           "type": "pwa-node"
+       },
         {
-            "name": ".NET Core Launch (web)",
+            "name": "server-dev-launch",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}\\finance-app\\bin\\Debug/netcoreapp3.0\\finance-app.dll",
+            "program": "${workspaceFolder}\\finance-app\\bin\\Debug\\netcoreapp3.1\\finance-app.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}\\finance-app",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
@@ -20,17 +34,38 @@
                 "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"                
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS":"https://localhost:5001",
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }
         },
         {
-            "name": ".NET Core Attach",
+            "name": "client-dev-launch-old",
+            "type": "node",
+            "smartStep": true,
+            "request": "launch",
+            "port": 9229,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"                
+            },
+            "cwd": "${workspaceFolder}\\finance-app\\ClientApp",
+            "program": "${workspaceFolder}\\finance-app\\ClientApp/index.js"
+        },
+        {
+            "name": "Server Attach (.NET Core)",
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:pickProcess}"
+        },
+
+    ],
+    "compounds": [
+        {
+          "name": "Server/Client",
+          "configurations": ["server-dev-launch", "client-dev-launch"],
         }
     ]
 }

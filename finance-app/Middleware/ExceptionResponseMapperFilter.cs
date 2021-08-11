@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using finance_app.Types;
-using finance_app.Types.Responses;
-using finance_app.Types.Responses.Dtos;
+using finance_app.Types.DataContracts.V1.Responses;
+using finance_app.Types.DataContracts.V1.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

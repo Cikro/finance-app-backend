@@ -2,8 +2,8 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using finance_app.Types;
-using finance_app.Types.Interfaces;
-using finance_app.Types.Responses;
+using finance_app.Types.DataContracts.V1.Responses;
+using finance_app.Types.Services.V1.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
