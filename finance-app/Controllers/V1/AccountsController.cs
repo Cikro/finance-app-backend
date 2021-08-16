@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.CodeDom;
-using Microsoft.Extensions.Localization;
 
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.DataContracts.V1.Responses;
