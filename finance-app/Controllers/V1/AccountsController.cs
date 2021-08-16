@@ -44,24 +44,9 @@ namespace finance_app.Controllers.V1
             var ret = new ApiResponse<ListResponse<AccountDto>>
             {
                 Data = new ListResponse<AccountDto>(accounts),
-                ResponseMessage = "Success"
-            };
-
-            return ret;
-        }
-
-        [HttpGet]
-        [ApiVersion("1.1")]
-        public async Task<ApiResponse<ListResponse<int>>> Get11([FromQuery]GetAccountsRequests request)
-        {
-
-            var x = new List<int>();
-            x.AddRange(new List<int>{5,6,7,8});
-            
-            var ret = new ApiResponse<ListResponse<int>>
-            {
-                Data = new ListResponse<int>(x),
-                ResponseMessage = "Success"
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
             };
 
             return ret;

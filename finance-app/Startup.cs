@@ -34,15 +34,6 @@ namespace finance_app
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApiVersioning(cfg => {
-                cfg.DefaultApiVersion = new ApiVersion(1,0);
-                cfg.AssumeDefaultVersionWhenUnspecified = true;
-                cfg.ReportApiVersions = true;
-                cfg.ApiVersionReader = ApiVersionReader.Combine(
-                    new HeaderApiVersionReader("X-Version"),
-                    new QueryStringApiVersionReader("v")
-                );
-            });
 
             #region MVC Pipline
             services.AddMvc(setup => {
@@ -58,11 +49,22 @@ namespace finance_app
                 fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
             });
 
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
             #endregion MVC Pipline
+
+            services.AddApiVersioning(cfg => {
+                cfg.DefaultApiVersion = new ApiVersion(1,0);
+                cfg.AssumeDefaultVersionWhenUnspecified = true;
+                cfg.ReportApiVersions = true;
+                cfg.ApiVersionReader = ApiVersionReader.Combine(
+                    new HeaderApiVersionReader("X-Version"),
+                    new QueryStringApiVersionReader("v")
+                );
+            });
 
             #region Validators
             services.AddTransient<PaginationInfoValidator>();
