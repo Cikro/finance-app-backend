@@ -2,19 +2,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
 
-using finance_app.Types.EFContexts;
-using finance_app.Types.Interfaces;
-using finance_app.Types.Services;
 using finance_app.Types.Validators;
 using finance_app.Types.Validators.RequestValidators.Accounts;
 using finance_app.Middleware;
-using Microsoft.AspNetCore.Mvc;
+using finance_app.Types.Repositories.Account;
+using finance_app.Types.Services.V1.Interfaces;
+using finance_app.Types.Services.V1;
 
 namespace finance_app
 {
@@ -33,6 +34,7 @@ namespace finance_app
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             #region MVC Pipline
             services.AddMvc(setup => {
 
@@ -47,11 +49,22 @@ namespace finance_app
                 fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
             });
 
+
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
             #endregion MVC Pipline
+
+            services.AddApiVersioning(cfg => {
+                cfg.DefaultApiVersion = new ApiVersion(1,0);
+                cfg.AssumeDefaultVersionWhenUnspecified = true;
+                cfg.ReportApiVersions = true;
+                cfg.ApiVersionReader = ApiVersionReader.Combine(
+                    new HeaderApiVersionReader("X-Version"),
+                    new QueryStringApiVersionReader("v")
+                );
+            });
 
             #region Validators
             services.AddTransient<PaginationInfoValidator>();
@@ -78,7 +91,7 @@ namespace finance_app
             #region Services
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAccountService, AccountService>();
-            services.AddTransient<IAccountServiceDbo, AccountServiceDbo>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
             #endregion Services
 
 

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using finance_app.Types;
-using finance_app.Types.Responses;
-using finance_app.Types.Responses.Dtos;
+using finance_app.Types.DataContracts.V1.Dtos;
+using finance_app.Types.DataContracts.V1.Responses;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc; 
