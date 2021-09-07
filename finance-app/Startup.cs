@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
+using AutoMapper;
 
 using finance_app.Types.Validators;
 using finance_app.Types.Validators.RequestValidators.Accounts;
@@ -16,6 +17,7 @@ using finance_app.Middleware;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1;
+using finance_app.Types.Mappers.Profiles;
 
 namespace finance_app
 {
@@ -69,6 +71,8 @@ namespace finance_app
             #region Validators
             services.AddTransient<PaginationInfoValidator>();
             #endregion Validators
+
+            services.AddAutoMapper(typeof(AccountProfile));
 
 
             services.AddControllersWithViews(); 

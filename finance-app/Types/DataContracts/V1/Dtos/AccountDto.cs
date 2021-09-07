@@ -1,8 +1,5 @@
 ﻿using System;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace finance_app.Types.DataContracts.V1.Dtos
 {
