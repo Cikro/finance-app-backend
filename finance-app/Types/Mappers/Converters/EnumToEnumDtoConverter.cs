@@ -13,10 +13,17 @@ namespace finance_app.Types.Mappers.Converters {
         public EnumDto<DestEnum> Convert(SourceEnum source, EnumDto<DestEnum> destination, ResolutionContext context)
         {
             // TODO: How does this behave When SourceEnum === DestinationEnum?
+            Enum toDto;
             if (source != null){
-                return new EnumDto<DestEnum>(context.Mapper.Map<DestEnum>(source));
+                if (typeof(SourceEnum) == typeof(DestEnum)) {
+                    toDto = source;
+                } else  {
+                    toDto = context.Mapper.Map<DestEnum>(source);
+                }
+
+                return new EnumDto<DestEnum>((DestEnum) toDto);
             }
-            return new EnumDto<DestEnum>(default);
+            return null;
         }
     }    
 }
