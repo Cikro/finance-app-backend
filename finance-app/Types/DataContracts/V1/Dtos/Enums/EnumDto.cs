@@ -7,29 +7,29 @@ namespace finance_app.Types.DataContracts.V1.Dtos.Enums
 {
     public class EnumDto<T> where T : Enum
     {
-        private T _Value { get; set; }
+        private T _value { get; set; }
         public T Value
         {
             get
             {
-                return _Value;
+                return _value;
             }
             set
             {
-                _Value = value;
+                _value = value;
                 Name = value.ToString();
             }
         }
-        private string _Name {get;set;}
+        private string _name {get;set;}
         public string Name
         {
             get
             {
-                return _Name;
+                return _name;
             }
             private set
             {
-                _Name = value;
+                _name = value;
             }
         }
 

@@ -24,8 +24,8 @@ namespace finance_app
     public class Startup
     {
 
-        public IConfiguration _configuration;
-        public IWebHostEnvironment _env;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {

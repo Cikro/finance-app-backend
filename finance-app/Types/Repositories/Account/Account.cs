@@ -12,7 +12,7 @@ namespace finance_app.Types.Repositories.Account
         [Required]
         public uint User_Id { get; set; }
         public string Description { get; set; }
-        public Decimal Balance { get; set; }
+        public decimal Balance { get; set; }
         [Required]
         public AccountTypeEnum Type { get; set; }
         [Required] 

@@ -54,8 +54,9 @@ namespace finance_app.Types.Repositories.Account
         }
         public List<Account> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
         {
-            var totalItems = new MySqlParameter("totalItems", MySqlDbType.UInt32, 4);
-            totalItems.Direction = ParameterDirection.Output;
+            var totalItems = new MySqlParameter("totalItems", MySqlDbType.UInt32, 4) {
+                Direction = ParameterDirection.Output
+            };
             var parameters = new object[]
             {
                 new MySqlParameter("userId",userId),
@@ -87,8 +88,6 @@ namespace finance_app.Types.Repositories.Account
                 accounts.Add(ReadAccount(reader));
             }
             connection.Close();
-
-            var totalAccounts = totalItems.Value;
 
             return accounts;
         }
