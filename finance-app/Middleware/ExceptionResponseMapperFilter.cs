@@ -24,7 +24,7 @@ namespace finance_app.Middleware
 
         public void OnException(ExceptionContext context)
         {
-            ApiResponse<ExceptionDto> apiResponse = new ApiResponse<ExceptionDto>
+            var apiResponse = new ApiResponse<ExceptionDto>
             {
                 ResponseCode = ApiResponseCodesEnum.InternalError,
                 StatusCode = HttpStatusCode.InternalServerError,

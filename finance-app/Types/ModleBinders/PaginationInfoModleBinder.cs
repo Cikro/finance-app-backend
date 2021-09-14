@@ -41,7 +41,7 @@ namespace finance_app.Types
 
             int? iPageNumber = null;
             int? iItemsPerPage = null;
-            int parseVal = 0;
+            int parseVal;
             if (string.IsNullOrEmpty(pageNumber)) {
                 iPageNumber = null;
             } else if (int.TryParse(pageNumber, out parseVal)) {

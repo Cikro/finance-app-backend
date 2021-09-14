@@ -1,8 +1,5 @@
 ﻿using System;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace finance_app.Types.DataContracts.V1.Dtos
 {
@@ -11,7 +8,7 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         public string Name { get; set; }
         public uint UserId { get; set; }
         public string Description { get; set; }
-        public Decimal Balance { get; set; }
+        public decimal Balance { get; set; }
         public EnumDto<AccountTypeDtoEnum> Type { get; set; }
         
         public string CurrencyCode { get; set; }

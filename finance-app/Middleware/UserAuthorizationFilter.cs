@@ -13,16 +13,16 @@ public class UserAuthorizationFilter : IAsyncActionFilter {
                                                 ActionExecutionDelegate next) 
     {
         uint userId = 0;
-        bool unauthorized = true;
+        var unauthorized = true;
 
         // No userId Provided. Continue.
         // TODO: Consider moving this whole class into an attribute to only run on routes 
         // that require Authorization.  Then, return error if there is no userId.
         if (context.RouteData.Values.TryGetValue("userId", out var userIdParam) 
-            && userIdParam is string
-            && uint.TryParse((string)userIdParam, out userId)) {
+            && userIdParam is string @string
+            && uint.TryParse(@string, out userId)) {
 
-            IUserService userService = (IUserService)context.HttpContext
+            var userService = (IUserService)context.HttpContext
                      .RequestServices.GetService(typeof(IUserService));
 
 

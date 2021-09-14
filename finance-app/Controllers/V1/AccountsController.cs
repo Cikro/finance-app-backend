@@ -11,7 +11,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 namespace finance_app.Controllers.V1
 {
     [ApiController]
-    [Route("Users/{userId}/[controller]")]
+    [Route("api/Users/{userId}/[controller]")]
     [ApiVersion("1.0")]
     public class AccountsController : ControllerBase
     {
