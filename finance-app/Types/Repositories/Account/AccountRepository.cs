@@ -25,34 +25,46 @@ namespace finance_app.Types.Repositories.Account
 
         }
 
-        public List<Account> GetAllByUserId(uint userId) {
+        public async Task<List<Account>> GetAllByUserId(uint userId) {
             
             var parameters = new object[]
             {
                 new MySqlParameter("userId",userId)
             };
+
             var connection = _context.Database.GetDbConnection();
             
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = "GetAllAccountsByUserId";
-            foreach (var p in parameters)
-            {
-                command.Parameters.Add(p);
+            try {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "GetAllAccountsByUserId";
+                foreach (var p in parameters)
+                {
+                    command.Parameters.Add(p);
 
+                }
+
+                var accounts = new List<Account>();
+                using (var reader = await command.ExecuteReaderAsync()) {
+                    while (await reader.ReadAsync()) {
+                        accounts.Add(ReadAccount(reader));
+                    }
+                }
+                await connection.CloseAsync();
+
+                return accounts;
+
+            } catch (Exception e) {
+                if (connection?.State == ConnectionState.Open) {
+                    await connection.CloseAsync();
+                }
+                throw e;
             }
 
-            var reader = command.ExecuteReader();            
-            var accounts = new List<Account>();
-            while (reader.Read()) {
-                accounts.Add(ReadAccount(reader));
-            }
-            connection.Close();
-
-            return accounts;
+            
         }
-        public List<Account> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
+        public async Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
         {
             var totalItems = new MySqlParameter("totalItems", MySqlDbType.UInt32, 4) {
                 Direction = ParameterDirection.Output
@@ -66,34 +78,41 @@ namespace finance_app.Types.Repositories.Account
                 
             };
             
-
             var connection = _context.Database.GetDbConnection();
 
-            connection.Open();
-            var command = connection.CreateCommand();
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = "GetAccountsByUserId";
+            try {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "GetAccountsByUserId";
 
-            foreach (var p in parameters)
-            {
-                command.Parameters.Add(p);
+                foreach (var p in parameters)
+                {
+                    command.Parameters.Add(p);
+                }
 
+                var accounts = new List<Account>();
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        accounts.Add(ReadAccount(reader));
+                    }
+                }
+                await connection.CloseAsync();
+
+                return accounts;
+            } catch (Exception e) {
+                if (connection?.State == ConnectionState.Open) {
+                    await connection.CloseAsync();
+                }
+                throw e;
             }
 
-            var reader = command.ExecuteReader();
-            var accounts = new List<Account>();
-            
-            while (reader.Read())
-            {
-                accounts.Add(ReadAccount(reader));
-            }
-            connection.Close();
-
-            return accounts;
         }
 
 
-        public async Task CreateItem(Account account) {
+        public async Task CreateAccount(Account account) {
             await _context.AddAsync(account);
         }
 

@@ -12,7 +12,7 @@ namespace finance_app.Types.Repositories.Account
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        List<Account> GetAllByUserId(uint userId) ;
+        Task<List<Account>> GetAllByUserId(uint userId);
 
         /// <summary>
         /// Fetches pages of Accounts that belong ot the associated user.
@@ -21,10 +21,10 @@ namespace finance_app.Types.Repositories.Account
         /// <param name="pageSize">The number of items for the page</param>
         /// <param name="offset">The page offset</param>
         /// <returns></returns>
-        List<Account> GetPaginatedByUserId(uint userId, uint pageSize, uint offset);
+        Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset);
 
 
-        Task CreateItem(Account account);
+        Task CreateAccount(Account account);
 
         Account DeleteItem(int accountId);
 

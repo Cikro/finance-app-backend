@@ -49,10 +49,10 @@ namespace finance_app.Controllers.V1
             List<AccountDto> accounts;
             if (request.PageInfo != null) {
                 
-                accounts = _accountService.GetPaginatedAccounts(request.UserId, request.PageInfo);
+                accounts = await _accountService.GetPaginatedAccounts(request.UserId, request.PageInfo);
 
             } else {
-                accounts = _accountService.GetAccounts(request.UserId);
+                accounts = await _accountService.GetAccounts(request.UserId);
             }
 
             var ret = new ApiResponse<ListResponse<AccountDto>>
@@ -62,7 +62,6 @@ namespace finance_app.Controllers.V1
                 StatusCode = System.Net.HttpStatusCode.OK,
                 ResponseCode = ApiResponseCodesEnum.Success
             };
-
             return ret;
         }
     }

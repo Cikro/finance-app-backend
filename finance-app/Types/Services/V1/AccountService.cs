@@ -23,19 +23,24 @@ namespace finance_app.Types.Services.V1
             
         }
 
-        public List<AccountDto> GetAccounts(uint userId){
-            var accounts = _accountServiceDbo.GetAllByUserId(userId);
+        /// <summary>
+        /// Gets a list of all accounts for a given userId
+        /// </summary>
+        /// <param name="userId">The user's Id</param>
+        /// <returns> A list of AccountDtos</returns>
+        public async Task<List<AccountDto>> GetAccounts(uint userId){
+            var accounts = await _accountServiceDbo.GetAllByUserId(userId);
             return new List<AccountDto>(_mapper.Map<List<AccountDto>>(accounts));
         }
         
-        public List<AccountDto> GetPaginatedAccounts(uint userId, PaginationInfo pageInfo)
+        public async Task<List<AccountDto>> GetPaginatedAccounts(uint userId, PaginationInfo pageInfo)
         {
             if (pageInfo.PageNumber <= 0) { return null; }
             if (pageInfo.ItemsPerPage < 0) { return null; }
 
             uint offset = (uint)pageInfo.PageNumber - 1;
             
-            var accounts = _accountServiceDbo.GetPaginatedByUserId(userId, (uint)pageInfo.ItemsPerPage, offset);
+            var accounts = await _accountServiceDbo.GetPaginatedByUserId(userId, (uint)pageInfo.ItemsPerPage, offset);
 
             return new List<AccountDto>(_mapper.Map<List<AccountDto>>(accounts));
         }
