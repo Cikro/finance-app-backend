@@ -11,8 +11,9 @@ using finance_app.Types.DataContracts.V1.Dtos;
 namespace finance_app.Controllers.V1
 {
     [ApiController]
-    [Route("api/Users/{userId}/[controller]")]
+    [Produces("application/json")]
     [ApiVersion("1.0")]
+    [Route("api/Users/{userId}/[controller]")]
     public class AccountsController : ControllerBase
     {
         
@@ -25,6 +26,23 @@ namespace finance_app.Controllers.V1
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Gets a list of financial accounts.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <remarks> 
+        /// Sample Request:
+        /// 
+        ///     GET /api/Users/{userId}/Accounts 
+        ///     {
+        ///         "pageNumber": 1,
+        ///         "itemsPerPage": 5
+        ///     }
+        /// 
+        /// 
+        /// 
+        /// </remarks>
+        /// <returns>A List of accounts, and the number of items in the list</returns>
         [HttpGet]
         public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery]GetAccountsRequests request)
         {
