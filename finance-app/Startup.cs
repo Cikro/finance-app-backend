@@ -1,3 +1,7 @@
+using System;
+using System.IO;
+using System.Reflection;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,6 +22,7 @@ using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1;
 using finance_app.Types.Mappers.Profiles;
+
 
 namespace finance_app
 {
@@ -77,6 +82,16 @@ namespace finance_app
 
             services.AddControllersWithViews(); 
 
+            #region Swagger
+            services.AddSwaggerGen( c => {
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+            #endregion Swagger
+
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -105,6 +120,16 @@ namespace finance_app
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            #region Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+            
+            #endregion Swagger
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
