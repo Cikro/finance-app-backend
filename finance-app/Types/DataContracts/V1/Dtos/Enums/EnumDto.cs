@@ -33,6 +33,8 @@ namespace finance_app.Types.DataContracts.V1.Dtos.Enums
             }
         }
 
+
+        public EnumDto() {}
         public EnumDto(T enumVal)
         {
             Value = enumVal;

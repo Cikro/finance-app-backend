@@ -108,12 +108,50 @@ namespace finance_app.Types.Repositories.Account
                 }
                 throw e;
             }
-
         }
 
 
-        public async Task CreateAccount(Account account) {
-            await _context.AddAsync(account);
+        public async Task<Account> CreateAccount(Account account) {
+            var parameters = new object[]
+            {
+                new MySqlParameter("userId", account.User_Id),
+                new MySqlParameter("accountName", account.Name),
+                new MySqlParameter("accountDescription", account.Description),
+                new MySqlParameter("accountType", account.Type),
+                new MySqlParameter("currencyCode", account.Currency_Code),
+                new MySqlParameter("parentAccountId", account.Parent_Account_Id)
+            };
+            
+            var connection = _context.Database.GetDbConnection();
+
+            try {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "CreateAccount";
+
+                foreach (var p in parameters)
+                {
+                    command.Parameters.Add(p);
+                }
+
+                var newAccount = new Account();
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        newAccount = ReadAccount(reader);
+                    }
+                }
+                await connection.CloseAsync();
+
+                return newAccount;
+            } catch (Exception e) {
+                if (connection?.State == ConnectionState.Open) {
+                    await connection.CloseAsync();
+                }
+                throw e;
+            }
         }
 
         public Account DeleteItem(int accountId) {

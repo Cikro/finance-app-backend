@@ -26,4 +26,15 @@ namespace finance_app.Types.Mappers.Converters {
             return null;
         }
     }    
+
+    public class EnumDtoToEnumConverter<SourceEnum, DestEnum> :
+        ITypeConverter<EnumDto<SourceEnum>, DestEnum>
+        where SourceEnum : Enum
+    {
+        public DestEnum Convert(EnumDto<SourceEnum> source, DestEnum destination, ResolutionContext context)
+        {            
+            var toEnum = Enum.IsDefined(typeof(SourceEnum), source.Value) ? source.Value : default;  
+            return context.Mapper.Map<DestEnum>(toEnum);
+        }
+    }    
 }

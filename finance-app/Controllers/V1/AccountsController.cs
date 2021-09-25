@@ -64,5 +64,47 @@ namespace finance_app.Controllers.V1
             };
             return ret;
         }
+
+                /// <summary>
+        /// Gets a list of financial accounts.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <remarks> 
+        /// Sample Request:
+        /// 
+        ///     POST /api/Users/{userId}/Accounts 
+        ///     {
+        ///         "Account": {
+        ///             "Name": "Sample Account Name"
+        ///             "Description": "A Sample Account for the Sample Request"
+        ///             "Balance": 
+        ///             "Type": "Asset""
+        ///             "CurrencyCode": "Ca"
+        ///             "ParentAccountId": null
+        ///     }
+        /// Valid Account Types:
+        ///     "Asset"
+        ///     "Liability"
+        ///     "Expense"
+        ///     "Equuity"
+        /// 
+        /// 
+        /// </remarks>
+        /// <returns>The account that was created</returns>
+        [HttpPost]
+        public async Task<ApiResponse<AccountDto>> CreateAccount([FromQuery]CreateAccountsRequests request)
+        {
+            request.Account.UserId = request.UserId;
+
+            var newAccount = await _accountService.CreateAccount(request.Account);
+            var ret = new ApiResponse<AccountDto>
+            {
+                Data = newAccount,
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
+            return ret;
+        }
     }
 }

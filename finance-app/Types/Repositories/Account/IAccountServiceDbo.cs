@@ -23,8 +23,12 @@ namespace finance_app.Types.Repositories.Account
         /// <returns></returns>
         Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset);
 
-
-        Task CreateAccount(Account account);
+        /// <summary>
+        /// Adds a new account to the database.
+        /// </summary>
+        /// <param name="account">The account you want to add to the database</param>
+        /// <returns></returns>
+        Task<Account> CreateAccount(Account account);
 
         Account DeleteItem(int accountId);
 

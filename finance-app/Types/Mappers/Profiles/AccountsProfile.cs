@@ -13,12 +13,15 @@ namespace finance_app.Types.Mappers.Profiles
         {
             SourceMemberNamingConvention  = new PascalUnderscoreNamingConvention();
             DestinationMemberNamingConvention  = new PascalCaseNamingConvention();
-            CreateMap<Account, AccountDto>();
+            CreateMap<Account, AccountDto>().ReverseMap();
 
-            CreateMap<AccountTypeEnum, AccountTypeDtoEnum>();
+            CreateMap<AccountTypeEnum, AccountTypeDtoEnum>().ReverseMap();
 
             CreateMap<AccountTypeEnum, EnumDto<AccountTypeDtoEnum>>()
             .ConvertUsing(new EnumToEnumDtoConverter<AccountTypeEnum, AccountTypeDtoEnum>());
+
+            CreateMap<EnumDto<AccountTypeDtoEnum>, AccountTypeEnum>()
+            .ConvertUsing(new EnumDtoToEnumConverter<AccountTypeDtoEnum, AccountTypeEnum>());
         }
     }
 

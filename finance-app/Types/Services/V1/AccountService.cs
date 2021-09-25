@@ -45,7 +45,10 @@ namespace finance_app.Types.Services.V1
             return new List<AccountDto>(_mapper.Map<List<AccountDto>>(accounts));
         }
 
-        public void InsertAccount(){
+        public async Task<AccountDto> CreateAccount(AccountDto account) {
+            var newAccount = await _accountServiceDbo.CreateAccount(_mapper.Map<Account>(account));
+            return _mapper.Map<AccountDto>(newAccount);
+
 
         }
 
