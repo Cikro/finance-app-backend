@@ -9,6 +9,7 @@ using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Repositories.Account;
 using AutoMapper;
+using finance_app.Types.DataContracts.V1.Requests;
 
 namespace finance_app.Controllers.V1
 {
@@ -51,15 +52,15 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>A List of accounts, and the number of items in the list</returns>
         [HttpGet]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromRoute(Name ="userId")] uint userId, [FromQuery]GetAccountsRequest request)
+        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
         {
             List<AccountDto> accounts;
             if (request.PageInfo != null) {
                 
-                accounts = await _accountService.GetPaginatedAccounts(userId, request.PageInfo);
+                accounts = await _accountService.GetPaginatedAccounts(userId.Id, request.PageInfo);
 
             } else {
-                accounts = await _accountService.GetAccounts(userId);
+                accounts = await _accountService.GetAccounts(userId.Id);
             }
 
             var ret = new ApiResponse<ListResponse<AccountDto>>
@@ -100,10 +101,10 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>The account that was created</returns>
         [HttpPost]
-        public async Task<ApiResponse<AccountDto>> CreateAccount([FromRoute(Name ="userId")] uint userId, [FromBody]CreateAccountRequest request)
+        public async Task<ApiResponse<AccountDto>> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
-            account.User_Id = userId;
+            account.User_Id = userId.Id;
 
             var newAccount = await _accountService.CreateAccount(account);
             var ret = new ApiResponse<AccountDto>

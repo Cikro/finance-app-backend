@@ -45,9 +45,31 @@ namespace finance_app.Types.Services.V1
             return new List<AccountDto>(_mapper.Map<List<AccountDto>>(accounts));
         }
 
-        public async Task<AccountDto> CreateAccount(Account account) {
+        public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
+            // TODO: Confirm default values of input (i.e. currency code)
+            // TODO: Implement GetAccountByAccountName
+            //        - restructure db folders
+            // TODO: Implement GetAccountByAccountId
+            // TODO: Maybe use ResourceIdentifiers all over the place?
+            if (await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name) != null) {    
+                return new ApiResponse<AccountDto>
+                {
+                    Data = null,
+                    ResponseMessage = $"Error creating account. Account with name {account.Name} already exists.",
+                    StatusCode = System.Net.HttpStatusCode.Conflict,
+                    ResponseCode = ApiResponseCodesEnum.DuplicateResource
+                };
+            };
             var newAccount = await _accountServiceDbo.CreateAccount(account);
-            return _mapper.Map<AccountDto>(newAccount);
+
+
+            return new ApiResponse<AccountDto>
+            {
+                Data = _mapper.Map<AccountDto>(newAccount),
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
         }
 
         public void UpdateAccounts(){

@@ -8,7 +8,6 @@ namespace finance_app.Types.DataContracts.V1.Requests.Accounts
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Balance { get; set; }
         public EnumDto<AccountTypeDtoEnum> Type { get; set; }
         public string CurrencyCode { get; set; }
         public uint? ParentAccountId { get; set; }

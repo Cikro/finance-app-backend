@@ -54,6 +54,7 @@ namespace finance_app
             {
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<UserResourceIdentifierValidator>();
             });
 
 

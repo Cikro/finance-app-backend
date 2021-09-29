@@ -7,6 +7,24 @@ namespace finance_app.Types.Repositories.Account
 {
     public interface IAccountRepository
     {
+
+        /// <summary>
+        /// Fetches an account by the accountId
+        /// </summary>
+        /// <param name="accountId">The Id of the account</param>
+        /// <returns></returns>
+        Task<Account> GetAccountByAccountId(uint accountId);
+
+
+        /// <summary>
+        /// Fetches an account by name from the given user.
+        /// </summary>
+        /// <param name="userId">the user that owns the account</param>
+        /// <param name="accountName">The name of the account</param>
+        /// <returns></returns>
+        Task<Account> GetAccountByAccountName(uint userId, string accountName);
+
+
         /// <summary>
         /// Fetches All Accounts that belong to the associated user.
         /// </summary>
