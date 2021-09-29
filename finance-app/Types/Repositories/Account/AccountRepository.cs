@@ -168,6 +168,7 @@ namespace finance_app.Types.Repositories.Account
         {
             return new Account
             {
+                Id = (uint)reader.GetInt32("id"),
                 User_Id = (uint)reader.GetInt32("user_id"),
                 Name = reader.IsDBNull("name") ? "" : reader.GetString("name"),
                 Description = reader.IsDBNull("description") ? "" : reader.GetString("description"),

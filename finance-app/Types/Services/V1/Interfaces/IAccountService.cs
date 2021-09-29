@@ -9,7 +9,7 @@ namespace finance_app.Types.Services.V1.Interfaces
     {
         Task<List<AccountDto>> GetAccounts(uint userId);
         Task<List<AccountDto>> GetPaginatedAccounts(uint userId, PaginationInfo pageInfo);
-        Task<AccountDto> CreateAccount(AccountDto account);
+        Task<AccountDto> CreateAccount(Account account);
         void UpdateAccounts();
         void DeleteAccounts();
     }

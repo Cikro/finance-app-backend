@@ -7,6 +7,8 @@ using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Dtos;
+using finance_app.Types.Repositories.Account;
+using AutoMapper;
 
 namespace finance_app.Controllers.V1
 {
@@ -19,17 +21,22 @@ namespace finance_app.Controllers.V1
         
         private readonly ILogger<AccountsController> _logger;
         private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
 
-        public AccountsController(ILogger<AccountsController> logger, IAccountService accountService)
+        public AccountsController(ILogger<AccountsController> logger, 
+                                  IAccountService accountService,
+                                  IMapper mapper)
         {
             _logger = logger;
             _accountService = accountService;
+            _mapper = mapper;
         }
 
         /// <summary>
         /// Gets a list of financial accounts.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="userId">The id of the User who's accounts you are fetching</param>
+        /// <param name="request">A GetAccountsRequest</param>
         /// <remarks> 
         /// Sample Request:
         /// 
@@ -44,15 +51,15 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>A List of accounts, and the number of items in the list</returns>
         [HttpGet]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery]GetAccountsRequests request)
+        public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromRoute(Name ="userId")] uint userId, [FromQuery]GetAccountsRequest request)
         {
             List<AccountDto> accounts;
             if (request.PageInfo != null) {
                 
-                accounts = await _accountService.GetPaginatedAccounts(request.UserId, request.PageInfo);
+                accounts = await _accountService.GetPaginatedAccounts(userId, request.PageInfo);
 
             } else {
-                accounts = await _accountService.GetAccounts(request.UserId);
+                accounts = await _accountService.GetAccounts(userId);
             }
 
             var ret = new ApiResponse<ListResponse<AccountDto>>
@@ -65,10 +72,11 @@ namespace finance_app.Controllers.V1
             return ret;
         }
 
-                /// <summary>
+        /// <summary>
         /// Gets a list of financial accounts.
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="userId">The id of the User you are creating an account for.</param>
+        /// <param name="request">A CreateAccountRequest</param>
         /// <remarks> 
         /// Sample Request:
         /// 
@@ -92,11 +100,12 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>The account that was created</returns>
         [HttpPost]
-        public async Task<ApiResponse<AccountDto>> CreateAccount([FromQuery]CreateAccountsRequests request)
+        public async Task<ApiResponse<AccountDto>> CreateAccount([FromRoute(Name ="userId")] uint userId, [FromBody]CreateAccountRequest request)
         {
-            request.Account.UserId = request.UserId;
+            var account = _mapper.Map<Account>(request);
+            account.User_Id = userId;
 
-            var newAccount = await _accountService.CreateAccount(request.Account);
+            var newAccount = await _accountService.CreateAccount(account);
             var ret = new ApiResponse<AccountDto>
             {
                 Data = newAccount,
