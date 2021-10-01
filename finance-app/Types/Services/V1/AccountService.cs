@@ -69,7 +69,7 @@ namespace finance_app.Types.Services.V1
                 return new ApiResponse<AccountDto>
                 {
                     Data = null,
-                    ResponseMessage = $"Error creating account. Account with name {account.Name} already exists.",
+                    ResponseMessage = $"Error creating account. Account with name '{account.Name}' already exists.",
                     StatusCode = System.Net.HttpStatusCode.Conflict,
                     ResponseCode = ApiResponseCodesEnum.DuplicateResource
                 };

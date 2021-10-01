@@ -40,7 +40,7 @@ namespace finance_app.Types.Repositories.Account
 
                 }
 
-                var account = new Account();
+                Account account = null;
                 using (var reader = await command.ExecuteReaderAsync()) {
                     while (await reader.ReadAsync()) {
                         account = ReadAccount(reader);
@@ -79,7 +79,7 @@ namespace finance_app.Types.Repositories.Account
 
                 }
 
-                var account = new Account();
+                Account account = null;
                 using (var reader = await command.ExecuteReaderAsync()) {
                     while (await reader.ReadAsync()) {
                         account = ReadAccount(reader);
@@ -206,7 +206,7 @@ namespace finance_app.Types.Repositories.Account
                     command.Parameters.Add(p);
                 }
 
-                var newAccount = new Account();
+                Account newAccount = null;
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
