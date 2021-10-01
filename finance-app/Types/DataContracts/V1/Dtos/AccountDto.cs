@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
 
 namespace finance_app.Types.DataContracts.V1.Dtos
@@ -10,8 +11,8 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         public string Description { get; set; }
         public decimal Balance { get; set; }
         public EnumDto<AccountTypeDtoEnum> Type { get; set; }
-        
         public string CurrencyCode { get; set; }
+        public bool Closed { get; set; }
         public uint? ParentAccountId { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Models;
 
 using AutoMapper;
+using System.Linq.Expressions;
 
 namespace finance_app.Types.Services.V1
 {
@@ -24,11 +25,7 @@ namespace finance_app.Types.Services.V1
             
         }
 
-        /// <summary>
-        /// Gets a list of all accounts for a given userId
-        /// </summary>
-        /// <param name="userId">The user's Id</param>
-        /// <returns> A list of AccountDtos</returns>
+        /// <inheritdoc cref="IAccountService.GetAccounts"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId){
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
 
@@ -41,6 +38,7 @@ namespace finance_app.Types.Services.V1
             };
         }
         
+        /// <inheritdoc cref="IAccountService.GetPaginatedAccounts"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)
         {
             if (pageInfo.PageNumber <= 0) { return null; }
@@ -59,16 +57,14 @@ namespace finance_app.Types.Services.V1
             };
         }
 
-
+        /// <inheritdoc cref="IAccountService.CreateAccount"/>
         public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
             // TODO: Confirm default values of input (i.e. currency code)
-            // TODO: Implement GetAccountByAccountName
-            //        - restructure db folders
-            // TODO: Implement GetAccountByAccountId
-            if (await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name) != null) {    
+            var existingAccount = await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name);
+            if ( existingAccount != null) {    
                 return new ApiResponse<AccountDto>
                 {
-                    Data = null,
+                    Data = _mapper.Map<AccountDto>(existingAccount),
                     ResponseMessage = $"Error creating account. Account with name '{account.Name}' already exists.",
                     StatusCode = System.Net.HttpStatusCode.Conflict,
                     ResponseCode = ApiResponseCodesEnum.DuplicateResource
@@ -89,8 +85,41 @@ namespace finance_app.Types.Services.V1
         public void UpdateAccounts(){
 
         }
-        public void DeleteAccounts(){
 
+        /// <inheritdoc cref="IAccountService.CloseAccount"/>
+        public async Task<ApiResponse<AccountDto>> CloseAccount(AccountResourceIdentifier accountId) {
+
+            var accountToClose = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
+            if (accountToClose == null) {    
+                return new ApiResponse<AccountDto>
+                {
+                    Data = null,
+                    ResponseMessage = $"Error closing account. Account with id '{accountId.Id}' could not be found.",
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    ResponseCode = ApiResponseCodesEnum.ResourceNotFound
+                };
+            };
+
+            if (accountToClose.Closed == true) {
+                return new ApiResponse<AccountDto>
+                {
+                    Data = _mapper.Map<AccountDto>(accountToClose),
+                    ResponseMessage = $"The Account with id {accountToClose.Id} is already closed.",
+                    StatusCode = System.Net.HttpStatusCode.Conflict,
+                    ResponseCode = ApiResponseCodesEnum.InternalError
+                };
+            }
+
+            await _accountServiceDbo.CloseAccount(accountId.Id);
+            accountToClose.Closed = true;
+            return new ApiResponse<AccountDto>
+            {
+                Data = _mapper.Map<AccountDto>(accountToClose),
+                ResponseMessage = $"The Account with id {accountToClose.Id} is already closed.",
+                StatusCode = System.Net.HttpStatusCode.Conflict,
+                ResponseCode = ApiResponseCodesEnum.InternalError
+            };
+ 
         }
     }
 }

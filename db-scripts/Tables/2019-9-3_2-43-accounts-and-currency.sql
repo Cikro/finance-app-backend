@@ -21,10 +21,11 @@ CREATE TABLE IF NOT EXISTS accounts
     user_id int unsigned NOT NULL,
     name varchar(50) NOT NULL UNIQUE,
     description varchar(255),
-    balance DOUBLE default 0,
+    balance DECIMAL(15,2) default 0,
     type tinyint unsigned NOT NULL,
     currency_code char(3) NOT NULL,
     parent_account int unsigned default NULL,
+    closed BOOLEAN default FALSE, 
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)

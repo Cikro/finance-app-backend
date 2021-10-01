@@ -54,7 +54,6 @@ namespace finance_app.Controllers.V1
         [HttpGet]
         public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
         {
-            List<AccountDto> accounts;
             if (request.PageInfo != null) {
                 
                 return await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);
@@ -86,18 +85,52 @@ namespace finance_app.Controllers.V1
         ///     "Asset"
         ///     "Liability"
         ///     "Expense"
-        ///     "Equuity"
+        ///     "Equity"
         /// 
         /// 
         /// </remarks>
         /// <returns>The account that was created</returns>
         [HttpPost]
-        public async Task<ApiResponse<AccountDto>> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
+        public async Task<ApiResponse<AccountDto>> Post([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
             account.User_Id = userId.Id;
 
             return await _accountService.CreateAccount(account);
+        }
+
+        
+        /// <summary>
+        /// Closes an Account.
+        /// </summary>
+        /// <param name="accountId">A CreateAccountRequest</param>
+        /// <remarks> 
+        /// Sample Request:
+        /// 
+        ///     POST /api/Users/{userId}/Accounts 
+        ///     {
+        ///         "Account": {
+        ///             "Name": "Sample Account Name"
+        ///             "Description": "A Sample Account for the Sample Request"
+        ///             "Balance": 
+        ///             "Type": "Asset""
+        ///             "CurrencyCode": "Ca"
+        ///             "ParentAccountId": null
+        ///     }
+        /// Valid Account Types:
+        ///     "Asset"
+        ///     "Liability"
+        ///     "Expense"
+        ///     "Equity"
+        /// 
+        /// 
+        /// </remarks>
+        /// <returns>The account that was created</returns>
+        [HttpDelete]
+        [Route("{accountId}")]
+        public async Task<ApiResponse<AccountDto>> Delete([FromQuery]UserResourceIdentifier userId, [FromQuery]AccountResourceIdentifier accountId)
+        {
+            return await _accountService.CloseAccount(accountId);
         }
     }
 }

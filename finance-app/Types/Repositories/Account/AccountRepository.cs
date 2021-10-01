@@ -33,7 +33,7 @@ namespace finance_app.Types.Repositories.Account
                 await connection.OpenAsync();
                 var command = connection.CreateCommand();
                 command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "GetAccountById";
+                command.CommandText = "GetAccountByAccountId";
                 foreach (var p in parameters)
                 {
                     command.Parameters.Add(p);
@@ -225,9 +225,36 @@ namespace finance_app.Types.Repositories.Account
             }
         }
 
-        public Account DeleteItem(int accountId) {
-            _context.Remove(accountId);
-            return new Account();
+        public async Task CloseAccount(uint accountId) {
+            // TODO: verify that close account is working
+            // TODO: Figure out cloing all children accounts.
+            // TODO: Figure out routing /User/{id}/Account/{id}?
+            var parameters = new object[]
+            {
+                new MySqlParameter("accountId", accountId),
+            };
+            
+            var connection = _context.Database.GetDbConnection();
+
+            try {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "CloseAccountByAccountId";
+
+                foreach (var p in parameters)
+                {
+                    command.Parameters.Add(p);
+                }
+
+                await connection.CloseAsync();
+
+            } catch (Exception e) {
+                if (connection?.State == ConnectionState.Open) {
+                    await connection.CloseAsync();
+                }
+                throw e;
+            }
 
         }
 
@@ -247,6 +274,7 @@ namespace finance_app.Types.Repositories.Account
                 Type = Enum.IsDefined(typeof(AccountTypeEnum), reader.GetByte("type")) ? (AccountTypeEnum) reader.GetByte("type") : AccountTypeEnum.Unknown,
                 Currency_Code = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
                 Parent_Account_Id = reader.IsDBNull("parent_account") ? null : (uint?)reader.GetInt32("parent_account"),
+                Closed = reader.IsDBNull("closed") ? null : (bool?)reader.GetBoolean("closed"),
                 Date_Created = reader.GetDateTime("date_created"),
                 Date_Last_Edited = reader.GetDateTime("date_last_edited")
             };

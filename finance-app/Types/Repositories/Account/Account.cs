@@ -18,6 +18,7 @@ namespace finance_app.Types.Repositories.Account
         [Required] 
         public string Currency_Code { get; set; }
         public uint? Parent_Account_Id { get; set; }
+        public bool?  Closed { get; set; }
     }
     public enum AccountTypeEnum : byte
     {
