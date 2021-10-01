@@ -13,16 +13,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
-using AutoMapper;
 
 using finance_app.Types.Validators;
-using finance_app.Types.Validators.RequestValidators.Accounts;
+using finance_app.Types.Validators.Accounts;
 using finance_app.Middleware;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1;
 using finance_app.Types.Mappers.Profiles;
-
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.OpenApi.Models;
 
 namespace finance_app
 {
@@ -85,12 +85,30 @@ namespace finance_app
             services.AddControllersWithViews(); 
 
             #region Swagger
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
             services.AddSwaggerGen( c => {
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+                c.ExampleFilters();
+
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
+                // or use the generic method, e.g. c.OperationFilter<AppendAuthorizeToSummaryOperationFilter<MyCustomAttribute>>();
+
+                // add Security information to each operation for OAuth2
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
+                // or use the generic method, e.g. c.OperationFilter<SecurityRequirementsOperationFilter<MyCustomAttribute>>();
+
+                // if you're using the SecurityRequirementsOperationFilter, you also need to tell Swashbuckle you're using OAuth2
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
             });
             #endregion Swagger
 
