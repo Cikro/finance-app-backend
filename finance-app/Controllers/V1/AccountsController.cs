@@ -8,8 +8,8 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Repositories.Account;
+using finance_app.Types.Models;
 using AutoMapper;
-using finance_app.Types.DataContracts.V1.Requests;
 
 namespace finance_app.Controllers.V1
 {
@@ -57,20 +57,11 @@ namespace finance_app.Controllers.V1
             List<AccountDto> accounts;
             if (request.PageInfo != null) {
                 
-                accounts = await _accountService.GetPaginatedAccounts(userId.Id, request.PageInfo);
+                return await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);
 
             } else {
-                accounts = await _accountService.GetAccounts(userId.Id);
+                return await _accountService.GetAccounts(userId);
             }
-
-            var ret = new ApiResponse<ListResponse<AccountDto>>
-            {
-                Data = new ListResponse<AccountDto>(accounts),
-                ResponseMessage = "Success",
-                StatusCode = System.Net.HttpStatusCode.OK,
-                ResponseCode = ApiResponseCodesEnum.Success
-            };
-            return ret;
         }
 
         /// <summary>
@@ -106,15 +97,7 @@ namespace finance_app.Controllers.V1
             var account = _mapper.Map<Account>(request);
             account.User_Id = userId.Id;
 
-            var newAccount = await _accountService.CreateAccount(account);
-            var ret = new ApiResponse<AccountDto>
-            {
-                Data = newAccount,
-                ResponseMessage = "Success",
-                StatusCode = System.Net.HttpStatusCode.OK,
-                ResponseCode = ApiResponseCodesEnum.Success
-            };
-            return ret;
+            return await _accountService.CreateAccount(account);
         }
     }
 }

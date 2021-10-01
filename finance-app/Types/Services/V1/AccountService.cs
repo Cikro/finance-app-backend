@@ -5,7 +5,8 @@ using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Dtos;
-using finance_app.Types.DataContracts.V1.Dtos.Enums;
+using finance_app.Types.Models;
+
 using AutoMapper;
 
 namespace finance_app.Types.Services.V1
@@ -28,29 +29,42 @@ namespace finance_app.Types.Services.V1
         /// </summary>
         /// <param name="userId">The user's Id</param>
         /// <returns> A list of AccountDtos</returns>
-        public async Task<List<AccountDto>> GetAccounts(uint userId){
-            var accounts = await _accountServiceDbo.GetAllByUserId(userId);
-            return new List<AccountDto>(_mapper.Map<List<AccountDto>>(accounts));
+        public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId){
+            var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
+
+            return new ApiResponse<ListResponse<AccountDto>>
+            {
+                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accounts)),
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
         }
         
-        public async Task<List<AccountDto>> GetPaginatedAccounts(uint userId, PaginationInfo pageInfo)
+        public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)
         {
             if (pageInfo.PageNumber <= 0) { return null; }
             if (pageInfo.ItemsPerPage < 0) { return null; }
 
             uint offset = (uint)pageInfo.PageNumber - 1;
             
-            var accounts = await _accountServiceDbo.GetPaginatedByUserId(userId, (uint)pageInfo.ItemsPerPage, offset);
+            var accounts = await _accountServiceDbo.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, offset);
 
-            return new List<AccountDto>(_mapper.Map<List<AccountDto>>(accounts));
+            return new ApiResponse<ListResponse<AccountDto>>
+            {
+                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accounts)),
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
         }
+
 
         public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
             // TODO: Confirm default values of input (i.e. currency code)
             // TODO: Implement GetAccountByAccountName
             //        - restructure db folders
             // TODO: Implement GetAccountByAccountId
-            // TODO: Maybe use ResourceIdentifiers all over the place?
             if (await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name) != null) {    
                 return new ApiResponse<AccountDto>
                 {
