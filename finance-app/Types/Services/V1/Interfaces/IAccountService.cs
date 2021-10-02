@@ -39,7 +39,7 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// </summary>
         /// <param name="accountId">An Identifier for the account you are closing</param>
         /// <returns> A list of AccountDtos</returns>
-        Task<ApiResponse<AccountDto>> CloseAccount(AccountResourceIdentifier accountId);
+        Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId);
         
     }
 }

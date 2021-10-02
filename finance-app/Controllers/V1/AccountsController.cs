@@ -101,34 +101,13 @@ namespace finance_app.Controllers.V1
 
         
         /// <summary>
-        /// Closes an Account.
+        /// Closes an Account and all of it's children.
         /// </summary>
         /// <param name="accountId">A CreateAccountRequest</param>
-        /// <remarks> 
-        /// Sample Request:
-        /// 
-        ///     POST /api/Users/{userId}/Accounts 
-        ///     {
-        ///         "Account": {
-        ///             "Name": "Sample Account Name"
-        ///             "Description": "A Sample Account for the Sample Request"
-        ///             "Balance": 
-        ///             "Type": "Asset""
-        ///             "CurrencyCode": "Ca"
-        ///             "ParentAccountId": null
-        ///     }
-        /// Valid Account Types:
-        ///     "Asset"
-        ///     "Liability"
-        ///     "Expense"
-        ///     "Equity"
-        /// 
-        /// 
-        /// </remarks>
-        /// <returns>The account that was created</returns>
+        /// <returns>A list of accounts that were closed.</returns>
         [HttpDelete]
         [Route("{accountId}")]
-        public async Task<ApiResponse<AccountDto>> Delete([FromQuery]UserResourceIdentifier userId, [FromQuery]AccountResourceIdentifier accountId)
+        public async Task<ApiResponse<ListResponse<AccountDto>>> Delete([FromQuery]UserResourceIdentifier userId, [FromQuery]AccountResourceIdentifier accountId)
         {
             return await _accountService.CloseAccount(accountId);
         }

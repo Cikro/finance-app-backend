@@ -21,7 +21,8 @@ namespace finance_app.Types.Repositories.Account
         }
 
         public async Task<Account> GetAccountByAccountId(uint accountId) {
-            
+            Account account = null;
+
             var parameters = new object[]
             {
                 new MySqlParameter("accountId",accountId)
@@ -34,13 +35,11 @@ namespace finance_app.Types.Repositories.Account
                 var command = connection.CreateCommand();
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "GetAccountByAccountId";
-                foreach (var p in parameters)
-                {
+                foreach (var p in parameters) {
                     command.Parameters.Add(p);
 
                 }
-
-                Account account = null;
+    
                 using (var reader = await command.ExecuteReaderAsync()) {
                     while (await reader.ReadAsync()) {
                         account = ReadAccount(reader);
@@ -48,7 +47,6 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-                return account;
 
             } catch (Exception e) {
                 if (connection?.State == ConnectionState.Open) {
@@ -56,12 +54,15 @@ namespace finance_app.Types.Repositories.Account
                 }
                 throw e;
             } 
+
+            return account;
         }
 
         public async Task<Account> GetAccountByAccountName(uint userId, string accountName) {
             
-            var parameters = new object[]
-            {
+            Account account = null;
+            
+            var parameters = new object[] {
                 new MySqlParameter("userId", userId),
                 new MySqlParameter("accountName", accountName)
             };
@@ -73,13 +74,12 @@ namespace finance_app.Types.Repositories.Account
                 var command = connection.CreateCommand();
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "GetAccountByAccountName";
-                foreach (var p in parameters)
-                {
+                foreach (var p in parameters) {
                     command.Parameters.Add(p);
 
                 }
 
-                Account account = null;
+                
                 using (var reader = await command.ExecuteReaderAsync()) {
                     while (await reader.ReadAsync()) {
                         account = ReadAccount(reader);
@@ -87,7 +87,6 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-                return account;
 
             } catch (Exception e) {
                 if (connection?.State == ConnectionState.Open) {
@@ -95,12 +94,14 @@ namespace finance_app.Types.Repositories.Account
                 }
                 throw e;
             } 
+            return account;
         }
 
         public async Task<List<Account>> GetAllByUserId(uint userId) {
             
-            var parameters = new object[]
-            {
+            var accounts = new List<Account>();
+
+            var parameters = new object[] {
                 new MySqlParameter("userId",userId)
             };
 
@@ -111,13 +112,11 @@ namespace finance_app.Types.Repositories.Account
                 var command = connection.CreateCommand();
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "GetAllAccountsByUserId";
-                foreach (var p in parameters)
-                {
+                foreach (var p in parameters) {
                     command.Parameters.Add(p);
 
                 }
 
-                var accounts = new List<Account>();
                 using (var reader = await command.ExecuteReaderAsync()) {
                     while (await reader.ReadAsync()) {
                         accounts.Add(ReadAccount(reader));
@@ -125,18 +124,20 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-                return accounts;
-
             } catch (Exception e) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
                 throw e;
             } 
+
+            return accounts;
         }
 
         public async Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
         {
+            var accounts = new List<Account>();
+
             var totalItems = new MySqlParameter("totalItems", MySqlDbType.UInt32, 4) {
                 Direction = ParameterDirection.Output
             };
@@ -157,34 +158,33 @@ namespace finance_app.Types.Repositories.Account
                 command.CommandType = CommandType.StoredProcedure;
                 command.CommandText = "GetAccountsByUserId";
 
-                foreach (var p in parameters)
-                {
+                foreach (var p in parameters) {
                     command.Parameters.Add(p);
                 }
 
-                var accounts = new List<Account>();
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
+                
+                using (var reader = await command.ExecuteReaderAsync()) {
+                    while (await reader.ReadAsync()) {
                         accounts.Add(ReadAccount(reader));
                     }
                 }
                 await connection.CloseAsync();
 
-                return accounts;
             } catch (Exception e) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
                 throw e;
             }
+
+            return accounts;
         }
 
 
         public async Task<Account> CreateAccount(Account account) {
-            var parameters = new object[]
-            {
+            Account newAccount = null;
+
+            var parameters = new object[] {
                 new MySqlParameter("userId", account.User_Id),
                 new MySqlParameter("accountName", account.Name),
                 new MySqlParameter("accountDescription", account.Description),
@@ -206,29 +206,26 @@ namespace finance_app.Types.Repositories.Account
                     command.Parameters.Add(p);
                 }
 
-                Account newAccount = null;
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
+                using (var reader = await command.ExecuteReaderAsync()) {
+                    while (await reader.ReadAsync()) {
                         newAccount = ReadAccount(reader);
                     }
                 }
                 await connection.CloseAsync();
-
-                return newAccount;
             } catch (Exception e) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
                 throw e;
             }
+
+            return newAccount;
         }
 
-        public async Task CloseAccount(uint accountId) {
-            // TODO: verify that close account is working
-            // TODO: Figure out cloing all children accounts.
+        public async Task<List<Account>> CloseAccount(uint accountId) {
             // TODO: Figure out routing /User/{id}/Account/{id}?
+            var accountsClosed = new List<Account>();;
+
             var parameters = new object[]
             {
                 new MySqlParameter("accountId", accountId),
@@ -247,6 +244,12 @@ namespace finance_app.Types.Repositories.Account
                     command.Parameters.Add(p);
                 }
 
+                
+                using (var reader = await command.ExecuteReaderAsync()) {
+                    while (await reader.ReadAsync()) {
+                        accountsClosed.Add(ReadAccount(reader));
+                    }
+                }
                 await connection.CloseAsync();
 
             } catch (Exception e) {
@@ -255,6 +258,8 @@ namespace finance_app.Types.Repositories.Account
                 }
                 throw e;
             }
+
+            return accountsClosed;
 
         }
 

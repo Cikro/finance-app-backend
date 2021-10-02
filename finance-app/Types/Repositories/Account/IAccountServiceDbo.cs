@@ -48,11 +48,11 @@ namespace finance_app.Types.Repositories.Account
         Task<Account> CreateAccount(Account account);
 
         /// <summary>
-        /// Closes an account the given account id Identifier
+        /// Closes an account, and all of it's children.
         /// </summary>
         /// <param name="accountId">The Account you want to close</param>
-        /// <returns></returns>
-        Task CloseAccount(uint accountId);
+        /// <returns>The number of accounts closed</returns>
+        Task<List<Account>> CloseAccount(uint accountId);
 
         void UpdateItem(Account account);
     }

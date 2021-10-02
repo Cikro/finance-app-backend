@@ -9,6 +9,7 @@ using finance_app.Types.Models;
 
 using AutoMapper;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace finance_app.Types.Services.V1
 {
@@ -87,11 +88,11 @@ namespace finance_app.Types.Services.V1
         }
 
         /// <inheritdoc cref="IAccountService.CloseAccount"/>
-        public async Task<ApiResponse<AccountDto>> CloseAccount(AccountResourceIdentifier accountId) {
+        public async Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) {
 
             var accountToClose = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
             if (accountToClose == null) {    
-                return new ApiResponse<AccountDto>
+                return new ApiResponse<ListResponse<AccountDto>>
                 {
                     Data = null,
                     ResponseMessage = $"Error closing account. Account with id '{accountId.Id}' could not be found.",
@@ -101,23 +102,34 @@ namespace finance_app.Types.Services.V1
             };
 
             if (accountToClose.Closed == true) {
-                return new ApiResponse<AccountDto>
+                return new ApiResponse<ListResponse<AccountDto>>
                 {
-                    Data = _mapper.Map<AccountDto>(accountToClose),
+                    Data = new ListResponse<AccountDto>(new List<AccountDto> {
+                         _mapper.Map<AccountDto>(accountToClose) 
+                    }),
                     ResponseMessage = $"The Account with id {accountToClose.Id} is already closed.",
                     StatusCode = System.Net.HttpStatusCode.Conflict,
                     ResponseCode = ApiResponseCodesEnum.InternalError
                 };
             }
 
-            await _accountServiceDbo.CloseAccount(accountId.Id);
-            accountToClose.Closed = true;
-            return new ApiResponse<AccountDto>
+            var accountsClosed = await _accountServiceDbo.CloseAccount(accountId.Id);
+            if (!accountsClosed.Any()) {
+                return new ApiResponse<ListResponse<AccountDto>>
+                {
+                    Data = null,
+                    ResponseMessage = $"Error closing account. Account with id '{accountId.Id} found, but not closed.' .",
+                    StatusCode = System.Net.HttpStatusCode.Conflict,
+                    ResponseCode = ApiResponseCodesEnum.InternalError
+                };
+            }
+
+            return new ApiResponse<ListResponse<AccountDto>>
             {
-                Data = _mapper.Map<AccountDto>(accountToClose),
-                ResponseMessage = $"The Account with id {accountToClose.Id} is already closed.",
-                StatusCode = System.Net.HttpStatusCode.Conflict,
-                ResponseCode = ApiResponseCodesEnum.InternalError
+                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accountsClosed)),
+                ResponseMessage = $"{accountsClosed.Count()} accounts closed.",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
             };
  
         }
