@@ -39,7 +39,7 @@ namespace CarfaxCanada.Dealer.Api.ContractExamples
                 Name = $"Swagger Account-{new Random().Next(9000,10000)}",
                 CurrencyCode = "CAD",
                 Description = "Test account from Swagger",
-                ParentAccountId = 0,
+                ParentAccountId = null,
                 Type = new EnumDto<AccountTypeDtoEnum>(AccountTypeDtoEnum.Asset) 
 
             };

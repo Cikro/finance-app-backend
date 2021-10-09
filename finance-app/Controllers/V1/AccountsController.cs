@@ -52,6 +52,7 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>A List of accounts, and the number of items in the list</returns>
         [HttpGet]
+        [UserAuthorizationFilter]
         public async Task<ApiResponse<ListResponse<AccountDto>>> Get([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
         {
             if (request.PageInfo != null) {
@@ -91,6 +92,7 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>The account that was created</returns>
         [HttpPost]
+        [UserAuthorizationFilter]
         public async Task<ApiResponse<AccountDto>> Post([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
@@ -106,8 +108,8 @@ namespace finance_app.Controllers.V1
         /// <param name="accountId">A CreateAccountRequest</param>
         /// <returns>A list of accounts that were closed.</returns>
         [HttpDelete]
-        [Route("{accountId}")]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> Delete([FromQuery]UserResourceIdentifier userId, [FromQuery]AccountResourceIdentifier accountId)
+        [Route("/api/[controller]/{accountId}")]
+        public async Task<ApiResponse<ListResponse<AccountDto>>> Delete([FromQuery]AccountResourceIdentifier accountId)
         {
             return await _accountService.CloseAccount(accountId);
         }

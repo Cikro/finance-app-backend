@@ -46,7 +46,6 @@ namespace finance_app
             services.AddMvc(setup => {
 
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
-                setup.Filters.Add(typeof(UserAuthorizationFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
 
             })

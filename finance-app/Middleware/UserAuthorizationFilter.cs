@@ -7,7 +7,7 @@ using finance_app.Types.Services.V1.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-public class UserAuthorizationFilter : IAsyncActionFilter {
+public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                 ActionExecutionDelegate next) 
