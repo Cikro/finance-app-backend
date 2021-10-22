@@ -45,4 +45,22 @@ namespace CarfaxCanada.Dealer.Api.ContractExamples
             };
         }
     }
+
+    /// <summary>Provider for swagger examples used with CreateAccountRequest</summary>
+    /// <remarks>See documentation for Swagger.AspNetCore.Filters, Manual Annotations, for details to use this example.</remarks>
+    [ExcludeFromCodeCoverage]
+    public class PostAccountRequestExample : IExamplesProvider<PostAccountRequest>
+    {
+        /// <summary>Returns the example data for the PostAccountRequest structure</summary>
+        /// <returns>PostAccountRequest</returns>
+        public PostAccountRequest GetExamples()
+        {
+            return new PostAccountRequest{
+                Name = $"Swagger Account-{new Random().Next(9000,10000)}",
+                Description = "Test account from Swagger",
+                Closed = false
+
+            };
+        }
+    }
 }

@@ -27,6 +27,7 @@ namespace finance_app.Types.Mappers.Profiles
             .ConvertUsing(new EnumDtoToEnumConverter<AccountTypeDtoEnum, AccountTypeEnum>());
 
             CreateMap<CreateAccountRequest, Account>();
+            CreateMap<PostAccountRequest, Account>();
         }
     }
 

@@ -91,7 +91,6 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.CreateAccount"/>
         public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
-            // TODO: Confirm default values of input (i.e. currency code)
             var existingAccount = await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name);
             if ( existingAccount != null) {    
                 return new ApiResponse<AccountDto>
@@ -114,12 +113,90 @@ namespace finance_app.Types.Services.V1
             };
         }
 
-        public void UpdateAccounts(){
+
+        /// <inheritdoc cref="IAccountService.UpdateAccount"/>
+        public async Task<ApiResponse<AccountDto>> UpdateAccount(Account account) {
+            var existingAccount = await _accountServiceDbo.GetAccountByAccountId(account.Id);
+            if (existingAccount == null) {    
+                return new ApiResponse<AccountDto>
+                {
+                    Data = null,
+                    ResponseMessage = $"Error updating account. Account with id '{account.Id}' does not exist.",
+                    StatusCode = System.Net.HttpStatusCode.Conflict,
+                    ResponseCode = ApiResponseCodesEnum.ResourceNotFound
+                };
+            }
+
+            if (existingAccount.Name != account.Name) {
+                var duplicateName = await _accountServiceDbo.GetAccountByAccountName(existingAccount.User_Id, account.Name);
+                if (duplicateName != null) {
+                    return new ApiResponse<AccountDto>
+                    {
+                        Data = _mapper.Map<AccountDto>(duplicateName),
+                        ResponseMessage = $"Error updating account. Account name id '{duplicateName.Name}' already Exists.",
+                        StatusCode = System.Net.HttpStatusCode.Conflict,
+                        ResponseCode = ApiResponseCodesEnum.DuplicateResource
+                    };
+                }
+            }
+
+            if (existingAccount.Closed != account.Closed) {
+
+                // If you are trying to close an account, all of it's children need to be closed
+                if (account.Closed == true) {
+                    var children = await _accountServiceDbo.GetChildrenByAccountId((uint) existingAccount.Id);
+
+                    // If any children accounts are open
+                    if (children.Any(child => child.Closed != true)) {
+                        return new ApiResponse<AccountDto>
+                        {
+                            // TODO: Maybe add a 'children' property to the DTO and return it's children
+                            Data = _mapper.Map<AccountDto>(existingAccount),
+                            ResponseMessage = $"Error updating account. cannot close an account when it has child accounts that are not closed.",
+                            StatusCode = System.Net.HttpStatusCode.Conflict,
+                            ResponseCode = ApiResponseCodesEnum.DuplicateResource
+                        };
+
+                    }
+
+                }
+
+                // If you are opening an account, its parent must be open
+                if (account.Closed == false
+                    && existingAccount.Parent_Account_Id != null) {
+
+                    var parent = await _accountServiceDbo.GetAccountByAccountId((uint) existingAccount.Parent_Account_Id);
+                    if (parent?.Closed == true) {
+                        return new ApiResponse<AccountDto>
+                        {
+                            Data = _mapper.Map<AccountDto>(existingAccount),
+                            ResponseMessage = $"Error updating account. Cannot open an account when its parent is closed.",
+                            StatusCode = System.Net.HttpStatusCode.Conflict,
+                            ResponseCode = ApiResponseCodesEnum.DuplicateResource
+                        };
+                    }
+                        
+                }
+
+            }
+
+            var updatedAccount = await _accountServiceDbo.UpdateAccount(account);
+
+
+            return new ApiResponse<AccountDto>
+            {
+                Data = _mapper.Map<AccountDto>(updatedAccount),
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
+
 
         }
 
         /// <inheritdoc cref="IAccountService.CloseAccount"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) {
+            //TODO: Consider only only closing one account here (not it's children). and create a new method to close children.
 
             var accountToClose = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
             if (accountToClose == null) {    
@@ -164,5 +241,7 @@ namespace finance_app.Types.Services.V1
             };
  
         }
+
+        
     }
 }

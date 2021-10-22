@@ -44,15 +44,21 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// Creates an account in the database
         /// </summary>
         /// <param name="account">A popualted account object</param>
-        /// <returns> A list of AccountDtos</returns>
+        /// <returns> An AccountDto of the created account</returns>
         Task<ApiResponse<AccountDto>> CreateAccount(Account account);
-        void UpdateAccounts();
+
+        /// <summary>
+        /// Updates an account with values from an existing account
+        /// </summary>
+        /// <param name="account">A popualted account object</param>
+        /// <returns> An AccountDto of the updated account</returns>
+        Task<ApiResponse<AccountDto>> UpdateAccount(Account account);
 
         /// <summary>
         /// Closes an account that has the provided Id.
         /// </summary>
         /// <param name="accountId">An Identifier for the account you are closing</param>
-        /// <returns> A list of AccountDtos</returns>
+        /// <returns>AccountDtos of the closed accounts</returns>
         Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId);
         
     }

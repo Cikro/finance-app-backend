@@ -105,7 +105,7 @@ namespace finance_app.Controllers.V1
         /// <summary>
         /// Closes an Account and all of it's children.
         /// </summary>
-        /// <param name="accountId">A AccountResourceIdentifier</param>
+        /// <param name="accountId">An AccountResourceIdentifier</param>
         /// <returns>A list of accounts that were closed.</returns>
         [HttpDelete]
         [Route("/api/[controller]/{accountId}")]
@@ -117,7 +117,7 @@ namespace finance_app.Controllers.V1
         /// <summary>
         /// Gets one Account
         /// </summary>
-        /// <param name="accountId">A AccountResourceIdentifier</param>
+        /// <param name="accountId">An AccountResourceIdentifier</param>
         /// <returns>A list of accounts that were closed.</returns>
         [HttpGet]
         [Route("/api/[controller]/{accountId}")]
@@ -129,13 +129,30 @@ namespace finance_app.Controllers.V1
         /// <summary>
         /// Gets all children on an account
         /// </summary>
-        /// <param name="accountId">A AccountResourceIdentifier</param>
+        /// <param name="accountId">An AccountResourceIdentifier</param>
         /// <returns>A list of accounts that were closed.</returns>
         [HttpGet]
         [Route("/api/[controller]/{accountId}/children")]
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren([FromQuery]AccountResourceIdentifier accountId)
         {
             return await _accountService.GetChildren(accountId);
+        }
+
+        
+        /// <summary>
+        /// Updates an Account with the account provided.
+        /// </summary>
+        /// <param name="accountId">An AccountResourceIdentifier</param>
+        /// <param name="request">A PostAccountRequest</param>
+        /// <returns>A list of accounts that were closed.</returns>
+        [HttpPost]
+        [Route("/api/[controller]/{accountId}")]
+        public async Task<ApiResponse<AccountDto>> PostResource([FromQuery]AccountResourceIdentifier accountId, [FromBody]PostAccountRequest request)
+        {
+            var account = _mapper.Map<Account>(request);
+            account.Id = accountId.Id;
+
+            return await _accountService.UpdateAccount(account);
         }
 
     }

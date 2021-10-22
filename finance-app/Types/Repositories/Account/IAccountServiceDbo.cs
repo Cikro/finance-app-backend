@@ -59,9 +59,14 @@ namespace finance_app.Types.Repositories.Account
         /// Closes an account, and all of it's children.
         /// </summary>
         /// <param name="accountId">The Account you want to close</param>
-        /// <returns>The number of accounts closed</returns>
+        /// <returns>A list of the closed accounts</returns>
         Task<List<Account>> CloseAccount(uint accountId);
 
-        void UpdateItem(Account account);
+        /// <summary>
+        /// Updates an account with all values provided by the account
+        /// </summary>
+        /// <param name="account">The Account and its updated values</param>
+        /// <returns>The updated account</returns>
+        Task<Account> UpdateAccount(Account account);
     }
 }

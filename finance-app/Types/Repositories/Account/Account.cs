@@ -12,11 +12,11 @@ namespace finance_app.Types.Repositories.Account
         [Required]
         public uint User_Id { get; set; }
         public string Description { get; set; }
-        public decimal Balance { get; set; } = 0;
+        public decimal Balance { get; set; }
         [Required]
         public AccountTypeEnum Type { get; set; }
         [Required] 
-        public string Currency_Code { get; set; } = "CAD";
+        public string Currency_Code { get; set; }
         public uint? Parent_Account_Id { get; set; }
         public bool?  Closed { get; set; }
     }

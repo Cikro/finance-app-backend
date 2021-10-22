@@ -258,7 +258,6 @@ namespace finance_app.Types.Repositories.Account
         }
 
         public async Task<List<Account>> CloseAccount(uint accountId) {
-            // TODO: Figure out routing /User/{id}/Account/{id}?
             var accountsClosed = new List<Account>();;
 
             var parameters = new object[]
@@ -295,6 +294,49 @@ namespace finance_app.Types.Repositories.Account
             }
 
             return accountsClosed;
+
+        }
+
+        public async Task<Account> UpdateAccount(Account account) {
+            Account updatedAccount = null;
+
+            var parameters = new object[]
+            {
+                new MySqlParameter("accountId", account.Id),
+                new MySqlParameter("accountName", account.Name),
+                new MySqlParameter("accountDescription", account.Description),
+                new MySqlParameter("accountClosed", account.Closed),
+            };
+            
+            var connection = _context.Database.GetDbConnection();
+
+            try {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "UpdateAccount";
+
+                foreach (var p in parameters)
+                {
+                    command.Parameters.Add(p);
+                }
+
+                
+                using (var reader = await command.ExecuteReaderAsync()) {
+                    while (await reader.ReadAsync()) {
+                        updatedAccount = ReadAccount(reader);
+                    }
+                }
+                await connection.CloseAsync();
+
+            } catch (Exception e) {
+                if (connection?.State == ConnectionState.Open) {
+                    await connection.CloseAsync();
+                }
+                throw e;
+            }
+
+            return updatedAccount;
 
         }
 
