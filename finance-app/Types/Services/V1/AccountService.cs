@@ -38,6 +38,37 @@ namespace finance_app.Types.Services.V1
                 ResponseCode = ApiResponseCodesEnum.Success
             };
         }
+
+
+        /// <inheritdoc cref="IAccountService.GetAccount"/>
+        public async Task<ApiResponse<AccountDto>> GetAccount(AccountResourceIdentifier accountId) {
+            var account = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
+
+            return new ApiResponse<AccountDto>
+            {
+                Data = _mapper.Map<AccountDto>(account),
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
+        }
+
+        /// <inheritdoc cref="IAccountService.GetChildren"/>
+        public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId) {
+            var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
+
+
+
+            return new ApiResponse<ListResponse<AccountDto>>
+            {
+                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accounts)),
+                ResponseMessage = "Success",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                ResponseCode = ApiResponseCodesEnum.Success
+            };
+
+        }
+
         
         /// <inheritdoc cref="IAccountService.GetPaginatedAccounts"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)

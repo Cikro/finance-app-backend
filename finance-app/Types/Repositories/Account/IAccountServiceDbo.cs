@@ -41,6 +41,14 @@ namespace finance_app.Types.Repositories.Account
         Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset);
 
         /// <summary>
+        /// Fetches a list of all children on a an account
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns>A list of an account's children</returns>
+        Task<List<Account>> GetChildrenByAccountId(uint accountId);
+        
+
+        /// <summary>
         /// Adds a new account to the database.
         /// </summary>
         /// <param name="account">The account you want to add to the database</param>

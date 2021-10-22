@@ -179,6 +179,41 @@ namespace finance_app.Types.Repositories.Account
 
             return accounts;
         }
+        public async Task<List<Account>> GetChildrenByAccountId(uint accountId) {
+            var accounts = new List<Account>();
+
+            var parameters = new object[] {
+                new MySqlParameter("accountId", accountId)
+            };
+
+            var connection = _context.Database.GetDbConnection();
+            
+            try {
+                await connection.OpenAsync();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "GetChildrenByAccountId";
+                foreach (var p in parameters) {
+                    command.Parameters.Add(p);
+
+                }
+
+                using (var reader = await command.ExecuteReaderAsync()) {
+                    while (await reader.ReadAsync()) {
+                        accounts.Add(ReadAccount(reader));
+                    }
+                }
+                await connection.CloseAsync();
+
+            } catch (Exception e) {
+                if (connection?.State == ConnectionState.Open) {
+                    await connection.CloseAsync();
+                }
+                throw e;
+            } 
+
+            return accounts;
+        }
 
 
         public async Task<Account> CreateAccount(Account account) {

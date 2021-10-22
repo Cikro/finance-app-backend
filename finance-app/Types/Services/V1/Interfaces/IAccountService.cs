@@ -13,10 +13,24 @@ namespace finance_app.Types.Services.V1.Interfaces
 
         /// <summary>
         /// Gets a list of all accounts that a user has access to 
-        /// </summary>
-        /// <param name="userId">An Identifier for the user who's accounts you are fetching</param>
+        /// </summary>  Identifier for the user who's accounts you are fetching</param>
         /// <returns> A list of AccountDtos</returns>
         Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId);
+
+        /// <summary>
+        /// Gets an Account
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        Task<ApiResponse<AccountDto>> GetAccount(AccountResourceIdentifier accountId);
+
+        /// <summary>
+        /// Gets all Children on an account
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId);
+
 
         /// <summary>
         /// Gets a list of paginated accounts that a user has access to 

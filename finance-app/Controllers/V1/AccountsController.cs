@@ -65,7 +65,7 @@ namespace finance_app.Controllers.V1
         }
 
         /// <summary>
-        /// Gets a list of financial accounts.
+        /// Creates an account for a user.
         /// </summary>
         /// <param name="userId">The id of the User you are creating an account for.</param>
         /// <param name="request">A CreateAccountRequest</param>
@@ -105,7 +105,7 @@ namespace finance_app.Controllers.V1
         /// <summary>
         /// Closes an Account and all of it's children.
         /// </summary>
-        /// <param name="accountId">A CreateAccountRequest</param>
+        /// <param name="accountId">A AccountResourceIdentifier</param>
         /// <returns>A list of accounts that were closed.</returns>
         [HttpDelete]
         [Route("/api/[controller]/{accountId}")]
@@ -113,5 +113,30 @@ namespace finance_app.Controllers.V1
         {
             return await _accountService.CloseAccount(accountId);
         }
+
+        /// <summary>
+        /// Gets one Account
+        /// </summary>
+        /// <param name="accountId">A AccountResourceIdentifier</param>
+        /// <returns>A list of accounts that were closed.</returns>
+        [HttpGet]
+        [Route("/api/[controller]/{accountId}")]
+        public async Task<ApiResponse<AccountDto>> GetResource([FromQuery]AccountResourceIdentifier accountId)
+        {
+            return await _accountService.GetAccount(accountId);
+        }
+
+        /// <summary>
+        /// Gets all children on an account
+        /// </summary>
+        /// <param name="accountId">A AccountResourceIdentifier</param>
+        /// <returns>A list of accounts that were closed.</returns>
+        [HttpGet]
+        [Route("/api/[controller]/{accountId}/children")]
+        public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren([FromQuery]AccountResourceIdentifier accountId)
+        {
+            return await _accountService.GetChildren(accountId);
+        }
+
     }
 }
