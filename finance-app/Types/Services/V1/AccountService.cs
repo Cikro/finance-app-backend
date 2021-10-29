@@ -55,6 +55,7 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.GetChildren"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId) {
+            // TODO: Consider fetching children of children in the future.
             var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
 
 
@@ -150,7 +151,6 @@ namespace finance_app.Types.Services.V1
                     if (children.Any(child => child.Closed != true)) {
                         return new ApiResponse<AccountDto>
                         {
-                            // TODO: Maybe add a 'children' property to the DTO and return it's children
                             Data = _mapper.Map<AccountDto>(existingAccount),
                             ResponseMessage = $"Error updating account. cannot close an account when it has child accounts that are not closed.",
                             StatusCode = System.Net.HttpStatusCode.Conflict,
@@ -196,8 +196,6 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.CloseAccount"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) {
-            //TODO: Consider only only closing one account here (not it's children). and create a new method to close children.
-
             var accountToClose = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
             if (accountToClose == null) {    
                 return new ApiResponse<ListResponse<AccountDto>>
