@@ -56,6 +56,7 @@ namespace CarfaxCanada.Dealer.Api.ContractExamples
         public PostAccountRequest GetExamples()
         {
             return new PostAccountRequest{
+                Id = 0,
                 Name = $"Swagger Account-{new Random().Next(9000,10000)}",
                 Description = "Test account from Swagger",
                 Closed = false
