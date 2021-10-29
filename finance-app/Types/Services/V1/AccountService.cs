@@ -226,7 +226,7 @@ namespace finance_app.Types.Services.V1
                 return new ApiResponse<ListResponse<AccountDto>>
                 {
                     Data = null,
-                    ResponseMessage = $"Error closing account. Account with id '{accountId.Id} found, but not closed.' .",
+                    ResponseMessage = $"Error closing account. Account with id '{accountId.Id}' found, but not closed.",
                     StatusCode = System.Net.HttpStatusCode.Conflict,
                     ResponseCode = ApiResponseCodesEnum.InternalError
                 };
