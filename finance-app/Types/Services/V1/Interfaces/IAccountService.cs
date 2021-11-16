@@ -13,7 +13,7 @@ namespace finance_app.Types.Services.V1.Interfaces
 
         /// <summary>
         /// Gets a list of all accounts that a user has access to 
-        /// </summary>  Identifier for the user who's accounts you are fetching</param>
+        /// </summary><param name="userId">  Identifier for the user who's accounts you are fetching</param>
         /// <returns> A list of AccountDtos</returns>
         Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId);
 

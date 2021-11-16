@@ -7,12 +7,13 @@ namespace finance_app.Types.Models {
         public uint Id { get; set; }
     }
 
-    public class UserResourceIdentifier : UIntResourceIdentifier{
+    public class UserResourceIdentifier : UIntResourceIdentifier {
+
 
         [FromRoute(Name ="userId")]
         public uint Id { get; set; }
     }
-    public class AccountResourceIdentifier : UIntResourceIdentifier{
+    public class AccountResourceIdentifier : UIntResourceIdentifier {
 
         [FromRoute(Name ="accountId")]
         public uint Id { get; set; }

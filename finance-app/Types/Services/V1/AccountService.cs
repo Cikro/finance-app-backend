@@ -93,7 +93,7 @@ namespace finance_app.Types.Services.V1
         /// <inheritdoc cref="IAccountService.CreateAccount"/>
         public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
             var existingAccount = await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name);
-            if ( existingAccount != null) {    
+            if (existingAccount != null) {    
                 return new ApiResponse<AccountDto>
                 {
                     Data = _mapper.Map<AccountDto>(existingAccount),
