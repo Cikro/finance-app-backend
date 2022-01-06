@@ -93,7 +93,7 @@ namespace finance_app.Controllers.V1
         /// <returns>The account that was created</returns>
         [HttpPost]
         [UserAuthorizationFilter]
-        public async Task<ApiResponse<AccountDto>> PostAccounts([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
+        public async Task<ApiResponse<AccountDto>> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
             account.User_Id = userId.Id;

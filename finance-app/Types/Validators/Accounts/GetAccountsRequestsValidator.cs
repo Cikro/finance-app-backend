@@ -3,11 +3,11 @@ using finance_app.Types.DataContracts.V1.Requests.Accounts;
 
 namespace finance_app.Types.Validators.Accounts
 {
-    public class GetAccountsRequestsValidator : AbstractValidator<GetAccountsRequest>
+    public class GetAccountsRequestValidator : AbstractValidator<GetAccountsRequest>
     {
-        public GetAccountsRequestsValidator()
+        public GetAccountsRequestValidator()
         {
-            _ = RuleFor(request => request.PageInfo).SetValidator(new PaginationInfoValidator()).When(request => request.PageInfo != null);
+            RuleFor(request => request.PageInfo).SetValidator(new PaginationInfoValidator()).When(request => request.PageInfo != null);
         }
     }
 }

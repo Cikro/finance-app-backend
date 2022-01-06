@@ -52,9 +52,11 @@ namespace finance_app
             .AddFluentValidation( fv =>
             {
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<UserResourceIdentifierValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<PostAccountRequestValidator>();
             });
 
 
