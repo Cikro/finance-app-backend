@@ -20,11 +20,11 @@ namespace unit_tests.accounts
         private Mock<IMapper> _mapper; 
         private Mock<IAccountService> _accountService;
 
-        private static UserResourceIdentifier TEST_USER_ID = new UserResourceIdentifier {
+        private static readonly UserResourceIdentifier TEST_USER_ID = new UserResourceIdentifier {
             Id = 1
         };
 
-        private static AccountResourceIdentifier TEST_ACCOUNT_ID = new AccountResourceIdentifier
+        private static readonly AccountResourceIdentifier TEST_ACCOUNT_ID = new AccountResourceIdentifier
         {
             Id = 1
         };
@@ -152,7 +152,7 @@ namespace unit_tests.accounts
 
 
             // Act
-            var response = controller.PostAccounts(TEST_USER_ID, request);
+            var response = controller.CreateAccount(TEST_USER_ID, request);
 
             // Assert
             _accountService.Verify(x => x.CreateAccount(It.IsAny<Account>()), Times.Once);
@@ -173,7 +173,7 @@ namespace unit_tests.accounts
 
 
             // Act
-            var response = controller.PostAccounts(TEST_USER_ID, request);
+            var response = controller.CreateAccount(TEST_USER_ID, request);
 
             // Assert
             Assert.AreEqual(expectedAccount.Id, calledWith.Id);
