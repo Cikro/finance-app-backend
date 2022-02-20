@@ -29,7 +29,7 @@ namespace finance_app.Types.Repositories.Account
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<List<Account>> GetAllByUserId(uint userId);
+        Task<IEnumerable<Account>> GetAllByUserId(uint userId);
 
         /// <summary>
         /// Fetches pages of Accounts that the user has access to 
@@ -38,14 +38,14 @@ namespace finance_app.Types.Repositories.Account
         /// <param name="pageSize">The number of items for the page</param>
         /// <param name="offset">The page offset</param>
         /// <returns>A list of accounts the user has access to</returns>
-        Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset);
+        Task<IEnumerable<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset);
 
         /// <summary>
         /// Fetches a list of all children on a an account
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns>A list of an account's children</returns>
-        Task<List<Account>> GetChildrenByAccountId(uint accountId);
+        Task<IEnumerable<Account>> GetChildrenByAccountId(uint accountId);
         
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace finance_app.Types.Repositories.Account
         /// </summary>
         /// <param name="accountId">The Account you want to close</param>
         /// <returns>A list of the closed accounts</returns>
-        Task<List<Account>> CloseAccount(uint accountId);
+        Task<IEnumerable<Account>> CloseAccount(uint accountId);
 
         /// <summary>
         /// Updates an account with all values provided by the account

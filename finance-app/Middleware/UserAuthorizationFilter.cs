@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using finance_app.Types;
 using finance_app.Types.DataContracts.V1.Responses;
+using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Services.V1.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -12,25 +14,15 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
     public async Task OnActionExecutionAsync(ActionExecutingContext context,
                                                 ActionExecutionDelegate next) 
     {
-        uint userId = 0;
+
+        var userService = (IUserAuthorizationService)context.HttpContext
+                    .RequestServices.GetService(typeof(IUserAuthorizationService));
+         var userResourceId = (UserResourceIdentifier)context.ActionArguments.Values
+                .FirstOrDefault(arg => arg is UserResourceIdentifier);
+
         var unauthorized = true;
 
-        // No userId Provided. Continue.
-        // TODO: Consider moving this whole class into an attribute to only run on routes 
-        // that require Authorization.  Then, return error if there is no userId.
-        if (context.RouteData.Values.TryGetValue("userId", out var userIdParam) 
-            && userIdParam is string @string
-            && uint.TryParse(@string, out userId)) {
-
-            var userService = (IUserService)context.HttpContext
-                     .RequestServices.GetService(typeof(IUserService));
-
-
-            // unauthorized = !await userService.CanAccessUser(1, userId);
-
-            //TODO: figure out how to get this working once we have users that can log in
-            unauthorized = false;
-        }
+        unauthorized = userResourceId != null && !userService.CanAccessResource(userResourceId.Id, 1);
         
         if (!unauthorized) {
             await next();
@@ -39,8 +31,8 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
             {
                 ResponseCode = ApiResponseCodesEnum.BadRequest,
                 StatusCode = HttpStatusCode.Unauthorized,
-                ResponseMessage = $"Unauthorized: You are not authorized to access user {userId}",
-                Data = $"You are not authorized to access user {userId}"
+                ResponseMessage = $"Unauthorized: You are not authorized to access user with Id {userResourceId?.Id}",
+                Data = $"You are not authorized to access user with Id {userResourceId?.Id}"
             };
             context.Result = new JsonResult(response)
             {

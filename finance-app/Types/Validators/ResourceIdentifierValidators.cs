@@ -1,5 +1,5 @@
 using FluentValidation;
-using finance_app.Types.Models;
+using finance_app.Types.Models.ResourceIdentifiers;
 
 namespace finance_app.Types.Validators
 {

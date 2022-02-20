@@ -97,7 +97,7 @@ namespace finance_app.Types.Repositories.Account
             return account;
         }
 
-        public async Task<List<Account>> GetAllByUserId(uint userId) {
+        public async Task<IEnumerable<Account>> GetAllByUserId(uint userId) {
             
             var accounts = new List<Account>();
 
@@ -134,7 +134,7 @@ namespace finance_app.Types.Repositories.Account
             return accounts;
         }
 
-        public async Task<List<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
+        public async Task<IEnumerable<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
         {
             var accounts = new List<Account>();
 
@@ -179,7 +179,7 @@ namespace finance_app.Types.Repositories.Account
 
             return accounts;
         }
-        public async Task<List<Account>> GetChildrenByAccountId(uint accountId) {
+        public async Task<IEnumerable<Account>> GetChildrenByAccountId(uint accountId) {
             var accounts = new List<Account>();
 
             var parameters = new object[] {
@@ -257,7 +257,7 @@ namespace finance_app.Types.Repositories.Account
             return newAccount;
         }
 
-        public async Task<List<Account>> CloseAccount(uint accountId) {
+        public async Task<IEnumerable<Account>> CloseAccount(uint accountId) {
             var accountsClosed = new List<Account>();;
 
             var parameters = new object[]

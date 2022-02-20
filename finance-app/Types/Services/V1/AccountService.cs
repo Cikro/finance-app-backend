@@ -11,6 +11,7 @@ using AutoMapper;
 using System.Linq.Expressions;
 using System.Linq;
 using finance_app.Types.Models.ResourceIdentifiers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace finance_app.Types.Services.V1
 {
@@ -18,22 +19,33 @@ namespace finance_app.Types.Services.V1
     {
         private readonly IAccountRepository _accountServiceDbo;
         private readonly IMapper _mapper;
+        private readonly IAuthorizationHandler _authorizationService;
+        private readonly IUserAuthorizationService _userAuthorizationService;
         
 
-        public AccountService(IMapper mapper, IAccountRepository accountServiceDbo){
+        public AccountService(IMapper mapper, IAccountRepository accountServiceDbo,
+                             IAuthorizationHandler authorizationService, IUserAuthorizationService userAuthorizationService){
 
             _accountServiceDbo = accountServiceDbo;
             _mapper = mapper;
-            
+            _authorizationService = authorizationService;
+            _userAuthorizationService = userAuthorizationService;
         }
 
         /// <inheritdoc cref="IAccountService.GetAccounts"/>
-        public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId){
+    public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId){
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
+
+            var accessibleAccounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
+
+            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
+                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
+            };
+
 
             return new ApiResponse<ListResponse<AccountDto>>
             {
-                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accounts)),
+                Data = ret,
                 ResponseMessage = "Success",
                 StatusCode = System.Net.HttpStatusCode.OK,
                 ResponseCode = ApiResponseCodesEnum.Success
@@ -44,6 +56,17 @@ namespace finance_app.Types.Services.V1
         /// <inheritdoc cref="IAccountService.GetAccount"/>
         public async Task<ApiResponse<AccountDto>> GetAccount(AccountResourceIdentifier accountId) {
             var account = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
+
+            if (!_userAuthorizationService.CanAccessResource(account, 1)) 
+            {
+                return new ApiResponse<AccountDto>
+                {
+                    Data = null,
+                    ResponseMessage = "Unauthorizaed",
+                    StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                    ResponseCode = ApiResponseCodesEnum.Forbidden
+                };
+            }
 
             return new ApiResponse<AccountDto>
             {
@@ -59,11 +82,15 @@ namespace finance_app.Types.Services.V1
             // TODO: Consider fetching children of children in the future.
             var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
 
+            var accessibleAccounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
 
+            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
+                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
+            };
 
             return new ApiResponse<ListResponse<AccountDto>>
             {
-                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accounts)),
+                Data = ret,
                 ResponseMessage = "Success",
                 StatusCode = System.Net.HttpStatusCode.OK,
                 ResponseCode = ApiResponseCodesEnum.Success
@@ -81,10 +108,17 @@ namespace finance_app.Types.Services.V1
             uint offset = (uint)pageInfo.PageNumber - 1;
             
             var accounts = await _accountServiceDbo.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, offset);
+            accounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
+
+            var accessibleAccounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
+
+            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
+                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
+            };
 
             return new ApiResponse<ListResponse<AccountDto>>
             {
-                Data = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accounts)),
+                Data = ret,
                 ResponseMessage = "Success",
                 StatusCode = System.Net.HttpStatusCode.OK,
                 ResponseCode = ApiResponseCodesEnum.Success
@@ -207,6 +241,18 @@ namespace finance_app.Types.Services.V1
                     ResponseCode = ApiResponseCodesEnum.ResourceNotFound
                 };
             };
+
+            var children = await GetChildren(accountId);
+            if (children.Data.ExcludedItems > 0) {
+                return new ApiResponse<ListResponse<AccountDto>>
+                {
+                    Data = null,
+                    ResponseMessage = $"Error closing account. Account with id '{accountId.Id}' has cildren that you don't have access to.",
+                    StatusCode = System.Net.HttpStatusCode.Forbidden,
+                    ResponseCode = ApiResponseCodesEnum.Forbidden
+                };
+            }
+            
 
             if (accountToClose.Closed == true) {
                 return new ApiResponse<ListResponse<AccountDto>>

@@ -85,6 +85,12 @@ namespace finance_app
 
             services.AddControllersWithViews(); 
 
+            // services.AddAuthorization(options =>
+            // {
+            //     options.AddPolicy("SameUserIdPolicy", policy =>
+            //         policy.Requirements.Add(new SameUserIdRequirement()));
+            // });
+
             #region Swagger
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
             services.AddSwaggerGen( c => {
@@ -129,7 +135,8 @@ namespace finance_app
 
 
             #region Services
-            services.AddTransient<IUserService, UserService>();
+            // services.AddSingleton<IAuthorizationHandler, DocumentAuthorizationHandler>();
+            services.AddTransient<IUserAuthorizationService, UserAuthorizationServiceService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             #endregion Services

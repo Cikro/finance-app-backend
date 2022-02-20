@@ -14,6 +14,7 @@ namespace finance_app.Types.DataContracts.V1.Responses
         }
 
         public int? Length { get; set; }
+        public int ExcludedItems { get; set; } = 0;
         public IEnumerable<T> Items { get; set; } 
     }
 }
