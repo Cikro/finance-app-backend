@@ -4,12 +4,11 @@ using Microsoft.Extensions.Logging;
 using AutoMapper;
 using finance_app.Controllers.V1;
 using finance_app.Types.Services.V1.Interfaces;
-
-using finance_app.Types.Models;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
 using finance_app.Types.Repositories.Account;
+using finance_app.Types.Models.ResourceIdentifiers;
 
 namespace unit_tests.accounts
 {
@@ -20,11 +19,12 @@ namespace unit_tests.accounts
         private Mock<IMapper> _mapper; 
         private Mock<IAccountService> _accountService;
 
-        private static readonly UserResourceIdentifier TEST_USER_ID = new UserResourceIdentifier {
+        private static readonly UserResourceIdentifier TEST_USER_ID = new()
+        {
             Id = 1
         };
 
-        private static readonly AccountResourceIdentifier TEST_ACCOUNT_ID = new AccountResourceIdentifier
+        private static readonly AccountResourceIdentifier TEST_ACCOUNT_ID = new()
         {
             Id = 1
         };
@@ -230,6 +230,7 @@ namespace unit_tests.accounts
         #endregion GetChildren
 
         #region PostAccount
+        [TestMethod]
         public void PostAccount_ExpectCallsUpdateAccount()
         {
             // Arrange
@@ -248,6 +249,7 @@ namespace unit_tests.accounts
             _accountService.Verify(x => x.UpdateAccount(It.IsAny<Account>()), Times.Once);
         }
 
+        [TestMethod]
         public void PostAccount_ExpectCallsUpdateAccountWithTheExpectedAccount()
         {
             // Arrange

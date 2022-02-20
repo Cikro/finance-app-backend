@@ -8,7 +8,7 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Repositories.Account;
-using finance_app.Types.Models;
+using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 
 namespace finance_app.Controllers.V1
