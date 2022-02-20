@@ -10,6 +10,7 @@ using finance_app.Types.Models;
 using AutoMapper;
 using System.Linq.Expressions;
 using System.Linq;
+using finance_app.Types.Models.ResourceIdentifiers;
 
 namespace finance_app.Types.Services.V1
 {
