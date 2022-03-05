@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using finance_app.Types;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
-using finance_app.Types.Services.V1.Interfaces;
+using finance_app.Types.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -15,14 +15,18 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
                                                 ActionExecutionDelegate next) 
     {
 
-        var userService = (IUserAuthorizationService)context.HttpContext
-                    .RequestServices.GetService(typeof(IUserAuthorizationService));
-         var userResourceId = (UserResourceIdentifier)context.ActionArguments.Values
+        var authorizationService = (IAuthorizationService)context.HttpContext
+                    .RequestServices.GetService(typeof(IAuthorizationService));
+        var userResourceId = (UserResourceIdentifier)context.ActionArguments.Values
                 .FirstOrDefault(arg => arg is UserResourceIdentifier);
+        
 
         var unauthorized = true;
 
-        unauthorized = userResourceId != null && !userService.CanAccessResource(userResourceId.Id, 1);
+        unauthorized = userResourceId != null && !(await authorizationService.AuthorizeAsync(
+                                                        context.HttpContext.User,
+                                                        new DatabaseObject { Id = userResourceId.Id },
+                                                        "CanAccessResourcePolicy")).Succeeded;
         
         if (!unauthorized) {
             await next();
@@ -36,7 +40,7 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
             };
             context.Result = new JsonResult(response)
             {
-                StatusCode = (int)response.StatusCode
+                StatusCode = (int) response.StatusCode
             };
         }
 

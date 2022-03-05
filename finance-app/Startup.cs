@@ -23,6 +23,9 @@ using finance_app.Types.Services.V1;
 using finance_app.Types.Mappers.Profiles;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
+using finance_app.Types.Services.V1.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using finance_app.Types.Configurations;
 
 namespace finance_app
 {
@@ -47,6 +50,9 @@ namespace finance_app
 
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
+                if (_env.EnvironmentName == Environments.Development) {
+                    setup.Filters.Add(typeof(LocalAuthenticaionFilter));
+                }
 
             })
             .AddFluentValidation( fv =>
@@ -85,11 +91,18 @@ namespace finance_app
 
             services.AddControllersWithViews(); 
 
-            // services.AddAuthorization(options =>
-            // {
-            //     options.AddPolicy("SameUserIdPolicy", policy =>
-            //         policy.Requirements.Add(new SameUserIdRequirement()));
-            // });
+            services.AddAuthentication()
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Unauthorized/";
+                options.AccessDeniedPath = "/Account/Forbidden/";
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanAccessResourcePolicy", policy =>
+                    policy.Requirements.Add(new UserOwnsResource()));
+            });
 
             #region Swagger
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
@@ -134,14 +147,16 @@ namespace finance_app
             });
 
 
+            #region ConfigurationOptions
+            services.Configure<LocalUserOptions>(_configuration.GetSection(LocalUserOptions.LocalUser));
+            #endregion
+
             #region Services
-            // services.AddSingleton<IAuthorizationHandler, DocumentAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, DatabaseObjectAuthorizationHandler>();
             services.AddTransient<IUserAuthorizationService, UserAuthorizationServiceService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             #endregion Services
-
-
 
         }
 
@@ -176,12 +191,17 @@ namespace finance_app
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
+            
+            // app.UseMiddleware<MockAuthenticationFilter>();
 
             app.UseSpa(spa =>
             {

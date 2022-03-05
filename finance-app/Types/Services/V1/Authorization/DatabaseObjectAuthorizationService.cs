@@ -7,14 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 //https://docs.microsoft.com/en-us/aspnet/core/security/authorization/resourcebased?view=aspnetcore-3.1
 namespace finance_app.Types.Services.V1.Authorization
 {
-    public class DatabaseObjectAuthorizationService : 
-        AuthorizationHandler<SameUserIdRequirement, DatabaseObject>
+    public class DatabaseObjectAuthorizationHandler : 
+        AuthorizationHandler<UserOwnsResource, DatabaseObject>
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-                                                    SameUserIdRequirement requirement,
+                                                    UserOwnsResource requirement,
                                                     DatabaseObject resource)
         {
-            var x = context.User.Claims.FirstOrDefault(c => c.Type == "UserId");
             if (!int.TryParse(context.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value, out var userId)) 
             {
                 context.Fail();
@@ -29,5 +28,5 @@ namespace finance_app.Types.Services.V1.Authorization
             return Task.CompletedTask;
         }
     }
-    public class SameUserIdRequirement : IAuthorizationRequirement { }
+    public class UserOwnsResource : IAuthorizationRequirement { }
 }

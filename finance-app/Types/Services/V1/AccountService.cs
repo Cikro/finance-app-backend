@@ -1,17 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Dtos;
-using finance_app.Types.Models;
-
-using AutoMapper;
-using System.Linq.Expressions;
-using System.Linq;
 using finance_app.Types.Models.ResourceIdentifiers;
-using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace finance_app.Types.Services.V1
 {
@@ -19,24 +16,27 @@ namespace finance_app.Types.Services.V1
     {
         private readonly IAccountRepository _accountServiceDbo;
         private readonly IMapper _mapper;
-        private readonly IAuthorizationHandler _authorizationService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IUserAuthorizationService _userAuthorizationService;
+        private readonly IHttpContextAccessor _context;
         
 
         public AccountService(IMapper mapper, IAccountRepository accountServiceDbo,
-                             IAuthorizationHandler authorizationService, IUserAuthorizationService userAuthorizationService){
+                             IAuthorizationService authorizationService, IUserAuthorizationService userAuthorizationService,
+                             IHttpContextAccessor context){
 
             _accountServiceDbo = accountServiceDbo;
             _mapper = mapper;
             _authorizationService = authorizationService;
             _userAuthorizationService = userAuthorizationService;
+            _context = context;
         }
 
         /// <inheritdoc cref="IAccountService.GetAccounts"/>
     public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId){
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
 
-            var accessibleAccounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
+            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
                 ExcludedItems = accounts.Count() - accessibleAccounts.Count()
@@ -82,7 +82,7 @@ namespace finance_app.Types.Services.V1
             // TODO: Consider fetching children of children in the future.
             var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
 
-            var accessibleAccounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
+            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
                 ExcludedItems = accounts.Count() - accessibleAccounts.Count()
@@ -110,7 +110,7 @@ namespace finance_app.Types.Services.V1
             var accounts = await _accountServiceDbo.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, offset);
             accounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
 
-            var accessibleAccounts = accounts.Where(account => _userAuthorizationService.CanAccessResource(account, 1));
+            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
                 ExcludedItems = accounts.Count() - accessibleAccounts.Count()
@@ -287,6 +287,22 @@ namespace finance_app.Types.Services.V1
  
         }
 
-        
+        private async Task<IEnumerable<Account>> FilterAccessibleAccounts(IEnumerable<Account> accounts) {
+            return (
+                await Task.WhenAll(accounts.Select(async (account) => {
+                    return new AccountsWithAccess {
+                        Account = account,
+                        HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded
+                    };
+                    })
+                ))
+                .Where(account => account.HasAccess == true)
+                .Select(a => a.Account);
+        }
+    
+    }
+    public class AccountsWithAccess {
+        public Account Account { get; set; }
+        public bool HasAccess { get; set; }
     }
 }
