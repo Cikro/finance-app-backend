@@ -22,12 +22,9 @@ namespace finance_app.Middleware {
                     Key = v.Key,
                     Errors = v.Value.Errors.Select(v => v.ErrorMessage).ToList() 
                 });
-            var apiResponse = new ApiResponse<List<ValidationError>> {
-                StatusCode = System.Net.HttpStatusCode.BadRequest,
-                ResponseCode = ApiResponseCodesEnum.BadRequest,
-                ResponseMessage = "There are errors in your input parameters",
-                Data = errors.ToList()
-            };
+
+            var message = "There are errors in your input parameters";
+            var apiResponse = new ApiResponse<List<ValidationError>>(ApiResponseCodesEnum.BadRequest, message);
 
             context.Result = new JsonResult(apiResponse) {
                 StatusCode = (int) apiResponse.StatusCode

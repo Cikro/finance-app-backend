@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace finance_app.Types.Repositories.Account
 {
     [Table("accounts")]
-    public class Account : DatabaseObject
+    public class Account : DatabaseObject, IUserIdResource
     {
         [Required]
         public string Name { get; set; }

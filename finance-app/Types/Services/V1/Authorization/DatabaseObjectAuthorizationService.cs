@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace finance_app.Types.Services.V1.Authorization
 {
     public class DatabaseObjectAuthorizationHandler : 
-        AuthorizationHandler<UserOwnsResource, DatabaseObject>
+        AuthorizationHandler<UserOwnsResource, IUserIdResource>
     {
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
                                                     UserOwnsResource requirement,
-                                                    DatabaseObject resource)
+                                                   IUserIdResource resource)
         {
             if (!int.TryParse(context.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value, out var userId)) 
             {
@@ -20,7 +20,7 @@ namespace finance_app.Types.Services.V1.Authorization
 
             };
 
-            if (userId == resource.Id)
+            if (userId == resource.User_Id)
             {
                 context.Succeed(requirement);
             }

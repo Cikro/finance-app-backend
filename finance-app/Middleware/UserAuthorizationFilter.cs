@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
+using finance_app.Types.Repositories.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -25,19 +26,15 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
 
         unauthorized = userResourceId != null && !(await authorizationService.AuthorizeAsync(
                                                         context.HttpContext.User,
-                                                        new DatabaseObject { Id = userResourceId.Id },
+                                                        new Account { User_Id = userResourceId.Id },
                                                         "CanAccessResourcePolicy")).Succeeded;
         
         if (!unauthorized) {
             await next();
         } else {
-            var response = new ApiResponse<string>
-            {
-                ResponseCode = ApiResponseCodesEnum.BadRequest,
-                StatusCode = HttpStatusCode.Unauthorized,
-                ResponseMessage = $"Unauthorized: You are not authorized to access user with Id {userResourceId?.Id}",
-                Data = $"You are not authorized to access user with Id {userResourceId?.Id}"
-            };
+            var message =  $"Unauthorized: You are not authorized to access user with Id {userResourceId?.Id}";
+            var response = new ApiResponse<string>(ApiResponseCodesEnum.BadRequest, message);
+
             context.Result = new JsonResult(response)
             {
                 StatusCode = (int) response.StatusCode

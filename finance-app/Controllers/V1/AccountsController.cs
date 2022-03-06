@@ -53,15 +53,17 @@ namespace finance_app.Controllers.V1
         /// <returns>A List of accounts, and the number of items in the list</returns>
         [HttpGet]
         [UserAuthorizationFilter]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
+        public async Task<IActionResult> GetAccounts([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
         {
+            ApiResponse<ListResponse<AccountDto>> ret;
             if (request.PageInfo != null) {
                 
-                return await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);
+                 ret = await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);
 
             } else {
-                return await _accountService.GetAccounts(userId);
+                 ret = await _accountService.GetAccounts(userId);
             }
+            return StatusCode(ret.StatusCode, ret);
         }
 
         /// <summary>
@@ -93,12 +95,14 @@ namespace finance_app.Controllers.V1
         /// <returns>The account that was created</returns>
         [HttpPost]
         [UserAuthorizationFilter]
-        public async Task<ApiResponse<AccountDto>> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
+        public async Task<IActionResult> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
             account.User_Id = userId.Id;
 
-            return await _accountService.CreateAccount(account);
+            var ret = await _accountService.CreateAccount(account);
+
+            return StatusCode(ret.StatusCode, ret);
         }
 
         
@@ -109,9 +113,10 @@ namespace finance_app.Controllers.V1
         /// <returns>A list of accounts that were closed.</returns>
         [HttpDelete]
         [Route("/api/[controller]/{accountId}")]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> DeleteAccount([FromQuery]AccountResourceIdentifier accountId)
+        public async Task<IActionResult> DeleteAccount([FromQuery]AccountResourceIdentifier accountId)
         {
-            return await _accountService.CloseAccount(accountId);
+            var ret = await _accountService.CloseAccount(accountId);
+            return StatusCode(ret.StatusCode, ret);
         }
 
         /// <summary>
@@ -121,9 +126,10 @@ namespace finance_app.Controllers.V1
         /// <returns>A list of accounts that were closed.</returns>
         [HttpGet]
         [Route("/api/[controller]/{accountId}")]
-        public async Task<ApiResponse<AccountDto>> GetAccount([FromQuery]AccountResourceIdentifier accountId)
+        public async Task<IActionResult> GetAccount([FromQuery]AccountResourceIdentifier accountId)
         {
-            return await _accountService.GetAccount(accountId);
+            var ret = await _accountService.GetAccount(accountId);
+            return StatusCode(ret.StatusCode, ret);
         }
 
         /// <summary>
@@ -133,9 +139,10 @@ namespace finance_app.Controllers.V1
         /// <returns>A list of accounts that were closed.</returns>
         [HttpGet]
         [Route("/api/[controller]/{accountId}/children")]
-        public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren([FromQuery]AccountResourceIdentifier accountId)
+        public async Task<IActionResult> GetChildren([FromQuery]AccountResourceIdentifier accountId)
         {
-            return await _accountService.GetChildren(accountId);
+            var ret = await _accountService.GetChildren(accountId);
+            return StatusCode(ret.StatusCode, ret);
         }
 
         
@@ -147,12 +154,15 @@ namespace finance_app.Controllers.V1
         /// <returns>A list of accounts that were closed.</returns>
         [HttpPost]
         [Route("/api/[controller]/{accountId}")]
-        public async Task<ApiResponse<AccountDto>> PostAccount([FromQuery]AccountResourceIdentifier accountId, [FromBody]PostAccountRequest request)
+        public async Task<IActionResult> PostAccount([FromQuery]AccountResourceIdentifier accountId, [FromBody]PostAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
             account.Id = accountId.Id;
 
-            return await _accountService.UpdateAccount(account);
+            var ret = await _accountService.UpdateAccount(account);
+
+            return StatusCode(ret.StatusCode, ret);
+
         }
 
     }
