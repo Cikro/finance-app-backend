@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Hosting;
+using AutoMapper;
 
 namespace finance_app.Middleware
 {
@@ -14,12 +15,15 @@ namespace finance_app.Middleware
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IModelMetadataProvider _modelMetadataProvider;
+        private readonly IMapper _mapper;
 
-        public ExceptionResponseMapperFilter( IWebHostEnvironment hostingEnvironment,
-                                            IModelMetadataProvider modelMetadataProvider)
+        public ExceptionResponseMapperFilter(IWebHostEnvironment hostingEnvironment,
+                                            IModelMetadataProvider modelMetadataProvider, 
+                                            IMapper mapper)
         {
             _hostingEnvironment = hostingEnvironment;
             _modelMetadataProvider = modelMetadataProvider;
+            _mapper = mapper;
         }
 
         public void OnException(ExceptionContext context)
@@ -37,7 +41,7 @@ namespace finance_app.Middleware
 
 
             context.Result = new JsonResult(apiResponse) {
-                StatusCode = (int) apiResponse.StatusCode
+                StatusCode = _mapper.Map<int>(apiResponse.ResponseCode)
             };
         }
     }

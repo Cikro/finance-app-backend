@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
@@ -35,9 +36,12 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
             var message =  $"Unauthorized: You are not authorized to access user with Id {userResourceId?.Id}";
             var response = new ApiResponse<string>(ApiResponseCodesEnum.BadRequest, message);
 
+            var mapper = (IMapper)context.HttpContext
+                    .RequestServices.GetService(typeof(IMapper));
+
             context.Result = new JsonResult(response)
             {
-                StatusCode = (int) response.StatusCode
+                StatusCode = mapper.Map<int>(response.ResponseCode)
             };
         }
 

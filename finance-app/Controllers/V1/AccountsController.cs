@@ -10,6 +10,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
+using System;
 
 namespace finance_app.Controllers.V1
 {
@@ -56,6 +57,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> GetAccounts([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
         {
             ApiResponse<ListResponse<AccountDto>> ret;
+            throw new Exception();
             if (request.PageInfo != null) {
                 
                  ret = await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);
@@ -63,7 +65,7 @@ namespace finance_app.Controllers.V1
             } else {
                  ret = await _accountService.GetAccounts(userId);
             }
-            return StatusCode(ret.StatusCode, ret);
+            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
         }
 
         /// <summary>
@@ -102,7 +104,7 @@ namespace finance_app.Controllers.V1
 
             var ret = await _accountService.CreateAccount(account);
 
-            return StatusCode(ret.StatusCode, ret);
+            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
         }
 
         
@@ -116,7 +118,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> DeleteAccount([FromQuery]AccountResourceIdentifier accountId)
         {
             var ret = await _accountService.CloseAccount(accountId);
-            return StatusCode(ret.StatusCode, ret);
+            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> GetAccount([FromQuery]AccountResourceIdentifier accountId)
         {
             var ret = await _accountService.GetAccount(accountId);
-            return StatusCode(ret.StatusCode, ret);
+            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
         }
 
         /// <summary>
@@ -142,7 +144,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> GetChildren([FromQuery]AccountResourceIdentifier accountId)
         {
             var ret = await _accountService.GetChildren(accountId);
-            return StatusCode(ret.StatusCode, ret);
+            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
         }
 
         
@@ -161,7 +163,7 @@ namespace finance_app.Controllers.V1
 
             var ret = await _accountService.UpdateAccount(account);
 
-            return StatusCode(ret.StatusCode, ret);
+            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
 
         }
 

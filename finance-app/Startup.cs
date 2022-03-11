@@ -86,7 +86,10 @@ namespace finance_app
             services.AddTransient<PaginationInfoValidator>();
             #endregion Validators
 
-            services.AddAutoMapper(typeof(AccountProfile));
+            services.AddAutoMapper(
+                typeof(AccountProfile),
+                typeof(StatusCodeProfile)
+            );
 
 
             services.AddControllersWithViews(); 

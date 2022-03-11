@@ -5,21 +5,6 @@ namespace finance_app.Types.DataContracts.V1.Responses
 {
     public class ApiResponse<T>
     {
-
-        private static Dictionary<ApiResponseCodesEnum, HttpStatusCode> StatusCodes 
-            = new Dictionary<ApiResponseCodesEnum, HttpStatusCode> {
-                { ApiResponseCodesEnum.Success, HttpStatusCode.OK },
-                { ApiResponseCodesEnum.BadRequest, HttpStatusCode.BadRequest },
-                { ApiResponseCodesEnum.InternalError, HttpStatusCode.InternalServerError },
-                { ApiResponseCodesEnum.Unauthorized, HttpStatusCode.Unauthorized },
-                { ApiResponseCodesEnum.DuplicateResource, HttpStatusCode.Conflict },
-                { ApiResponseCodesEnum.ResourceNotFound, HttpStatusCode.Conflict }
-            };
-        /// <summary>
-        /// The Http Status Code of the request
-        /// </summary>
-        public int StatusCode { get; set; }
-
         /// <summary>
         /// A number indicating a specific outocme or problem with the response
         /// </summary>
@@ -40,7 +25,6 @@ namespace finance_app.Types.DataContracts.V1.Responses
         {
             Data = data;
             ResponseCode = ApiResponseCodesEnum.Success;
-            StatusCode = (int) StatusCodes[ApiResponseCodesEnum.Success];
             ResponseMessage = "Successful";
         }
 
@@ -48,7 +32,6 @@ namespace finance_app.Types.DataContracts.V1.Responses
         {
             Data = default;
             ResponseCode = responseCode;
-            StatusCode = (int) StatusCodes[responseCode];
             ResponseMessage = message;
         }
 
@@ -56,7 +39,6 @@ namespace finance_app.Types.DataContracts.V1.Responses
         {
             Data = data;
             ResponseCode = responseCode;
-            StatusCode = (int) StatusCodes[responseCode];
             ResponseMessage = message;
         }
     }

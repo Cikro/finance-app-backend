@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using finance_app.Types;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
@@ -9,7 +11,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace finance_app.Middleware {
-    public class ValidationResponseMapperFilter : IActionFilter {
+    public class ValidationResponseMapperFilter : IActionFilter 
+    {
+        private readonly IMapper _mapper;
+
+        public ValidationResponseMapperFilter(IMapper mapper)
+        {
+            _mapper = mapper;
+            
+        }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
@@ -26,8 +36,11 @@ namespace finance_app.Middleware {
             var message = "There are errors in your input parameters";
             var apiResponse = new ApiResponse<List<ValidationError>>(ApiResponseCodesEnum.BadRequest, message);
 
+            var mapper = (IMapper)context.HttpContext
+                    .RequestServices.GetService(typeof(IMapper));
+
             context.Result = new JsonResult(apiResponse) {
-                StatusCode = (int) apiResponse.StatusCode
+                StatusCode = mapper.Map<int>(apiResponse.ResponseCode)
             };
             
         }
