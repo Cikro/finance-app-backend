@@ -10,7 +10,6 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
-using System;
 
 namespace finance_app.Controllers.V1
 {
@@ -57,7 +56,6 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> GetAccounts([FromQuery]UserResourceIdentifier userId, [FromQuery]GetAccountsRequest request)
         {
             ApiResponse<ListResponse<AccountDto>> ret;
-            throw new Exception();
             if (request.PageInfo != null) {
                 
                  ret = await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);

@@ -23,7 +23,7 @@ namespace finance_app.Types.Services.V1
 
         public AccountService(IMapper mapper, IAccountRepository accountServiceDbo,
                              IAuthorizationService authorizationService, IUserAuthorizationService userAuthorizationService,
-                             IHttpContextAccessor context){
+                             IHttpContextAccessor context) {
 
             _accountServiceDbo = accountServiceDbo;
             _mapper = mapper;
@@ -33,7 +33,7 @@ namespace finance_app.Types.Services.V1
         }
 
         /// <inheritdoc cref="IAccountService.GetAccounts"/>
-    public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId){
+    public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId) {
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
 
             var accessibleAccounts = await FilterAccessibleAccounts(accounts);
@@ -139,9 +139,7 @@ namespace finance_app.Types.Services.V1
                 }
 
                 // If you are opening an account, its parent must be open
-                if (account.Closed == false
-                    && existingAccount.Parent_Account_Id != null) {
-
+                if (account.Closed == false && existingAccount.Parent_Account_Id != null) {
                     var parent = await _accountServiceDbo.GetAccountByAccountId((uint) existingAccount.Parent_Account_Id);
                     if (parent?.Closed == true) {
                         var message = $"Error updating account. Cannot open an account when its parent is closed.";

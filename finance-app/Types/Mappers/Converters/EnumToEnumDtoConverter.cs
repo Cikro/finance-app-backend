@@ -14,7 +14,7 @@ namespace finance_app.Types.Mappers.Converters {
         {
             // TODO: How does this behave When SourceEnum === DestinationEnum?
             Enum toDto;
-            if (source != null){
+            if (source != null) {
                 if (typeof(SourceEnum) == typeof(DestEnum)) {
                     toDto = source;
                 } else  {
