@@ -63,7 +63,7 @@ namespace finance_app.Controllers.V1
             } else {
                  ret = await _accountService.GetAccounts(userId);
             }
-            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace finance_app.Controllers.V1
 
             var ret = await _accountService.CreateAccount(account);
 
-            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         
@@ -116,7 +116,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> DeleteAccount([FromQuery]AccountResourceIdentifier accountId)
         {
             var ret = await _accountService.CloseAccount(accountId);
-            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> GetAccount([FromQuery]AccountResourceIdentifier accountId)
         {
             var ret = await _accountService.GetAccount(accountId);
-            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> GetChildren([FromQuery]AccountResourceIdentifier accountId)
         {
             var ret = await _accountService.GetChildren(accountId);
-            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         
@@ -161,7 +161,7 @@ namespace finance_app.Controllers.V1
 
             var ret = await _accountService.UpdateAccount(account);
 
-            return StatusCode(_mapper.Map<int>(ret.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
 
         }
 

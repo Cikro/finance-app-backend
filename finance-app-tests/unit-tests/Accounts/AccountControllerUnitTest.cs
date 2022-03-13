@@ -9,6 +9,10 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Models.ResourceIdentifiers;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using finance_app.Types.DataContracts.V1.Responses;
+using System.Collections.Generic;
 
 namespace unit_tests.accounts
 {
@@ -101,7 +105,7 @@ namespace unit_tests.accounts
         #region GetAccounts
 
         [TestMethod]
-        public void GetAccounts_PageInfoNotNull_Expect_GetPaginatedAccounts()
+        public async Task GetAccounts_PageInfoNotNull_Expect_GetPaginatedAccounts()
         {
             // Arrange
             var request = new GetAccountsRequest {
@@ -110,9 +114,19 @@ namespace unit_tests.accounts
                     PageNumber = 5
                 }
             };
+            var accountsList = new ListResponse<AccountDto>(
+                new List<AccountDto>
+                {
+                    { new AccountDto() }
+                });
+
+            _mapper.Setup(x => x.Map<int>(It.IsAny<ApiResponseCodesEnum>()))
+                .Returns(200);
+            _accountService.Setup(x => x.GetPaginatedAccounts(It.IsAny<UserResourceIdentifier>(), It.IsAny<PaginationInfo>()))
+                .ReturnsAsync(new ApiResponse<ListResponse<AccountDto>>(accountsList));
 
             // Act
-            var response = controller.GetAccounts(TEST_USER_ID, request);
+            var response = await controller.GetAccounts(TEST_USER_ID, request);
             // Assert
             _accountService.Verify(x => x.GetPaginatedAccounts(
                                             It.IsAny<UserResourceIdentifier>(),
@@ -120,7 +134,7 @@ namespace unit_tests.accounts
         }
 
         [TestMethod]
-        public void GetAccounts_PageInfoNull_Expect_GetPaginatedAccounts()
+        public async Task GetAccounts_PageInfoNull_Expect_GetPaginatedAccounts()
         {
             // Arrange
             var request = new GetAccountsRequest
@@ -128,8 +142,19 @@ namespace unit_tests.accounts
                 PageInfo = null
             };
 
+            var accountsList = new ListResponse<AccountDto>(
+                new List<AccountDto>
+                {
+                    { new AccountDto() }
+                });
+
+            _mapper.Setup(x => x.Map<int>(It.IsAny<ApiResponseCodesEnum>()))
+                .Returns(200);
+            _accountService.Setup(x => x.GetPaginatedAccounts(It.IsAny<UserResourceIdentifier>(), It.IsAny<PaginationInfo>()))
+                .ReturnsAsync(new ApiResponse<ListResponse<AccountDto>>(accountsList));
+
             // Act
-            var response = controller.GetAccounts(TEST_USER_ID, request);
+            var response = await controller.GetAccounts(TEST_USER_ID, request);
             // Assert
             _accountService.Verify(x => x.GetPaginatedAccounts(
                                             It.IsAny<UserResourceIdentifier>(),
@@ -142,7 +167,7 @@ namespace unit_tests.accounts
 
         #region PostAccounts
         [TestMethod]
-        public void PostAccounts_Expect_CallsCreateAccount()
+        public async Task PostAccounts_Expect_CallsCreateAccount()
         {
             // Arrange
             var request = GetTestCreateAccountRequest();
@@ -152,14 +177,14 @@ namespace unit_tests.accounts
 
 
             // Act
-            var response = controller.CreateAccount(TEST_USER_ID, request);
+            var response = await controller.CreateAccount(TEST_USER_ID, request);
 
             // Assert
             _accountService.Verify(x => x.CreateAccount(It.IsAny<Account>()), Times.Once);
         }
 
         [TestMethod]
-        public void PostAccounts_Expect_CallsCreateAccountWithTheExpectedAccount()
+        public async Task PostAccounts_Expect_CallsCreateAccountWithTheExpectedAccount()
         {
             // Arrange
             var request = GetTestCreateAccountRequest();
@@ -173,7 +198,7 @@ namespace unit_tests.accounts
 
 
             // Act
-            var response = controller.CreateAccount(TEST_USER_ID, request);
+            var response = await controller.CreateAccount(TEST_USER_ID, request);
 
             // Assert
             Assert.AreEqual(expectedAccount.Id, calledWith.Id);
@@ -189,11 +214,21 @@ namespace unit_tests.accounts
         #region DeleteAccount
         
         [TestMethod]
-        public void DeleteAccount_Expect_CallsDeleteAccount()
+        public async Task DeleteAccount_Expect_CallsDeleteAccount()
         {
             // Arrange
+            var accountsList = new ListResponse<AccountDto> (
+                new List<AccountDto>
+                {
+                    { new AccountDto() }
+                });
+
+            _mapper.Setup(x => x.Map<int>(It.IsAny<ApiResponseCodesEnum>()))
+                .Returns(200);
+            _accountService.Setup(x => x.CloseAccount(It.IsAny<AccountResourceIdentifier>()))
+                .ReturnsAsync(new ApiResponse<ListResponse<AccountDto>>(accountsList));
             // Act
-            var response = controller.DeleteAccount(TEST_ACCOUNT_ID);
+            var response = await controller.DeleteAccount(TEST_ACCOUNT_ID);
 
             // Assert
             _accountService.Verify(x => x.CloseAccount(It.IsAny<AccountResourceIdentifier>()), Times.Once);
@@ -203,11 +238,17 @@ namespace unit_tests.accounts
 
         #region GetAccount
         [TestMethod]
-        public void GetAccount_Expect_CallsDeleteAccount()
+        public async Task GetAccount_Expect_CallsGetAccount()
         {
             // Arrange
+            var account = new AccountDto();;
+
+            _mapper.Setup(x => x.Map<int>(It.IsAny<ApiResponseCodesEnum>()))
+                .Returns(200);
+            _accountService.Setup(x => x.GetAccount(It.IsAny<AccountResourceIdentifier>()))
+                .ReturnsAsync(new ApiResponse<AccountDto>(account));
             // Act
-            var response = controller.GetAccount(TEST_ACCOUNT_ID);
+            var response = await controller.GetAccount(TEST_ACCOUNT_ID);
 
             // Assert
             _accountService.Verify(x => x.GetAccount(It.IsAny<AccountResourceIdentifier>()), Times.Once);
@@ -217,11 +258,11 @@ namespace unit_tests.accounts
 
         #region GetChildren
         [TestMethod]
-        public void GetChildren_Expect_CallsDeleteAccount()
+        public async Task GetChildren_Expect_CallsDeleteAccount()
         {
             // Arrange
             // Act
-            var response = controller.GetChildren(TEST_ACCOUNT_ID);
+            var response = await controller.GetChildren(TEST_ACCOUNT_ID);
 
             // Assert
             _accountService.Verify(x => x.GetChildren(It.IsAny<AccountResourceIdentifier>()), Times.Once);
@@ -231,48 +272,54 @@ namespace unit_tests.accounts
 
         #region PostAccount
         [TestMethod]
-        public void PostAccount_ExpectCallsUpdateAccount()
+        public async Task PostAccount_ExpectCallsUpdateAccount()
         {
             // Arrange
             var request = GetTestPostAccountRequest();
+            var mappedAccount = new Account()
+            {
+                Id = TEST_ACCOUNT_ID.Id,
+                Name = request.Name,
+                Description = request.Description,
+                Closed = request.Closed
+                
+            };
             var expectedAccount = GetTestAccountToPost();
             expectedAccount.Id = TEST_ACCOUNT_ID.Id;
 
             Account calledWith = null;
 
-            _accountService.Setup(x => x.CreateAccount(It.IsAny<Account>()))
+            _mapper.Setup(x => x.Map<Account>(It.IsAny<PostAccountRequest>()))
+                .Returns(mappedAccount);
+            _accountService.Setup(x => x.UpdateAccount(It.IsAny<Account>()))
                 .Callback<Account>(account => calledWith = account);
             // Act
-            var response = controller.PostAccount(TEST_ACCOUNT_ID, request);
+            var response = await controller.PostAccount(TEST_ACCOUNT_ID, request);
 
             // Assert
             _accountService.Verify(x => x.UpdateAccount(It.IsAny<Account>()), Times.Once);
         }
 
         [TestMethod]
-        public void PostAccount_ExpectCallsUpdateAccountWithTheExpectedAccount()
+        public async Task PostAccount_ExpectCallsUpdateAccountWithTheExpectedAccount()
         {
             // Arrange
             var request = GetTestPostAccountRequest();
-            var expectedAccount = GetTestAccountToPost();
-            expectedAccount.Id = TEST_ACCOUNT_ID.Id;
+            var mappedAccount = GetTestAccountToPost();
+            mappedAccount.Id = TEST_ACCOUNT_ID.Id;
 
-            Account calledWith = null;
-
-            _accountService.Setup(x => x.CreateAccount(It.IsAny<Account>()))
-                .Callback<Account>(account => calledWith = account);
+            _mapper.Setup(x => x.Map<Account>(It.IsAny<PostAccountRequest>()))
+                .Returns(mappedAccount);
+            _accountService.Setup(x => x.UpdateAccount(mappedAccount))
+                .Verifiable();
 
             // Act
-            var response = controller.PostAccount(TEST_ACCOUNT_ID, request);
+            var response = await controller.PostAccount(TEST_ACCOUNT_ID, request);
+
+            _accountService.Verify(x => x.UpdateAccount(mappedAccount), Times.Once);
 
             // Assert
-            Assert.AreEqual(expectedAccount.Id, calledWith.Id);
-            Assert.AreEqual(expectedAccount.User_Id, calledWith.User_Id);
-            Assert.AreEqual(expectedAccount.Name, calledWith.Name);
-            Assert.AreEqual(expectedAccount.Description, calledWith.Description);
-            Assert.AreEqual(expectedAccount.Currency_Code, calledWith.Currency_Code);
-            Assert.AreEqual(expectedAccount.Type, calledWith.Type);
-            Assert.AreEqual(expectedAccount.Parent_Account_Id, calledWith.Parent_Account_Id);
+            Assert.IsInstanceOfType(response, typeof(ObjectResult));
         }
         #endregion PostAccount
 
