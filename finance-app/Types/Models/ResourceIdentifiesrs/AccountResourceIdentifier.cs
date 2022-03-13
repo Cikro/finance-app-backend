@@ -6,5 +6,11 @@ namespace finance_app.Types.Models.ResourceIdentifiers {
 
         [FromRoute(Name ="accountId")]
         public uint Id { get; set; }
+
+        public AccountResourceIdentifier() {}
+        public AccountResourceIdentifier(uint id) 
+        {
+            Id = id;
+        }
     }
 }

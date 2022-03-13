@@ -9,6 +9,7 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
+using System;
 
 namespace finance_app.Types.Services.V1
 {
@@ -17,18 +18,16 @@ namespace finance_app.Types.Services.V1
         private readonly IAccountRepository _accountServiceDbo;
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
-        private readonly IUserAuthorizationService _userAuthorizationService;
         private readonly IHttpContextAccessor _context;
         
 
         public AccountService(IMapper mapper, IAccountRepository accountServiceDbo,
-                             IAuthorizationService authorizationService, IUserAuthorizationService userAuthorizationService,
+                             IAuthorizationService authorizationService,
                              IHttpContextAccessor context) {
 
             _accountServiceDbo = accountServiceDbo;
             _mapper = mapper;
             _authorizationService = authorizationService;
-            _userAuthorizationService = userAuthorizationService;
             _context = context;
         }
 
@@ -49,11 +48,12 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.GetAccount"/>
         public async Task<ApiResponse<AccountDto>> GetAccount(AccountResourceIdentifier accountId) {
+            if (accountId == null) { throw new ArgumentNullException(nameof(AccountResourceIdentifier)); }
             var account = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
 
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
-                return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorizaed");
+                return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
             }
 
             return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(account));
@@ -160,16 +160,15 @@ namespace finance_app.Types.Services.V1
                 return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.ResourceNotFound, message);
             };
 
+            if (accountToClose.Closed == true) {
+                message = $"The Account with id {accountToClose.Id} is already closed.";
+                return new ApiResponse<ListResponse<AccountDto>>(new ListResponse<AccountDto>(new List<AccountDto> {{_mapper.Map<AccountDto>(accountToClose)}}), ApiResponseCodesEnum.InternalError, message);
+            }
+
             var children = await GetChildren(accountId);
             if (children.Data.ExcludedItems > 0) {
                 message = $"Error closing account. Account with id '{accountId.Id}' has cildren that you don't have access to.";
                 return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.Unauthorized, message);
-            }
-            
-
-            if (accountToClose.Closed == true) {
-                message = $"The Account with id {accountToClose.Id} is already closed.";
-                return new ApiResponse<ListResponse<AccountDto>>(new ListResponse<AccountDto>(new List<AccountDto> {{_mapper.Map<AccountDto>(accountToClose)}}), ApiResponseCodesEnum.InternalError, message);
             }
 
             var accountsClosed = await _accountServiceDbo.CloseAccount(accountId.Id);
