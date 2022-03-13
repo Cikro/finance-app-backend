@@ -70,8 +70,9 @@ namespace finance_app.Types.Services.V1
         /// <inheritdoc cref="IAccountService.GetPaginatedAccounts"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)
         {
-            if (pageInfo.PageNumber <= 0) { return null; }
-            if (pageInfo.ItemsPerPage < 0) { return null; }
+            if (userId== null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
+            if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.BadRequest, "Invlaid Page Number."); }
+            if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.BadRequest, "Invlaid Items Per Page.");; }
 
             uint offset = (uint)pageInfo.PageNumber - 1;
             

@@ -353,18 +353,65 @@ namespace unit_tests.Accounts
 
         #region GetPaginatedAccounts
 
-        [TestMethod]
-        [TestProperty ("GetPaginatedAccounts","")]
-        public async Task GetPaginatedAccounts_InvalidPageNumber_Expect_BadRequest()
-        {
-            Assert.Fail();
-        }
 
         [TestMethod]
         [TestProperty ("GetPaginatedAccounts","")]
-        public async Task GetPaginatedAccounts_InvalidItemsPerPage_Expect_Success_With_DefaultItemsPerPage()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task GetPaginatedAccounts_NullUserResourceIdentifier_Expect_CallsRepositoryWithNull()
         {
-            Assert.Fail();
+            // Arrange
+            UserResourceIdentifier userId = null;
+            var pageInfo = new PaginationInfo {
+                ItemsPerPage = 5,
+                PageNumber = 1
+            };
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+        }
+
+        [DataTestMethod]
+        [TestProperty ("GetPaginatedAccounts","")]
+        [DataRow (null)]
+        [DataRow (-1)]
+        [DataRow (0)]
+        public async Task GetPaginatedAccounts_InvalidPageNumber_Expect_BadRequest(int? pageNumber)
+        {
+            var userId = new UserResourceIdentifier(77);
+            var pageInfo = new PaginationInfo {
+                ItemsPerPage = 5,
+                PageNumber = pageNumber
+            };
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+
+            // Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.BadRequest, response.ResponseCode);
+            Assert.IsNull(response.Data);
+        }
+
+        [DataTestMethod]
+        [TestProperty ("GetPaginatedAccounts","")]
+        [DataRow (null)]
+        [DataRow (-1)]
+        [DataRow (0)]
+        public async Task GetPaginatedAccounts_InvalidItemsPerPage_Expect_Success_With_DefaultItemsPerPage(int? itemsPerPage)
+        {
+            var userId = new UserResourceIdentifier(77);
+            var pageInfo = new PaginationInfo {
+                ItemsPerPage = itemsPerPage,
+                PageNumber = 1
+            };
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+
+            // Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.BadRequest, response.ResponseCode);
+            Assert.IsNull(response.Data);
         }
 
         [TestMethod]
@@ -398,13 +445,6 @@ namespace unit_tests.Accounts
         [TestMethod]
         [TestProperty ("GetPaginatedAccounts","")]
         public async Task GetPaginatedAccounts_Expect_CallsRepositoryWithExpectedData()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        [TestProperty ("GetPaginatedAccounts","")]
-        public async Task GetPaginatedAccounts_NullUserResourceIdentifier_Expect_CallsRepositoryWithNull()
         {
             Assert.Fail();
         }
