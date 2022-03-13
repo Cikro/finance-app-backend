@@ -184,44 +184,170 @@ namespace unit_tests.Accounts
         #region GetAccounts
         [TestMethod]
         [TestProperty ("GetAccounts","")]
-        public async Task GetAccounts_RepositoryThrows_Expect_ThrowsException()
+        [ExpectedException (typeof(Exception))]
+        public async Task GetAccounts_GetAccountsThrows_Expect_ThrowsException()
         {
-            Assert.Fail();
+            // Arrange
+            var userId = new UserResourceIdentifier(77);
+            _accountServiceDbo.Setup(x => x.GetAllByUserId(userId.Id))
+                .ThrowsAsync(new Exception("GetAllByUserId Threw an Exception"))
+                .Verifiable();
+            
+            // Act
+            var response = await accountService.GetAccounts(userId);
+
         }
 
         [TestMethod]
         [TestProperty ("GetAccounts","")]
         public async Task GetAccounts_UnauthourizedToAccess_Expect_FilteredAccounts()
         {
-            Assert.Fail();
+            // Arrange
+            var userId = new UserResourceIdentifier(77);
+            var policy = "CanAccessResourcePolicy";
+
+            var accounts = new List<Account>
+            {
+                {
+                    new Account() {
+                        Id = 1337,
+                        User_Id = 15, 
+                        Name = "TestAccount",
+                        Balance = 1337,
+                        Closed = false,
+                        Currency_Code = "CAD",
+                        Description = "A test account",
+                        Type = AccountTypeEnum.Asset,
+                    }
+                },
+                {
+                    new Account() {
+                        Id = 1338,
+                        User_Id = 16, 
+                        Name = "TestAccount",
+                        Balance = 1337,
+                        Closed = false,
+                        Currency_Code = "CAD",
+                        Description = "A test account",
+                        Type = AccountTypeEnum.Asset,
+                    }
+                },
+                {
+                    new Account() {
+                        Id = 1338,
+                        User_Id = 16, 
+                        Name = "TestAccount",
+                        Balance = 1337,
+                        Closed = false,
+                        Currency_Code = "CAD",
+                        Description = "A test account",
+                        Type = AccountTypeEnum.Asset,
+                    }
+                }
+
+            };
+
+            var accountDtos = new List<AccountDto>();
+
+            _accountServiceDbo.Setup(x => x.GetAllByUserId(userId.Id))
+                .ReturnsAsync(accounts)
+                .Verifiable();
+            _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[0], policy))
+                .ReturnsAsync(AuthorizationResult.Failed());
+            _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[1], policy))
+                .ReturnsAsync(AuthorizationResult.Success());
+                _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[2], policy))
+                .ReturnsAsync(AuthorizationResult.Success());
+            _mapper.Setup(x => x.Map<List<AccountDto>>(It.IsAny<IEnumerable<Account>>()))
+                .Returns(accountDtos).Verifiable();
+            
+            // Act
+            var response = await accountService.GetAccounts(userId);
+
+            // Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.Success, response.ResponseCode); 
+            Assert.AreEqual(1, response.Data.ExcludedItems);
+            Assert.AreEqual(accountDtos, response.Data.Items);
         }
 
         [TestMethod]
         [TestProperty ("GetAccounts","")]
         public async Task GetAccounts_Success_Expect_SuccessWithAccounts()
         {
-            Assert.Fail();
+            // Arrange
+            var userId = new UserResourceIdentifier(77);
+            var policy = "CanAccessResourcePolicy";
+
+            var accounts = new List<Account>
+            {
+                {
+                    new Account() {
+                        Id = 1337,
+                        User_Id = 15, 
+                        Name = "TestAccount",
+                        Balance = 1337,
+                        Closed = false,
+                        Currency_Code = "CAD",
+                        Description = "A test account",
+                        Type = AccountTypeEnum.Asset,
+                    }
+                }
+            };
+
+            var accountDtos = new List<AccountDto>();
+
+            _accountServiceDbo.Setup(x => x.GetAllByUserId(userId.Id))
+                .ReturnsAsync(accounts).Verifiable();
+            _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[0], policy))
+                .ReturnsAsync(AuthorizationResult.Success());
+            _mapper.Setup(x => x.Map<List<AccountDto>>(It.IsAny<IEnumerable<Account>>()))
+                .Returns(accountDtos).Verifiable();
+            
+            // Act
+            var response = await accountService.GetAccounts(userId);
+
+            // Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.Success, response.ResponseCode); 
+            Assert.AreEqual(0, response.Data.ExcludedItems);
+            Assert.AreEqual(accountDtos, response.Data.Items);
         }
 
         [TestMethod]
         [TestProperty ("GetAccounts","")]
-        public async Task GetAccounts_RepositoryReturnsNull_Expect_SuccessWithNullAccounts()
+        public async Task GetAccounts_GetAccountsReturnsEmptyList_Expect_SuccessWithNullAccounts()
         {
-            Assert.Fail();
+            // Arrange
+            var userId = new UserResourceIdentifier(77);
+            var accounts = new List<Account>();
+
+            var accountDtos = new List<AccountDto>();
+
+            _accountServiceDbo.Setup(x => x.GetAllByUserId(userId.Id))
+                .ReturnsAsync(accounts).Verifiable();
+            _mapper.Setup(x => x.Map<List<AccountDto>>(It.IsAny<IEnumerable<Account>>()))
+                .Returns(accountDtos).Verifiable();
+            
+            // Act
+            var response = await accountService.GetAccounts(userId);
+
+            // Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.Success, response.ResponseCode); 
+            Assert.AreEqual(0, response.Data.ExcludedItems);
+            Assert.AreEqual(accountDtos, response.Data.Items);
         }
 
         [TestMethod]
         [TestProperty ("GetAccounts","")]
-        public async Task GetAccounts_Expect_CallsRepositoryWithExpectedData()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        [TestProperty ("GetAccounts","")]
+        [ExpectedException (typeof(ArgumentNullException))]
         public async Task GetAccounts_NullUserResourceIdentifier_Expect_CallsRepositoryWithNull()
         {
-            Assert.Fail();
+            // Arrange
+            UserResourceIdentifier userId = null;
+            // Act
+            var response = await accountService.GetAccounts(userId);
         }
         #endregion
 

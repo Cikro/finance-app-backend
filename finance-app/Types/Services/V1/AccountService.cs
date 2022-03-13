@@ -33,6 +33,7 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.GetAccounts"/>
     public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId) {
+            if (userId == null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
 
             var accessibleAccounts = await FilterAccessibleAccounts(accounts);
@@ -201,7 +202,7 @@ namespace finance_app.Types.Services.V1
 
         private async Task<IEnumerable<Account>> FilterAccessibleAccounts(IEnumerable<Account> accounts) {
             return (
-                await Task.WhenAll(accounts.Select(async (account) => {
+                await Task.WhenAll(accounts?.Select(async (account) => {
                     return new AccountsWithAccess {
                         Account = account,
                         HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded
