@@ -62,18 +62,9 @@ namespace finance_app.Types.Services.V1
         /// <inheritdoc cref="IAccountService.GetChildren"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId) {
             // TODO: Consider fetching children of children in the future.
-            var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
-
-            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
-
-            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
-                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
-            };
-
-            return new ApiResponse<ListResponse<AccountDto>>(ret);
+            return await GetChildren(accountId.Id);
 
         }
-
         
         /// <inheritdoc cref="IAccountService.GetPaginatedAccounts"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)
@@ -109,6 +100,7 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.UpdateAccount"/>
         public async Task<ApiResponse<AccountDto>> UpdateAccount(Account account) {
+
             var existingAccount = await _accountServiceDbo.GetAccountByAccountId(account.Id);
             if (existingAccount == null) {    
                 var message = $"Error updating account. Account with id '{account.Id}' does not exist.";
@@ -127,13 +119,17 @@ namespace finance_app.Types.Services.V1
 
                 // If you are trying to close an account, all of it's children need to be closed
                 if (account.Closed == true) {
-                    var children = await _accountServiceDbo.GetChildrenByAccountId((uint) existingAccount.Id);
+
+                    var children = await GetChildren(account.Id);
+                    if (children.Data.ExcludedItems > 0) {
+                        var message = $"Error updating account. Account with id '{account.Id}' has cildren that you don't have access to.";
+                        return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, message);
+                    }
 
                     // If any children accounts are open
-                    if (children.Any(child => child.Closed != true)) {
-                        var message = $"Error updating account. cannot close an account when it has child accounts that are not closed.";
+                    if (children?.Data?.Items.Any(child => child.Closed == true) == true) {
+                        var message = $"Error updating account. Cannot close an account when it has child accounts that are not closed.";
                         return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, message);
-
                     }
 
                 }
@@ -190,14 +186,21 @@ namespace finance_app.Types.Services.V1
  
         }
 
+        private async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(uint accountId) {
+            // TODO: Consider fetching children of children in the future.
+            var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId);
+
+            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
+
+            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
+                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
+            };
+
+            return new ApiResponse<ListResponse<AccountDto>>(ret);
+
+        }
+
         private async Task<IEnumerable<Account>> FilterAccessibleAccounts(IEnumerable<Account> accounts) {
-            var qq = await Task.WhenAll(accounts.Select(async (account) => {
-                    return new AccountsWithAccess {
-                        Account = account,
-                        HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded
-                    };
-                    })
-                );
             return (
                 await Task.WhenAll(accounts.Select(async (account) => {
                     return new AccountsWithAccess {
