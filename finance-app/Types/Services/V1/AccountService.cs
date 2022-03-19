@@ -80,7 +80,7 @@ namespace finance_app.Types.Services.V1
             var accessibleAccounts = await FilterAccessibleAccounts(accounts);
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
-                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
+                ExcludedItems = (accounts?.Count() - accessibleAccounts?.Count()) ?? 0
             };
 
             return new ApiResponse<ListResponse<AccountDto>>(ret);
@@ -202,6 +202,7 @@ namespace finance_app.Types.Services.V1
         }
 
         private async Task<IEnumerable<Account>> FilterAccessibleAccounts(IEnumerable<Account> accounts) {
+            if (accounts == null) { return null; }
             return (
                 await Task.WhenAll(accounts?.Select(async (account) => {
                     return new AccountsWithAccess {
@@ -210,8 +211,8 @@ namespace finance_app.Types.Services.V1
                     };
                     })
                 ))
-                .Where(account => account.HasAccess == true)
-                .Select(a => a.Account);
+                ?.Where(account => account.HasAccess == true)
+                ?.Select(a => a.Account);
         }
     
     }

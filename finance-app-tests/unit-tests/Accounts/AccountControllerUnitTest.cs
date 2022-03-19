@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using finance_app.Types.DataContracts.V1.Responses;
 using System.Collections.Generic;
 
-namespace unit_tests.accounts
+namespace unit_tests.Accounts
 {
     [TestClass]
     public class AccountControllerUnitTest

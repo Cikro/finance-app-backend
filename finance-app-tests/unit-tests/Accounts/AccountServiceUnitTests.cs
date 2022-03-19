@@ -416,37 +416,131 @@ namespace unit_tests.Accounts
 
         [TestMethod]
         [TestProperty ("GetPaginatedAccounts","")]
-        public async Task GetPaginatedAccounts_RepositoryThrows_Expect_ThrowsException()
+        [ExpectedException(typeof(Exception))]
+        public async Task GetPaginatedAccounts_GetPaginatedThrows_Expect_ThrowsException()
         {
-            Assert.Fail();
+            var userId = new UserResourceIdentifier(77);
+            var pageInfo = new PaginationInfo {
+                ItemsPerPage = 3,
+                PageNumber = 4
+            };
+
+            _accountServiceDbo.Setup(x => 
+                x.GetPaginatedByUserId(userId.Id, (uint) pageInfo.ItemsPerPage, (uint) 3))
+                .ThrowsAsync(new Exception("Get Paginated By UserId threw exception"));
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+
         }
 
         [TestMethod]
         [TestProperty ("GetPaginatedAccounts","")]
         public async Task GetPaginatedAccounts_UnauthourizedToAccessAccounts_Expect_FilteredAccounts()
         {
-            Assert.Fail();
+            var userId = new UserResourceIdentifier(77);
+            var pageInfo = new PaginationInfo {
+                ItemsPerPage = 3,
+                PageNumber = 4
+            };
+            
+            var accounts = new List<Account> { new Account(), new Account() };
+            var accountDtos = new List<AccountDto> { new AccountDto() };
+            var accessibleAccounts = new List<Account> { accounts[1] };
+
+            _accountServiceDbo.Setup(x => 
+                x.GetPaginatedByUserId(userId.Id, (uint) pageInfo.ItemsPerPage, (uint) 3))
+                .ReturnsAsync(accounts).Verifiable();
+
+            var policy = "CanAccessResourcePolicy";
+            _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[0], policy))
+                .ReturnsAsync(AuthorizationResult.Failed()).Verifiable();
+            _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[1], policy))
+                .ReturnsAsync(AuthorizationResult.Success()).Verifiable();
+
+            _mapper.Setup(x => x.Map<List<AccountDto>>(It.IsAny<IEnumerable<Account>>()))
+                .Returns<IEnumerable<Account>>(x => x.ToList()[0] == accounts[1] ? accountDtos : null).Verifiable();
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+
+            //Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.Success, response.ResponseCode);
+            Assert.IsNotNull(response.Data);
+            Assert.AreEqual(1, response.Data.ExcludedItems);
+            Assert.AreEqual(1, response.Data.Length);
+            
+
         }
 
         [TestMethod]
         [TestProperty ("GetPaginatedAccounts","")]
         public async Task GetPaginatedAccounts_Success_Expect_SuccessWithAccounts()
         {
-            Assert.Fail();
+            var userId = new UserResourceIdentifier(77);
+            var pageInfo = new PaginationInfo
+            {
+                ItemsPerPage = 3,
+                PageNumber = 4
+            };
+
+            var accounts = new List<Account> { new Account() };
+            var accountDtos = new List<AccountDto> { new AccountDto() };
+            var accessibleAccounts = new List<Account> { accounts[0] };
+
+            _accountServiceDbo.Setup(x =>
+                x.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, (uint)3))
+                .ReturnsAsync(accounts).Verifiable();
+
+            var policy = "CanAccessResourcePolicy";
+            _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[0], policy))
+                .ReturnsAsync(AuthorizationResult.Success()).Verifiable();
+
+            _mapper.Setup(x => x.Map<List<AccountDto>>(It.IsAny<IEnumerable<Account>>()))
+                .Returns<IEnumerable<Account>>(x => x.ToList()[0] == accounts[0] ? accountDtos : null).Verifiable();
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+
+            //Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.Success, response.ResponseCode);
+            Assert.IsNotNull(response.Data);
+            Assert.AreEqual(0, response.Data.ExcludedItems);
+            Assert.AreEqual(1, response.Data.Length);
         }
 
         [TestMethod]
         [TestProperty ("GetPaginatedAccounts","")]
         public async Task GetPaginatedAccounts_RepositoryReturnsNull_Expect_SuccessWithNullAccounts()
         {
-            Assert.Fail();
-        }
+            var userId = new UserResourceIdentifier(77);
+            var pageInfo = new PaginationInfo
+            {
+                ItemsPerPage = 3,
+                PageNumber = 4
+            };
 
-        [TestMethod]
-        [TestProperty ("GetPaginatedAccounts","")]
-        public async Task GetPaginatedAccounts_Expect_CallsRepositoryWithExpectedData()
-        {
-            Assert.Fail();
+            var accountDtos = new List<AccountDto> { new AccountDto() };
+
+            _accountServiceDbo.Setup(x =>
+                x.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, (uint)3))
+                .ReturnsAsync((List<Account>) null).Verifiable();
+
+
+            _mapper.Setup(x => x.Map<List<AccountDto>>((IEnumerable<Account>) null))
+                .Returns((List<AccountDto>) null).Verifiable();
+
+            // Act
+            var response = await accountService.GetPaginatedAccounts(userId, pageInfo);
+
+            //Assert
+            Assert.IsInstanceOfType(response, typeof(ApiResponse<ListResponse<AccountDto>>));
+            Assert.AreEqual(ApiResponseCodesEnum.Success, response.ResponseCode);
+            Assert.IsNull(response.Data.Items);
+
+            _authorizationService.Verify(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<List<Account>>(), It.IsAny<string>()), Times.Never);
         }
         #endregion
 

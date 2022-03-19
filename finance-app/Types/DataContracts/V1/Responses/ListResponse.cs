@@ -10,10 +10,10 @@ namespace finance_app.Types.DataContracts.V1.Responses
     {
         public ListResponse(IList<T> items) {
             Items = items;
-            Length = items.Count;
+            Length = items?.Count ?? 0;
         }
 
-        public int? Length { get; set; }
+        public int Length { get; set; }
         public int ExcludedItems { get; set; } = 0;
         public IEnumerable<T> Items { get; set; } 
     }
