@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>finance-app</name>
+    </assembly>
+    <members>
+        <member name="M:finance_app.Controllers.V1.AccountsController.Get(finance_app.Types.Models.UserResourceIdentifier,finance_app.Types.DataContracts.V1.Requests.Accounts.GetAccountsRequest)">
+            <summary>
+            Gets a list of financial accounts.
+            </summary>
+            <param name="userId">The id of the User who's accounts you are fetching</param>
+            <param name="request">A GetAccountsRequest</param>
+            <remarks> 
+            Sample Request:
+            
+                GET /api/Users/{userId}/Accounts 
+                {
+                    "pageNumber": 1,
+                    "itemsPerPage": 5
+                }
+            
+            
+            
+            </remarks>
+            <returns>A List of accounts, and the number of items in the list</returns>
+        </member>
+        <member name="M:finance_app.Controllers.V1.AccountsController.Post(finance_app.Types.Models.UserResourceIdentifier,finance_app.Types.DataContracts.V1.Requests.Accounts.CreateAccountRequest)">
+            <summary>
+            Creates an account for a user.
+            </summary>
+            <param name="userId">The id of the User you are creating an account for.</param>
+            <param name="request">A CreateAccountRequest</param>
+            <remarks> 
+            Sample Request:
+            
+                POST /api/Users/{userId}/Accounts 
+                {
+                    "Account": {
+                        "Name": "Sample Account Name"
+                        "Description": "A Sample Account for the Sample Request"
+                        "Balance": 
+                        "Type": "Asset""
+                        "CurrencyCode": "Ca"
+                        "ParentAccountId": null
+                }
+            Valid Account Types:
+                "Asset"
+                "Liability"
+                "Expense"
+                "Equity"
+            
+            
+            </remarks>
+            <returns>The account that was created</returns>
+        </member>
+        <member name="M:finance_app.Controllers.V1.AccountsController.Delete(finance_app.Types.Models.AccountResourceIdentifier)">
+            <summary>
+            Closes an Account and all of it's children.
+            </summary>
+            <param name="accountId">An AccountResourceIdentifier</param>
+            <returns>A list of accounts that were closed.</returns>
+        </member>
+        <member name="M:finance_app.Controllers.V1.AccountsController.GetResource(finance_app.Types.Models.AccountResourceIdentifier)">
+            <summary>
+            Gets one Account
+            </summary>
+            <param name="accountId">An AccountResourceIdentifier</param>
+            <returns>A list of accounts that were closed.</returns>
+        </member>
+        <member name="M:finance_app.Controllers.V1.AccountsController.GetChildren(finance_app.Types.Models.AccountResourceIdentifier)">
+            <summary>
+            Gets all children on an account
+            </summary>
+            <param name="accountId">An AccountResourceIdentifier</param>
+            <returns>A list of accounts that were closed.</returns>
+        </member>
+        <member name="M:finance_app.Controllers.V1.AccountsController.PostResource(finance_app.Types.Models.AccountResourceIdentifier,finance_app.Types.DataContracts.V1.Requests.Accounts.PostAccountRequest)">
+            <summary>
+            Updates an Account with the account provided.
+            </summary>
+            <param name="accountId">An AccountResourceIdentifier</param>
+            <param name="request">A PostAccountRequest</param>
+            <returns>A list of accounts that were closed.</returns>
+        </member>
+        <member name="P:finance_app.Types.DataContracts.V1.Responses.ApiResponse`1.StatusCode">
+            <summary>
+            The Http Status Code of the request
+            </summary>
+        </member>
+        <member name="P:finance_app.Types.DataContracts.V1.Responses.ApiResponse`1.ResponseCode">
+            <summary>
+            A number indicating a specific outocme or problem with the response
+            </summary>
+        </member>
+        <member name="P:finance_app.Types.DataContracts.V1.Responses.ApiResponse`1.ResponseMessage">
+            <summary>
+            A human readable message explaining the response code to the user.
+            </summary>
+        </member>
+        <member name="P:finance_app.Types.DataContracts.V1.Responses.ApiResponse`1.Data">
+            <summary>
+            The data in the response
+            </summary>
+            <value></value>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.GetAccountByAccountId(System.UInt32)">
+            <summary>
+            Fetches an account by the accountId
+            </summary>
+            <param name="accountId">The Id of the account</param>
+            <returns></returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.GetAccountByAccountName(System.UInt32,System.String)">
+            <summary>
+            Fetches an account by name from the given user.
+            </summary>
+            <param name="userId">the user that owns the account</param>
+            <param name="accountName">The name of the account</param>
+            <returns></returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.GetAllByUserId(System.UInt32)">
+            <summary>
+            Fetches all Accounts that the user has access to 
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.GetPaginatedByUserId(System.UInt32,System.UInt32,System.UInt32)">
+            <summary>
+            Fetches pages of Accounts that the user has access to 
+            </summary>
+            <param name="userId"></param>
+            <param name="pageSize">The number of items for the page</param>
+            <param name="offset">The page offset</param>
+            <returns>A list of accounts the user has access to</returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.GetChildrenByAccountId(System.UInt32)">
+            <summary>
+            Fetches a list of all children on a an account
+            </summary>
+            <param name="accountId"></param>
+            <returns>A list of an account's children</returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.CreateAccount(finance_app.Types.Repositories.Account.Account)">
+            <summary>
+            Adds a new account to the database.
+            </summary>
+            <param name="account">The account you want to add to the database</param>
+            <returns>The created Account</returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.CloseAccount(System.UInt32)">
+            <summary>
+            Closes an account, and all of it's children.
+            </summary>
+            <param name="accountId">The Account you want to close</param>
+            <returns>A list of the closed accounts</returns>
+        </member>
+        <member name="M:finance_app.Types.Repositories.Account.IAccountRepository.UpdateAccount(finance_app.Types.Repositories.Account.Account)">
+            <summary>
+            Updates an account with all values provided by the account
+            </summary>
+            <param name="account">The Account and its updated values</param>
+            <returns>The updated account</returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.GetAccounts(finance_app.Types.Models.UserResourceIdentifier)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetAccounts(finance_app.Types.Models.UserResourceIdentifier)"/>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.GetAccount(finance_app.Types.Models.AccountResourceIdentifier)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetAccount(finance_app.Types.Models.AccountResourceIdentifier)"/>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.GetChildren(finance_app.Types.Models.AccountResourceIdentifier)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetChildren(finance_app.Types.Models.AccountResourceIdentifier)"/>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.GetPaginatedAccounts(finance_app.Types.Models.UserResourceIdentifier,finance_app.Types.DataContracts.V1.Dtos.PaginationInfo)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetPaginatedAccounts(finance_app.Types.Models.UserResourceIdentifier,finance_app.Types.DataContracts.V1.Dtos.PaginationInfo)"/>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.CreateAccount(finance_app.Types.Repositories.Account.Account)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.CreateAccount(finance_app.Types.Repositories.Account.Account)"/>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.UpdateAccount(finance_app.Types.Repositories.Account.Account)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.UpdateAccount(finance_app.Types.Repositories.Account.Account)"/>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.AccountService.CloseAccount(finance_app.Types.Models.AccountResourceIdentifier)">
+            <inheritdoc cref="M:finance_app.Types.Services.V1.Interfaces.IAccountService.CloseAccount(finance_app.Types.Models.AccountResourceIdentifier)"/>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetAccounts(finance_app.Types.Models.UserResourceIdentifier)" -->
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetAccount(finance_app.Types.Models.AccountResourceIdentifier)">
+            <summary>
+            Gets an Account
+            </summary>
+            <param name="accountId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetChildren(finance_app.Types.Models.AccountResourceIdentifier)">
+            <summary>
+            Gets all Children on an account
+            </summary>
+            <param name="accountId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IAccountService.GetPaginatedAccounts(finance_app.Types.Models.UserResourceIdentifier,finance_app.Types.DataContracts.V1.Dtos.PaginationInfo)">
+            <summary>
+            Gets a list of paginated accounts that a user has access to 
+            </summary>
+            <param name="userId">An Identifier for the user who's accounts you are fetching</param>
+            <param name="pageInfo">An object represent information for paging</param>
+            <returns> A list of AccountDtos</returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IAccountService.CreateAccount(finance_app.Types.Repositories.Account.Account)">
+            <summary>
+            Creates an account in the database
+            </summary>
+            <param name="account">A popualted account object</param>
+            <returns> An AccountDto of the created account</returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IAccountService.UpdateAccount(finance_app.Types.Repositories.Account.Account)">
+            <summary>
+            Updates an account with values from an existing account
+            </summary>
+            <param name="account">A popualted account object</param>
+            <returns> An AccountDto of the updated account</returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IAccountService.CloseAccount(finance_app.Types.Models.AccountResourceIdentifier)">
+            <summary>
+            Closes an account that has the provided Id.
+            </summary>
+            <param name="accountId">An Identifier for the account you are closing</param>
+            <returns>AccountDtos of the closed accounts</returns>
+        </member>
+        <member name="M:finance_app.Types.Services.V1.Interfaces.IUserService.CanAccessUser(System.UInt32,System.UInt32)">
+            <summary>
+            Checks if a user can access data from the provided userId
+            </summary>
+            <param name="userId"></param>
+            <param name="userIdToAccess"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CarfaxCanada.Dealer.Api.ContractExamples.GetAccountsRequestExample">
+            <summary>Provider for swagger examples used with GetAccountsRequest</summary>
+            <remarks>See documentation for Swagger.AspNetCore.Filters, Manual Annotations, for details to use this example.</remarks>
+        </member>
+        <member name="M:CarfaxCanada.Dealer.Api.ContractExamples.GetAccountsRequestExample.GetExamples">
+            <summary>Returns the example data for the GetAccountsRequest structure</summary>
+            <returns>GetAccountsRequest</returns>
+        </member>
+        <member name="T:CarfaxCanada.Dealer.Api.ContractExamples.CreateAccountRequestExample">
+            <summary>Provider for swagger examples used with CreateAccountRequest</summary>
+            <remarks>See documentation for Swagger.AspNetCore.Filters, Manual Annotations, for details to use this example.</remarks>
+        </member>
+        <member name="M:CarfaxCanada.Dealer.Api.ContractExamples.CreateAccountRequestExample.GetExamples">
+            <summary>Returns the example data for the CreateAccountRequest structure</summary>
+            <returns>CreateAccountRequest</returns>
+        </member>
+        <member name="T:CarfaxCanada.Dealer.Api.ContractExamples.PostAccountRequestExample">
+            <summary>Provider for swagger examples used with CreateAccountRequest</summary>
+            <remarks>See documentation for Swagger.AspNetCore.Filters, Manual Annotations, for details to use this example.</remarks>
+        </member>
+        <member name="M:CarfaxCanada.Dealer.Api.ContractExamples.PostAccountRequestExample.GetExamples">
+            <summary>Returns the example data for the PostAccountRequest structure</summary>
+            <returns>PostAccountRequest</returns>
+        </member>
+    </members>
+</doc>

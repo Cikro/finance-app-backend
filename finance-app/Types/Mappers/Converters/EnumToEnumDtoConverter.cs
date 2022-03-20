@@ -14,7 +14,7 @@ namespace finance_app.Types.Mappers.Converters {
         {
             // TODO: How does this behave When SourceEnum === DestinationEnum?
             Enum toDto;
-            if (source != null){
+            if (source != null) {
                 if (typeof(SourceEnum) == typeof(DestEnum)) {
                     toDto = source;
                 } else  {
@@ -24,6 +24,17 @@ namespace finance_app.Types.Mappers.Converters {
                 return new EnumDto<DestEnum>((DestEnum) toDto);
             }
             return null;
+        }
+    }    
+
+    public class EnumDtoToEnumConverter<SourceEnum, DestEnum> :
+        ITypeConverter<EnumDto<SourceEnum>, DestEnum>
+        where SourceEnum : Enum
+    {
+        public DestEnum Convert(EnumDto<SourceEnum> source, DestEnum destination, ResolutionContext context)
+        {            
+            var toEnum = Enum.IsDefined(typeof(SourceEnum), source.Value) ? source.Value : default;  
+            return context.Mapper.Map<DestEnum>(toEnum);
         }
     }    
 }

@@ -13,16 +13,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
-using AutoMapper;
 
 using finance_app.Types.Validators;
-using finance_app.Types.Validators.RequestValidators.Accounts;
+using finance_app.Types.Validators.Accounts;
 using finance_app.Middleware;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1;
 using finance_app.Types.Mappers.Profiles;
-
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.OpenApi.Models;
+using finance_app.Types.Services.V1.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using finance_app.Types.Configurations;
 
 namespace finance_app
 {
@@ -46,14 +49,20 @@ namespace finance_app
             services.AddMvc(setup => {
 
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
-                setup.Filters.Add(typeof(UserAuthorizationFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
+                if (_env.EnvironmentName == Environments.Development) {
+                    setup.Filters.Add(typeof(LocalAuthenticaionFilter));
+                }
 
             })
             .AddFluentValidation( fv =>
             {
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestsValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<UserResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<PostAccountRequestValidator>();
             });
 
 
@@ -77,18 +86,52 @@ namespace finance_app
             services.AddTransient<PaginationInfoValidator>();
             #endregion Validators
 
-            services.AddAutoMapper(typeof(AccountProfile));
+            services.AddAutoMapper(
+                typeof(AccountProfile),
+                typeof(StatusCodeProfile)
+            );
 
 
             services.AddControllersWithViews(); 
 
+            services.AddAuthentication()
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Unauthorized/";
+                options.AccessDeniedPath = "/Account/Forbidden/";
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanAccessResourcePolicy", policy =>
+                    policy.Requirements.Add(new UserOwnsResource()));
+            });
+
             #region Swagger
+            services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
             services.AddSwaggerGen( c => {
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+                c.ExampleFilters();
+
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>(); // Adds "(Auth)" to the summary so that you can see which endpoints have Authorization
+                // or use the generic method, e.g. c.OperationFilter<AppendAuthorizeToSummaryOperationFilter<MyCustomAttribute>>();
+
+                // add Security information to each operation for OAuth2
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
+                // or use the generic method, e.g. c.OperationFilter<SecurityRequirementsOperationFilter<MyCustomAttribute>>();
+
+                // if you're using the SecurityRequirementsOperationFilter, you also need to tell Swashbuckle you're using OAuth2
+                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
             });
             #endregion Swagger
 
@@ -107,13 +150,16 @@ namespace finance_app
             });
 
 
+            #region ConfigurationOptions
+            services.Configure<LocalUserOptions>(_configuration.GetSection(LocalUserOptions.LocalUser));
+            #endregion
+
             #region Services
-            services.AddTransient<IUserService, UserService>();
+            services.AddSingleton<IAuthorizationHandler, DatabaseObjectAuthorizationHandler>();
+            services.AddTransient<IUserAuthorizationService, UserAuthorizationServiceService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             #endregion Services
-
-
 
         }
 
@@ -148,12 +194,17 @@ namespace finance_app
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
+            
+            // app.UseMiddleware<MockAuthenticationFilter>();
 
             app.UseSpa(spa =>
             {

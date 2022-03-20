@@ -1,14 +1,10 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 
 namespace finance_app.Types.DataContracts.V1.Responses
 {
     public class ApiResponse<T>
     {
-        /// <summary>
-        /// The Http Status Code of the request
-        /// </summary>
-        public HttpStatusCode StatusCode { get; set; }
-
         /// <summary>
         /// A number indicating a specific outocme or problem with the response
         /// </summary>
@@ -24,5 +20,26 @@ namespace finance_app.Types.DataContracts.V1.Responses
         /// </summary>
         /// <value></value>
         public T Data{ get; set; }
+
+        public ApiResponse(T data)
+        {
+            Data = data;
+            ResponseCode = ApiResponseCodesEnum.Success;
+            ResponseMessage = "Successful";
+        }
+
+        public ApiResponse(ApiResponseCodesEnum responseCode, string message)
+        {
+            Data = default;
+            ResponseCode = responseCode;
+            ResponseMessage = message;
+        }
+
+        public ApiResponse(T data, ApiResponseCodesEnum responseCode, string message)
+        {
+            Data = data;
+            ResponseCode = responseCode;
+            ResponseMessage = message;
+        }
     }
 }
