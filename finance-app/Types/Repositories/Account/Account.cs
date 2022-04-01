@@ -20,6 +20,8 @@ namespace finance_app.Types.Repositories.Account
         public uint? Parent_Account_Id { get; set; }
         public bool?  Closed { get; set; }
     }
+
+    
     public enum AccountTypeEnum : byte
     {
         Unknown = 0,
