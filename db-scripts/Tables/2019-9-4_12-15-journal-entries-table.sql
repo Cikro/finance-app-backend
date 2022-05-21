@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS journal_entries
 (
     id int unsigned PRIMARY KEY AUTO_INCREMENT,
     user_id int unsigned NOT NULL,
-    amount double,
+    amount DECIMAL(15,2),
     corrected boolean default false,
     server_generated boolean default false,
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
