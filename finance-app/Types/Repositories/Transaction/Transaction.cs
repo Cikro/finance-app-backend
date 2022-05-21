@@ -11,10 +11,11 @@ namespace finance_app.Types.Repositories.Transaction
         /// The Id the transaction belongs to.
         /// </summary>
         [Required]
+        [Column("account_id")]
         public uint AccountId { get; set; }
         
         /// <summary>
-        /// The type of transation
+        /// The type of transaction
         /// </summary> 
         [Required]
         public TransactionTypeEnum Type { get; set; }
@@ -26,20 +27,23 @@ namespace finance_app.Types.Repositories.Transaction
         public decimal Amount { get; set; }
 
         /// <summary>
-        /// Notes about the transaction
+        /// The date the transaction occurred 
         /// </summary>
-        public string Notes { get; set; }
+        [Required]
+        [Column("transaction_date")]
+        public DateTime? TransactionDate { get; set; }
 
         /// <summary>
-        /// The Id of the journal entery that the transation belongs to.
+        /// Notes about the transaction
         /// </summary>
-        public uint JournalEntryId { get; set; }
+        public string   Notes { get; set; }
+
+        /// <summary>
+        /// The Id of the journal entry that the transaction belongs to.
+        /// </summary>
+        [Column("journal_entry")]
+        public uint JournalEntry { get; set; }
 
     }
-    public enum TransactionTypeEnum : byte
-    {
-        Unknown = 0,
-        Debit = 1,
-        Transaction = 2
-    }
+
 }

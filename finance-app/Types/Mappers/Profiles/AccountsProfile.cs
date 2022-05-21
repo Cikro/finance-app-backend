@@ -15,7 +15,7 @@ namespace finance_app.Types.Mappers.Profiles
             SourceMemberNamingConvention  = new PascalUnderscoreNamingConvention();
             DestinationMemberNamingConvention  = new PascalCaseNamingConvention();
             CreateMap<Account, AccountDto>()
-            .ForMember(d => d.UserId, o => o.MapFrom(s => s.User_Id))
+            .ForMember(d => d.UserId, o => o.MapFrom(s => s.UserId))
             .ReverseMap();
 
             CreateMap<AccountTypeEnum, AccountTypeDtoEnum>().ReverseMap();

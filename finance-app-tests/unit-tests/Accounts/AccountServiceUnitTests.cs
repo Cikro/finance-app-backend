@@ -88,11 +88,11 @@ namespace unit_tests.Accounts
 
             var account = new Account() {
                 Id = 1337,
-                User_Id = 15, 
+                UserId = 15, 
                 Name = "TestAccount",
                 Balance = 1337,
                 Closed = false,
-                Currency_Code = "CAD",
+                CurrencyCode = "CAD",
                 Description = "A test account",
                 Type = AccountTypeEnum.Asset,
             };
@@ -211,11 +211,11 @@ namespace unit_tests.Accounts
                 {
                     new Account() {
                         Id = 1337,
-                        User_Id = 15, 
+                        UserId = 15, 
                         Name = "TestAccount",
                         Balance = 1337,
                         Closed = false,
-                        Currency_Code = "CAD",
+                        CurrencyCode = "CAD",
                         Description = "A test account",
                         Type = AccountTypeEnum.Asset,
                     }
@@ -223,11 +223,11 @@ namespace unit_tests.Accounts
                 {
                     new Account() {
                         Id = 1338,
-                        User_Id = 16, 
+                        UserId = 16, 
                         Name = "TestAccount",
                         Balance = 1337,
                         Closed = false,
-                        Currency_Code = "CAD",
+                        CurrencyCode = "CAD",
                         Description = "A test account",
                         Type = AccountTypeEnum.Asset,
                     }
@@ -235,11 +235,11 @@ namespace unit_tests.Accounts
                 {
                     new Account() {
                         Id = 1338,
-                        User_Id = 16, 
+                        UserId = 16, 
                         Name = "TestAccount",
                         Balance = 1337,
                         Closed = false,
-                        Currency_Code = "CAD",
+                        CurrencyCode = "CAD",
                         Description = "A test account",
                         Type = AccountTypeEnum.Asset,
                     }
@@ -284,11 +284,11 @@ namespace unit_tests.Accounts
                 {
                     new Account() {
                         Id = 1337,
-                        User_Id = 15, 
+                        UserId = 15, 
                         Name = "TestAccount",
                         Balance = 1337,
                         Closed = false,
-                        Currency_Code = "CAD",
+                        CurrencyCode = "CAD",
                         Description = "A test account",
                         Type = AccountTypeEnum.Asset,
                     }

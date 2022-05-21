@@ -3,10 +3,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace finance_app.Types.Repositories
 {
-    public class EFContext : DbContext
+    public class FinanceAppContext : DbContext
     {
         private readonly IConfiguration _configuration;
-        public EFContext(DbContextOptions options) : base(options){}
+
+        public DbSet<Account.Account> Accounts { get; set; }
+        public DbSet<Transaction.Transaction> Transactions { get; set; }
+
+        public FinanceAppContext(DbContextOptions options) : base(options){}
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));

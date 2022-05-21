@@ -27,7 +27,7 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
 
         unauthorized = userResourceId != null && !(await authorizationService.AuthorizeAsync(
                                                         context.HttpContext.User,
-                                                        new Account { User_Id = userResourceId.Id },
+                                                        new Account { UserId = userResourceId.Id },
                                                         "CanAccessResourcePolicy")).Succeeded;
         
         if (!unauthorized) {

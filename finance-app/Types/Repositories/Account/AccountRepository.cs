@@ -220,12 +220,12 @@ namespace finance_app.Types.Repositories.Account
             Account newAccount = null;
 
             var parameters = new object[] {
-                new MySqlParameter("userId", account.User_Id),
+                new MySqlParameter("userId", account.UserId),
                 new MySqlParameter("accountName", account.Name),
                 new MySqlParameter("accountDescription", account.Description),
                 new MySqlParameter("accountType", account.Type),
-                new MySqlParameter("currencyCode", account.Currency_Code),
-                new MySqlParameter("parentAccountId", account.Parent_Account_Id)
+                new MySqlParameter("currencyCode", account.CurrencyCode),
+                new MySqlParameter("parentAccountId", account.ParentAccountId)
             };
             
             var connection = _context.Database.GetDbConnection();
@@ -349,16 +349,16 @@ namespace finance_app.Types.Repositories.Account
             return new Account
             {
                 Id = (uint)reader.GetInt32("id"),
-                User_Id = (uint)reader.GetInt32("user_id"),
+                UserId = (uint)reader.GetInt32("user_id"),
                 Name = reader.IsDBNull("name") ? "" : reader.GetString("name"),
                 Description = reader.IsDBNull("description") ? "" : reader.GetString("description"),
                 Balance = reader.IsDBNull("balance") ? 0 : reader.GetDecimal("balance"),
                 Type = Enum.IsDefined(typeof(AccountTypeEnum), reader.GetByte("type")) ? (AccountTypeEnum) reader.GetByte("type") : AccountTypeEnum.Unknown,
-                Currency_Code = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
-                Parent_Account_Id = reader.IsDBNull("parent_account") ? null : (uint?)reader.GetInt32("parent_account"),
+                CurrencyCode = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
+                ParentAccountId = reader.IsDBNull("parent_account") ? null : (uint?)reader.GetInt32("parent_account"),
                 Closed = reader.IsDBNull("closed") ? null : (bool?)reader.GetBoolean("closed"),
-                Date_Created = reader.GetDateTime("date_created"),
-                Date_Last_Edited = reader.GetDateTime("date_last_edited")
+                DateCreated = reader.GetDateTime("date_created"),
+                DateLastEdited = reader.GetDateTime("date_last_edited")
             };
 
         }

@@ -20,7 +20,7 @@ namespace finance_app.Types.Services.V1.Authorization
 
             };
 
-            if (userId == resource.User_Id)
+            if (userId == resource.UserId)
             {
                 context.Succeed(requirement);
             }

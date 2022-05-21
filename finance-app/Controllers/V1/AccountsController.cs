@@ -98,7 +98,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
-            account.User_Id = userId.Id;
+            account.UserId = userId.Id;
 
             var ret = await _accountService.CreateAccount(account);
 

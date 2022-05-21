@@ -8,7 +8,10 @@ namespace finance_app.Types.Repositories
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public uint Id { get; set; }
 
-        public DateTime Date_Created { get; set; }
-        public DateTime Date_Last_Edited { get; set; }
+        [Column("date_created")]
+        public DateTime DateCreated { get; set; }
+
+        [Column("date_last_edited")]
+        public DateTime DateLastEdited { get; set; }
     }
 }
