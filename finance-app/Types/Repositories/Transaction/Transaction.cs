@@ -21,7 +21,7 @@ namespace finance_app.Types.Repositories.Transaction
         public TransactionTypeEnum Type { get; set; }
         
         /// <summary>
-        /// The amount of the Transation
+        /// The amount of the Transaction
         /// </summary>
         [Required]
         public decimal Amount { get; set; }
@@ -36,14 +36,18 @@ namespace finance_app.Types.Repositories.Transaction
         /// <summary>
         /// Notes about the transaction
         /// </summary>
-        public string   Notes { get; set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// The Id of the journal entry that the transaction belongs to.
         /// </summary>
-        [Column("journal_entry")]
-        public uint JournalEntry { get; set; }
+        [Column("journal_entry_id")]
+        public uint JournalEntryId { get; set; }
 
+        /// <summary>
+        /// The Journal Entry
+        /// </summary>
+        public JournalEntry.JournalEntry JournalEntry { get; set; }
     }
 
 }

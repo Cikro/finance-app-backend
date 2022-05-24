@@ -22,7 +22,7 @@ namespace finance_app.Types.Repositories.Account
 
         [Column("Parent_Account_Id")]
         public uint? ParentAccountId { get; set; }
-        public bool?  Closed { get; set; }
+        public bool? Closed { get; set; }
     }
 
     
