@@ -14,6 +14,14 @@ namespace finance_app.Types.Repositories.Transaction
 
         }
 
+        public async Task<Transaction> GetTransaction(uint transactionId) 
+        {
+            var transaction = await _context.Transactions
+                .SelectTransaction()
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
+            return transaction;
+        }
+
         public async Task<IEnumerable<Transaction>> GetRecentTransactionsByAccountId(uint accountId, int pageSize, int offset)
         {
             var transactions =  await _context.Transactions
@@ -37,6 +45,15 @@ namespace finance_app.Types.Repositories.Transaction
                 .AsNoTracking()
                 .ToListAsync();
             return transactions;
+        }
+
+        public async Task<Transaction> UpdateTransaction(Transaction transaction) {
+            if (transaction == null) { return null; } 
+
+            _context.Update(transaction);
+            await _context.SaveChangesAsync();
+            
+            return transaction;
         }
     }
 }

@@ -24,13 +24,13 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         public EnumDto<TransactionTypeDtoEnum> Type { get; set; }
         
         /// <summary>
-        /// The amount of the Transation
+        /// The amount of the Transaction
         /// </summary>
         public decimal Amount { get; set; }
 
         /// <summary>
         /// The date of transaction. 
-        /// NOTE: Different than when the transation was added to the system
+        /// NOTE: Different than when the transaction was added to the system
         /// </summary>
         public DateTime? TransactionDate { get; set; }
 
@@ -40,7 +40,7 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         public string Notes { get; set; }
 
         /// <summary>
-        /// The Id of the journal entery that the transation belongs to.
+        /// The Id of the journal entry that the transaction belongs to.
         /// </summary>
         /// <value></value>
         public uint JournalEntryId { get; set; }

@@ -19,7 +19,7 @@ namespace finance_app.Controllers.V1
     [ApiController]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("api/Users/{accountId}/[controller]")]
+    [Route("api/{accountId}/[controller]")]
     public class TransactionsController : ControllerBase
     {
         
@@ -59,6 +59,8 @@ namespace finance_app.Controllers.V1
         [UserAuthorizationFilter]
         public async Task<IActionResult> GetTransactions([FromQuery]AccountResourceIdentifier accountId,  [FromQuery]GetTransactionsRequest request)
         {
+            // TODO: Add proper code. (default page sizes, error checks, Fluent Validation if not)
+
             // ApiResponse<ListResponse<TransactionDto>> ret;
             // if (request.PageInfo != null) {
                 
@@ -73,6 +75,8 @@ namespace finance_app.Controllers.V1
 
             // return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
+
+        // TODO: Add Update Endpoint
 
       
 
