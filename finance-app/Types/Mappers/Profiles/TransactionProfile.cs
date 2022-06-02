@@ -1,9 +1,8 @@
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using finance_app.Types.DataContracts.V1.Requests.Accounts;
+using finance_app.Types.DataContracts.V1.Requests.Transactions;
 using finance_app.Types.Mappers.Converters;
-using finance_app.Types.Repositories.Account;
 using finance_app.Types.Repositories.Transaction;
 
 namespace finance_app.Types.Mappers.Profiles
@@ -12,7 +11,6 @@ namespace finance_app.Types.Mappers.Profiles
     {
         public TransactionProfile()
         {
-            // TODO: Actually populate this profile
             
             SourceMemberNamingConvention  = new PascalUnderscoreNamingConvention();
             DestinationMemberNamingConvention  = new PascalCaseNamingConvention();
@@ -27,9 +25,9 @@ namespace finance_app.Types.Mappers.Profiles
             CreateMap<EnumDto<TransactionTypeDtoEnum>, TransactionTypeEnum>()
             .ConvertUsing(new EnumDtoToEnumConverter<TransactionTypeDtoEnum, TransactionTypeEnum>());
 
-            // CreateMap<UpdateTransactionRequest, Transaction>()
-            // .ForMember(d => d.Notes, s => s.Notes())
-            // .ForAllOtherMembers(d => d.Ignore());
+            CreateMap<UpdateTransactionRequest, Transaction>()
+            .ForMember(d => d.Notes, O => O.MapFrom(s => s.Notes))
+            .ForAllOtherMembers(d => d.Ignore());
         }
     }
 
