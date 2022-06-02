@@ -4,10 +4,10 @@ using finance_app.Types.DataContracts.V1.Dtos.Enums;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.Mappers.Converters;
 using finance_app.Types.Repositories.Account;
+using finance_app.Types.Repositories.Transaction;
 
 namespace finance_app.Types.Mappers.Profiles
 {
-    // This is the approach starting with version 5
     public class TransactionProfile : Profile
     {
         public TransactionProfile()
@@ -16,20 +16,20 @@ namespace finance_app.Types.Mappers.Profiles
             
             SourceMemberNamingConvention  = new PascalUnderscoreNamingConvention();
             DestinationMemberNamingConvention  = new PascalCaseNamingConvention();
-            CreateMap<Account, AccountDto>()
-            .ForMember(d => d.UserId, o => o.MapFrom(s => s.UserId))
+            CreateMap<Transaction, TransactionDto>()
             .ReverseMap();
 
-            CreateMap<AccountTypeEnum, AccountTypeDtoEnum>().ReverseMap();
+            CreateMap<TransactionTypeEnum, TransactionTypeDtoEnum>().ReverseMap();
 
-            CreateMap<AccountTypeEnum, EnumDto<AccountTypeDtoEnum>>()
-            .ConvertUsing(new EnumToEnumDtoConverter<AccountTypeEnum, AccountTypeDtoEnum>());
+            CreateMap<TransactionTypeEnum, EnumDto<TransactionTypeDtoEnum>>()
+            .ConvertUsing(new EnumToEnumDtoConverter<TransactionTypeEnum, TransactionTypeDtoEnum>());
 
-            CreateMap<EnumDto<AccountTypeDtoEnum>, AccountTypeEnum>()
-            .ConvertUsing(new EnumDtoToEnumConverter<AccountTypeDtoEnum, AccountTypeEnum>());
+            CreateMap<EnumDto<TransactionTypeDtoEnum>, TransactionTypeEnum>()
+            .ConvertUsing(new EnumDtoToEnumConverter<TransactionTypeDtoEnum, TransactionTypeEnum>());
 
-            CreateMap<CreateAccountRequest, Account>();
-            CreateMap<PostAccountRequest, Account>();
+            // CreateMap<UpdateTransactionRequest, Transaction>()
+            // .ForMember(d => d.Notes, s => s.Notes())
+            // .ForAllOtherMembers(d => d.Ignore());
         }
     }
 

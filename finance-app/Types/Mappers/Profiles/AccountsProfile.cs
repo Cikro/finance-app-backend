@@ -7,7 +7,6 @@ using finance_app.Types.Repositories.Account;
 
 namespace finance_app.Types.Mappers.Profiles
 {
-    // This is the approach starting with version 5
     public class AccountProfile : Profile
     {
         public AccountProfile()

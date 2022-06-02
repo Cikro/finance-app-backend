@@ -14,7 +14,7 @@ using finance_app.Types.Repositories.Transaction;
 
 namespace finance_app.Types.Services.V1
 {
-    public class TransactionsService : ITransactionService
+    public class TransactionService : ITransactionService
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly IAccountRepository _accountRepository;
@@ -23,7 +23,8 @@ namespace finance_app.Types.Services.V1
         private readonly IHttpContextAccessor _context;
         
 
-        public TransactionsService(IMapper mapper, ITransactionRepository transactionRepository,
+        public TransactionService(IMapper mapper, 
+                             ITransactionRepository transactionRepository,
                              IAccountRepository accountRepository,
                              IAuthorizationService authorizationService,
                              IHttpContextAccessor context) {
@@ -36,12 +37,12 @@ namespace finance_app.Types.Services.V1
         }
 
         /// <inheritdoc cref="ITransactionService.GetRecentTransactions"/>
-        public async Task<ApiResponse<ListResponse<TransactionDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals) {
+        public async Task<ApiResponse<ListResponse<TransactionDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals = false) {
             if (accountId == null) { throw new ArgumentNullException(nameof(AccountResourceIdentifier)); }
             if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<TransactionDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Page Number."); }
             if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<TransactionDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Items Per Page.");; }
 
-            var account = _accountRepository.GetAccountByAccountId(accountId.Id);
+            var account = await _accountRepository.GetAccountByAccountId(accountId.Id);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
                 return new ApiResponse<ListResponse<TransactionDto>>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");

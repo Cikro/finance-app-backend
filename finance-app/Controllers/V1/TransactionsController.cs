@@ -19,16 +19,16 @@ namespace finance_app.Controllers.V1
     [ApiController]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("api/{accountId}/[controller]")]
+    [Route("api/Accounts/{accountId}/[controller]")]
     public class TransactionsController : ControllerBase
     {
         
         private readonly ILogger<AccountsController> _logger;
-        private readonly ITransactionRepository _transactionService;
+        private readonly ITransactionService _transactionService;
         private readonly IMapper _mapper;
 
         public TransactionsController(ILogger<AccountsController> logger, 
-                                  ITransactionRepository transactionService,
+                                  ITransactionService transactionService,
                                   IMapper mapper)
         {
             _logger = logger;
@@ -39,13 +39,12 @@ namespace finance_app.Controllers.V1
         /// <summary>
         /// Gets a list of financial accounts.
         /// </summary>
-        /// <param name="userId">The id of the User who's accounts you are fetching</param>
         /// <param name="accountId">The id of the Account who's transactions you are fetching</param>
-        /// <param name="request">A GetAccountsRequest</param>
+        /// <param name="request">A GetTransactionsRequest</param>
         /// <remarks> 
         /// Sample Request:
         /// 
-        ///     GET /api/Users/{userId}/Accounts 
+        ///     GET /api/Accounts/{accountId}/Transactions
         ///     {
         ///         "pageNumber": 1,
         ///         "itemsPerPage": 5
@@ -54,26 +53,28 @@ namespace finance_app.Controllers.V1
         /// 
         /// 
         /// </remarks>
-        /// <returns>A List of accounts, and the number of items in the list</returns>
+        /// <returns>A List of Recent Transactions on the provided Account</returns>
         [HttpGet]
         [UserAuthorizationFilter]
         public async Task<IActionResult> GetTransactions([FromQuery]AccountResourceIdentifier accountId,  [FromQuery]GetTransactionsRequest request)
         {
             // TODO: Add proper code. (default page sizes, error checks, Fluent Validation if not)
 
-            // ApiResponse<ListResponse<TransactionDto>> ret;
-            // if (request.PageInfo != null) {
+            ApiResponse<ListResponse<TransactionDto>> ret;
+            if (request.PageInfo != null) {
                 
-            //      ret = await  _accountService.GetPaginatedAccounts(userId, request.PageInfo);
+                 ret =  await _transactionService.GetRecentTransactions(accountId,
+                                                                        request.PageInfo,
+                                                                        request.IncludeJournals);
 
-            // } else {
-            //      ret = await _accountService.GetAccounts(userId);
-            // }
+            } else {
+                 ret = await _transactionService.GetRecentTransactions(accountId,
+                                                                        request.PageInfo,
+                                                                        request.IncludeJournals);
+            }
 
-            var ret = await _transactionService.GetRecentTransactionsByAccountId(accountId.Id, (int) request.PageInfo.ItemsPerPage, (int)request.PageInfo.PageNumber-1);
-            return Ok(ret);
 
-            // return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         // TODO: Add Update Endpoint

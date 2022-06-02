@@ -1,7 +1,6 @@
 using System;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using finance_app.Types.Repositories;
-
+using finance_app.Types.Repositories.JournalEntry;
 
 namespace finance_app.Types.DataContracts.V1.Dtos 
 {
@@ -12,14 +11,9 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// The Id the transaction belongs to.
         /// </summary>
         public uint AccountId { get; set; }
-
-        /// <summary>
-        /// The User who is making the transaction.
-        /// </summary>
-        public uint UserId { get; set; }
         
         /// <summary>
-        /// The type of transation
+        /// The type of transaction
         /// </summary>
         public EnumDto<TransactionTypeDtoEnum> Type { get; set; }
         
@@ -40,12 +34,6 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         public string Notes { get; set; }
 
         /// <summary>
-        /// The Id of the journal entry that the transaction belongs to.
-        /// </summary>
-        /// <value></value>
-        public uint JournalEntryId { get; set; }
-
-        /// <summary>
         /// Did the user correct the transaction?
         /// </summary>
         public bool Corrected { get; set; }
@@ -54,5 +42,16 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// Did the server create this?
         /// </summary>
         public bool ServerGenerated { get; set; }
+
+        /// <summary>
+        /// The Id of the journal entry that the transaction belongs to.
+        /// </summary>
+        /// <value></value>
+        public uint JournalEntryId { get; set; }
+
+        /// <summary>
+        /// The Journal Entry
+        /// </summary>
+        public JournalEntry JournalEntry { get; set; }
     }
 }
