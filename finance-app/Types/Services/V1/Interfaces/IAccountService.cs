@@ -21,14 +21,14 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// Gets an Account
         /// </summary>
         /// <param name="accountId"></param>
-        /// <returns></returns>
+        /// <returns>An AccountDto</returns>
         Task<ApiResponse<AccountDto>> GetAccount(AccountResourceIdentifier accountId);
 
         /// <summary>
         /// Gets all Children on an account
         /// </summary>
         /// <param name="accountId"></param>
-        /// <returns></returns>
+        /// <returns>A list of children on an account</returns>
         Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId);
 
 
@@ -43,14 +43,14 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// <summary>
         /// Creates an account in the database
         /// </summary>
-        /// <param name="account">A popualted account object</param>
+        /// <param name="account">A populated account object</param>
         /// <returns> An AccountDto of the created account</returns>
         Task<ApiResponse<AccountDto>> CreateAccount(Account account);
 
         /// <summary>
         /// Updates an account with values from an existing account
         /// </summary>
-        /// <param name="account">A popualted account object</param>
+        /// <param name="account">A populated account object</param>
         /// <returns> An AccountDto of the updated account</returns>
         Task<ApiResponse<AccountDto>> UpdateAccount(Account account);
 

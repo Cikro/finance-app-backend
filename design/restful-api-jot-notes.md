@@ -21,3 +21,10 @@
 * Correct Journal Entry
 
 * Get all Journal Entries 
+
+* Get Transactions on an account
+* Edit Transactions: NO
+* Delete Transaction: NO
+* Create Transaction: NO
+* 
+* 

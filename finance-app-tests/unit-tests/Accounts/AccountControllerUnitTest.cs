@@ -56,10 +56,10 @@ namespace unit_tests.Accounts
                 Type = AccountTypeEnum.Expense,
                 Balance = 0,
                 Closed = false,
-                Currency_Code = "Cad",
+                CurrencyCode = "Cad",
                 Description = accountRequest.Description,
                 Name = accountRequest.Name,
-                Parent_Account_Id = null,
+                ParentAccountId = null,
             };
         }
 
@@ -173,7 +173,7 @@ namespace unit_tests.Accounts
             var request = GetTestCreateAccountRequest();
 
             var expectedAccount = GetTestAccountToCreate();
-            expectedAccount.User_Id = TEST_USER_ID.Id;
+            expectedAccount.UserId = TEST_USER_ID.Id;
 
 
             // Act
@@ -189,7 +189,7 @@ namespace unit_tests.Accounts
             // Arrange
             var request = GetTestCreateAccountRequest();
             var expectedAccount = GetTestAccountToCreate();
-            expectedAccount.User_Id = TEST_USER_ID.Id;
+            expectedAccount.UserId = TEST_USER_ID.Id;
 
             Account calledWith = null;
 
@@ -202,12 +202,12 @@ namespace unit_tests.Accounts
 
             // Assert
             Assert.AreEqual(expectedAccount.Id, calledWith.Id);
-            Assert.AreEqual(expectedAccount.User_Id, calledWith.User_Id);
+            Assert.AreEqual(expectedAccount.UserId, calledWith.UserId);
             Assert.AreEqual(expectedAccount.Name, calledWith.Name);
             Assert.AreEqual(expectedAccount.Description, calledWith.Description);
-            Assert.AreEqual(expectedAccount.Currency_Code, calledWith.Currency_Code);
+            Assert.AreEqual(expectedAccount.CurrencyCode, calledWith.CurrencyCode);
             Assert.AreEqual(expectedAccount.Type, calledWith.Type);
-            Assert.AreEqual(expectedAccount.Parent_Account_Id, calledWith.Parent_Account_Id);
+            Assert.AreEqual(expectedAccount.ParentAccountId, calledWith.ParentAccountId);
         }
         #endregion PostAccounts
 

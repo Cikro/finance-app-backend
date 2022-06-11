@@ -8,7 +8,7 @@ namespace finance_app.Types.Validators.Accounts
     {
         public CreateAccountRequestValidator()
         {
-            RuleFor(request => request.Name).NotEmpty();
+            RuleFor(request => request.Name).NotEmpty().ContainsOnlyValidCharacters();
             RuleFor(request => request.Type).SetValidator(new EnumDtoValidator<AccountTypeDtoEnum>());
             RuleFor(request => request.ParentAccountId)
                 .IsValidDatabaseId()

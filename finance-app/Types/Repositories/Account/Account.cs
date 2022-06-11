@@ -10,16 +10,22 @@ namespace finance_app.Types.Repositories.Account
         [Required]
         public string Name { get; set; }
         [Required]
-        public uint User_Id { get; set; }
+        [Column("user_id")]
+        public uint UserId { get; set; }
         public string Description { get; set; }
         public decimal Balance { get; set; }
         [Required]
         public AccountTypeEnum Type { get; set; }
         [Required] 
-        public string Currency_Code { get; set; }
-        public uint? Parent_Account_Id { get; set; }
-        public bool?  Closed { get; set; }
+        [Column("currency_code")]
+        public string CurrencyCode { get; set; }
+
+        [Column("Parent_Account_Id")]
+        public uint? ParentAccountId { get; set; }
+        public bool? Closed { get; set; }
     }
+
+    
     public enum AccountTypeEnum : byte
     {
         Unknown = 0,

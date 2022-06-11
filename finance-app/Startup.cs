@@ -26,6 +26,8 @@ using Microsoft.OpenApi.Models;
 using finance_app.Types.Services.V1.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using finance_app.Types.Configurations;
+using finance_app.Types.Repositories;
+using finance_app.Types.Repositories.Transaction;
 
 namespace finance_app
 {
@@ -58,11 +60,17 @@ namespace finance_app
             .AddFluentValidation( fv =>
             {
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestValidator>();
+
                 fv.RegisterValidatorsFromAssemblyContaining<UserResourceIdentifierValidator>();
-                fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
+                
+                // Accounts
+                // fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<PostAccountRequestValidator>();
+
+                // Transactions
+                fv.RegisterValidatorsFromAssemblyContaining<GetTransactionsRequestValidator>();
             });
 
 
@@ -88,6 +96,7 @@ namespace finance_app
 
             services.AddAutoMapper(
                 typeof(AccountProfile),
+                typeof(TransactionProfile),
                 typeof(StatusCodeProfile)
             );
 
@@ -148,6 +157,9 @@ namespace finance_app
             services.AddDbContext<AccountContext>(options => {
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
+            services.AddDbContext<FinanceAppContext>(options => {
+                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+            });
 
 
             #region ConfigurationOptions
@@ -157,8 +169,14 @@ namespace finance_app
             #region Services
             services.AddSingleton<IAuthorizationHandler, DatabaseObjectAuthorizationHandler>();
             services.AddTransient<IUserAuthorizationService, UserAuthorizationServiceService>();
+
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountRepository, AccountRepository>();
+
+            services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<ITransactionRepository, TransactionRepository>();
+
+            services.AddHttpContextAccessor();
             #endregion Services
 
         }
@@ -179,6 +197,7 @@ namespace finance_app
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHsts();
             }
             else
             {

@@ -71,8 +71,8 @@ namespace finance_app.Types.Services.V1
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)
         {
             if (userId== null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
-            if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.BadRequest, "Invlaid Page Number."); }
-            if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.BadRequest, "Invlaid Items Per Page.");; }
+            if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Page Number."); }
+            if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Items Per Page.");; }
 
             uint offset = (uint)pageInfo.PageNumber - 1;
             
@@ -88,7 +88,7 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.CreateAccount"/>
         public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
-            var existingAccount = await _accountServiceDbo.GetAccountByAccountName(account.User_Id, account.Name);
+            var existingAccount = await _accountServiceDbo.GetAccountByAccountName(account.UserId, account.Name);
             if (existingAccount != null) {   
                 var message = $"Error creating account. Account with name '{account.Name}' already exists.";
                 return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource,message);
@@ -110,7 +110,7 @@ namespace finance_app.Types.Services.V1
             }
 
             if (existingAccount.Name != account.Name) {
-                var duplicateName = await _accountServiceDbo.GetAccountByAccountName(existingAccount.User_Id, account.Name);
+                var duplicateName = await _accountServiceDbo.GetAccountByAccountName(existingAccount.UserId, account.Name);
                 if (duplicateName != null) {
                     var message = $"Error updating account. Account with name '{duplicateName.Name}' already Exists.";
                     return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(duplicateName), ApiResponseCodesEnum.DuplicateResource, message);
@@ -124,7 +124,7 @@ namespace finance_app.Types.Services.V1
 
                     var children = await GetChildren(account.Id);
                     if (children.Data.ExcludedItems > 0) {
-                        var message = $"Error updating account. Account with id '{account.Id}' has cildren that you don't have access to.";
+                        var message = $"Error updating account. Account with id '{account.Id}' has children that you don't have access to.";
                         return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, message);
                     }
 
@@ -137,8 +137,8 @@ namespace finance_app.Types.Services.V1
                 }
 
                 // If you are opening an account, its parent must be open
-                if (account.Closed == false && existingAccount.Parent_Account_Id != null) {
-                    var parent = await _accountServiceDbo.GetAccountByAccountId((uint) existingAccount.Parent_Account_Id);
+                if (account.Closed == false && existingAccount.ParentAccountId != null) {
+                    var parent = await _accountServiceDbo.GetAccountByAccountId((uint) existingAccount.ParentAccountId);
                     if (parent?.Closed == true) {
                         var message = $"Error updating account. Cannot open an account when its parent is closed.";
                         return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, message);

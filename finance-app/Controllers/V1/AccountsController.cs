@@ -98,7 +98,7 @@ namespace finance_app.Controllers.V1
         public async Task<IActionResult> CreateAccount([FromQuery]UserResourceIdentifier userId, [FromBody]CreateAccountRequest request)
         {
             var account = _mapper.Map<Account>(request);
-            account.User_Id = userId.Id;
+            account.UserId = userId.Id;
 
             var ret = await _accountService.CreateAccount(account);
 
@@ -152,7 +152,7 @@ namespace finance_app.Controllers.V1
         /// <param name="accountId">An AccountResourceIdentifier</param>
         /// <param name="request">A PostAccountRequest</param>
         /// <returns>A list of accounts that were closed.</returns>
-        [HttpPost]
+        [HttpPatch]
         [Route("/api/[controller]/{accountId}")]
         public async Task<IActionResult> PostAccount([FromQuery]AccountResourceIdentifier accountId, [FromBody]PostAccountRequest request)
         {
