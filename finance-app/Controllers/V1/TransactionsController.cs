@@ -58,8 +58,6 @@ namespace finance_app.Controllers.V1
         [UserAuthorizationFilter]
         public async Task<IActionResult> GetTransactions([FromQuery]AccountResourceIdentifier accountId,  [FromQuery]GetTransactionsRequest request)
         {
-            // TODO: Add proper code. (default page sizes, error checks, Fluent Validation if not)
-
             ApiResponse<ListResponse<TransactionDto>> ret;
             if (request.PageInfo != null) {
                 
@@ -77,7 +75,65 @@ namespace finance_app.Controllers.V1
             return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
-        // TODO: Add Update Endpoint
+
+        /// <summary>
+        /// Gets a list of financial accounts.
+        /// </summary>
+        /// <param name="transactionId">The id of the Transaction you want to update</param>
+        /// <remarks> 
+        /// Sample Request:
+        /// 
+        ///     GET /api/Accounts/{accountId}/Transactions/{transactionId}
+        ///     {
+        ///         "pageNumber": 1,
+        ///         "itemsPerPage": 5
+        ///     }
+        /// 
+        /// 
+        /// 
+        /// </remarks>
+        /// <returns>The Updated Transaction</returns>
+        [HttpGet]
+        [Route("/api/[controller]/{transactionId}")]
+        [UserAuthorizationFilter]
+        public async Task<IActionResult> GetTransaction([FromQuery]TransactionResourceIdentifier transactionId)
+        {
+
+            var ret = await _transactionService.GetTransaction(transactionId);
+
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
+        }
+
+        /// <summary>
+        /// Updates a Transaction.
+        /// </summary>
+        /// <param name="transactionId">The id of the Transaction you want to update</param>
+        /// <param name="request">A GetTransactionsRequest</param>
+        /// <remarks> 
+        /// Sample Request:
+        /// 
+        ///     GET /api/Accounts/{accountId}/Transactions/{transactionId}
+        ///     {
+        ///         "pageNumber": 1,
+        ///         "itemsPerPage": 5
+        ///     }
+        /// 
+        /// 
+        /// 
+        /// </remarks>
+        /// <returns>The Updated Transaction</returns>
+        [HttpPatch]
+        [Route("/api/[controller]/{transactionId}")]
+        [UserAuthorizationFilter]
+        public async Task<IActionResult> UpdateTransaction([FromQuery]TransactionResourceIdentifier transactionId, UpdateTransactionRequest request)
+        {
+            var transaction = _mapper.Map<Transaction>(request);
+            transaction.Id = transactionId.Id;
+
+            var ret = await _transactionService.UpdateTransaction(transaction);
+
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
+        }
 
       
 

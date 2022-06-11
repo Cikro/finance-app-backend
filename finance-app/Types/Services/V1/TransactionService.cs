@@ -23,6 +23,14 @@ namespace finance_app.Types.Services.V1
         private readonly IHttpContextAccessor _context;
         
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapper">A Mapper dependency</param>
+        /// <param name="transactionRepository">A transaction repository</param>
+        /// <param name="accountRepository">An account repository</param>
+        /// <param name="authorizationService">An Authorization Service</param>
+        /// <param name="context">An IHttpContext Accessor</param>
         public TransactionService(IMapper mapper, 
                              ITransactionRepository transactionRepository,
                              IAccountRepository accountRepository,
@@ -34,6 +42,29 @@ namespace finance_app.Types.Services.V1
             _mapper = mapper;
             _authorizationService = authorizationService;
             _context = context;
+        }
+
+        /// <inheritdoc cref="ITransactionService.GetTransaction"/>
+        public async Task<ApiResponse<TransactionDto>> GetTransaction(TransactionResourceIdentifier transactionId, bool includeJournals = false) {
+            // Fetch Transaction to update
+            var transaction = await _transactionRepository.GetTransaction(transactionId.Id);
+            if (transaction == null) 
+            {
+                var message = $"Error getting transaction. Transaction with id '{transaction.Id}' does not exist.";
+                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+            }
+
+            // Verify that the use can access the transaction
+            var account = await _accountRepository.GetAccountByAccountId(transaction.AccountId);
+            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
+            {
+                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+            }
+
+            var ret = _mapper.Map<TransactionDto>(transaction);
+            return new ApiResponse<TransactionDto>(ret);
+
+
         }
 
         /// <inheritdoc cref="ITransactionService.GetRecentTransactions"/>
@@ -55,7 +86,7 @@ namespace finance_app.Types.Services.V1
 
             var ret = new ListResponse<TransactionDto>(_mapper.Map<List<TransactionDto>>(transactions));
 
-            return new ApiResponse<ListResponse<TransactionDto>>(ret, ApiResponseCodesEnum.Success, "Success");
+            return new ApiResponse<ListResponse<TransactionDto>>(ret);
         }
 
         /// <inheritdoc cref="ITransactionService.UpdateTransaction"/>   
@@ -69,7 +100,7 @@ namespace finance_app.Types.Services.V1
             }
 
             // Verify that the use can access the transaction
-            var account = _accountRepository.GetAccountByAccountId(transactionToUpdate.AccountId);
+            var account = await _accountRepository.GetAccountByAccountId(transactionToUpdate.AccountId);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
                 return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
@@ -78,7 +109,7 @@ namespace finance_app.Types.Services.V1
             // Currently can only update the notes on a transaction
             transactionToUpdate.Notes = transaction.Notes;
 
-            var updatedTransaction = _transactionRepository.UpdateTransaction(transactionToUpdate);
+            var updatedTransaction = await _transactionRepository.UpdateTransaction(transactionToUpdate);
 
             return new ApiResponse<TransactionDto>( _mapper.Map<TransactionDto>(updatedTransaction));
 

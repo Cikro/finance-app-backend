@@ -152,7 +152,7 @@ namespace finance_app.Controllers.V1
         /// <param name="accountId">An AccountResourceIdentifier</param>
         /// <param name="request">A PostAccountRequest</param>
         /// <returns>A list of accounts that were closed.</returns>
-        [HttpPost]
+        [HttpPatch]
         [Route("/api/[controller]/{accountId}")]
         public async Task<IActionResult> PostAccount([FromQuery]AccountResourceIdentifier accountId, [FromBody]PostAccountRequest request)
         {

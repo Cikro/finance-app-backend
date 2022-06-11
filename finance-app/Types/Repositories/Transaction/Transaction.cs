@@ -42,13 +42,13 @@ namespace finance_app.Types.Repositories.Transaction
         /// <summary>
         /// Did the user correct the transaction?
         /// </summary>
-        public bool Corrected { get; set; }
+        public bool? Corrected { get; set; }
 
         /// <summary>
         /// Did the server create this?
         /// </summary>
         [Column("server_generated")]
-        public bool ServerGenerated { get; set; }
+        public bool? ServerGenerated { get; set; }
 
         /// <summary>
         /// The Id of the journal entry that the transaction belongs to.
