@@ -13,6 +13,13 @@ namespace finance_app.Types.Repositories.Transaction
         public Task<Transaction> GetTransaction(uint transactionId);
 
         /// <summary>
+        /// Fetches one Transaction with JournalEntries Populated by TransactionId from the database
+        /// </summary>
+        /// <param name="transactionId">The Id of the transaction you are fetching.</param>
+        /// <returns>The transaction you wanted to fetch</returns>
+        public Task<Transaction> GetTransactionWithJournal(uint transactionId) ;
+
+        /// <summary>
         /// Fetches recent Transactions that occurred on given Account.
         /// </summary>
         /// <param name="accountId">The ID of the Account you want transactions on.</param>
@@ -36,5 +43,6 @@ namespace finance_app.Types.Repositories.Transaction
         /// <param name="transaction">The Transactions you want to save to the DB.</param>
         /// <returns></returns>
         public Task<Transaction> UpdateTransaction(Transaction transaction);
+
     }
 }

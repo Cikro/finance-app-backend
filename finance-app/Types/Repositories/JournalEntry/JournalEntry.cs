@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using System.Linq;
+using finance_app.Types.Repositories.Transaction;
 
 namespace finance_app.Types.Repositories.JournalEntry
 {
@@ -33,5 +36,22 @@ namespace finance_app.Types.Repositories.JournalEntry
         [Required]
         [Column("server_generated")]
         public bool ServerGenerated { get; set; }
+
+        public IEnumerable<Transaction.Transaction> Transactions { get; set; }
+
+        public IEnumerable<Transaction.Transaction> ReversedTransactions() {
+            return Transactions.Select(t => {
+                t.Type = ReverseTransactionType(t.Type);
+                return t;
+            });
+        }
+
+        public static TransactionTypeEnum ReverseTransactionType(TransactionTypeEnum t) => t switch
+        {
+            TransactionTypeEnum.Debit    =>  TransactionTypeEnum.Credit,
+            TransactionTypeEnum.Credit    =>  TransactionTypeEnum.Debit,
+            _ => throw new ArgumentOutOfRangeException(nameof(t), $"Error Reversing Journal. Not expected Transaction Type Enum : {t}"),
+        };
+
     }
 }

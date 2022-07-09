@@ -39,6 +39,7 @@ namespace finance_app.Types.Repositories.Transaction
         /// </summary>
         public string Notes { get; set; }
 
+        // TODO: Remove Corrected and Server Generated. Use Journal entry as source of truth?
         /// <summary>
         /// Did the user correct the transaction?
         /// </summary>

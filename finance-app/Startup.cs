@@ -174,7 +174,11 @@ namespace finance_app
             services.AddTransient<IAccountRepository, AccountRepository>();
 
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<IJournalEntryService, JournalEntryService>();
+
             services.AddTransient<ITransactionRepository, TransactionRepository>();
+
+
 
             services.AddHttpContextAccessor();
             #endregion Services

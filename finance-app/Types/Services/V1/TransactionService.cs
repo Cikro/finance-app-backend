@@ -99,7 +99,7 @@ namespace finance_app.Types.Services.V1
                 return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.ResourceNotFound, message);
             }
 
-            // Verify that the use can access the transaction
+            // Verify that the user can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transactionToUpdate.AccountId);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {

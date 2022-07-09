@@ -31,7 +31,7 @@ namespace finance_app.Types.Services.V1
             _context = context;
         }
 
-        /// <inheritdoc cref="IAccountService.GetAccounts"/>
+    /// <inheritdoc cref="IAccountService.GetAccounts"/>
     public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId) {
             if (userId == null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);

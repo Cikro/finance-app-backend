@@ -13,38 +13,40 @@ using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Requests.Transactions;
 using finance_app.Types.Repositories.Transaction;
+using finance_app.Types.DataContracts.V1.Requests.JournalEntries;
+using finance_app.Types.Repositories.JournalEntry;
 
 namespace finance_app.Controllers.V1
 {
     [ApiController]
     [Produces("application/json")]
     [ApiVersion("1.0")]
-    [Route("api/Accounts/{accountId}/[controller]")]
-    public class TransactionsController : ControllerBase
+    [Route("api/[controller]/")]
+    public class JournalEntriesController : ControllerBase
     {
         
         private readonly ILogger<AccountsController> _logger;
-        private readonly ITransactionService _transactionService;
+        private readonly IJournalEntryService _journalEntryService;
         private readonly IMapper _mapper;
 
-        public TransactionsController(ILogger<AccountsController> logger,
-                                  ITransactionService transactionService,
+        public JournalEntriesController(ILogger<AccountsController> logger, 
+                                  IJournalEntryService transactionService,
                                   IMapper mapper)
         {
             _logger = logger;
-            _transactionService = transactionService;
+            _journalEntryService = transactionService;
             _mapper = mapper;
         }
 
         /// <summary>
-        /// Gets a list of financial accounts.
+        /// Gets recent journal Entries.
         /// </summary>
-        /// <param name="accountId">The id of the Account who's transactions you are fetching</param>
+        /// <param name="userId">The id of the User who's journal entries you are fetching</param>
         /// <param name="request">A GetTransactionsRequest</param>
         /// <remarks> 
         /// Sample Request:
         /// 
-        ///     GET /api/Accounts/{accountId}/Transactions
+        ///     GET /api/Accounts/{userId}/JournalEntries
         ///     {
         ///         "pageNumber": 1,
         ///         "itemsPerPage": 5
@@ -56,30 +58,18 @@ namespace finance_app.Controllers.V1
         /// <returns>A List of Recent Transactions on the provided Account</returns>
         [HttpGet]
         [UserAuthorizationFilter]
-        public async Task<IActionResult> GetTransactions([FromQuery]AccountResourceIdentifier accountId,  [FromQuery]GetTransactionsRequest request)
+        [Route("api/User/{userId}/[controller]")]
+        public async Task<IActionResult> GetJournalEntries([FromQuery]UserResourceIdentifier userId,  [FromQuery]GetJournalEntriesRequest request)
         {
-            ApiResponse<ListResponse<TransactionDto>> ret;
-            if (request.PageInfo != null) {
-                
-                 ret =  await _transactionService.GetRecentTransactions(accountId,
-                                                                        request.PageInfo,
-                                                                        request.IncludeJournals);
-
-            } else {
-                 ret = await _transactionService.GetRecentTransactions(accountId,
-                                                                        request.PageInfo,
-                                                                        request.IncludeJournals);
-            }
-
-
+            ApiResponse<ListResponse<JournalEntryDto>> ret;
+            ret =  await _journalEntryService.GetRecent(userId, request.PageInfo);
             return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
-
         /// <summary>
-        /// Gets a list of financial accounts.
+        /// Creates a journal Entry.
         /// </summary>
-        /// <param name="transactionId">The id of the Transaction you want to update</param>
+        /// <param name="request">A CreateJournalEntryRequest</param>
         /// <remarks> 
         /// Sample Request:
         /// 
@@ -93,13 +83,13 @@ namespace finance_app.Controllers.V1
         /// 
         /// </remarks>
         /// <returns>The Updated Transaction</returns>
-        [HttpGet]
-        [Route("/api/[controller]/{transactionId}")]
+        [HttpPost]
+        [Route("/api/[controller]/")]
         [UserAuthorizationFilter]
-        public async Task<IActionResult> GetTransaction([FromQuery]TransactionResourceIdentifier transactionId)
+        public async Task<IActionResult> CreateJournalEntry( [FromQuery]CreateJournalEntryRequest request)
         {
-
-            var ret = await _transactionService.GetTransaction(transactionId);
+            var journalEntry = _mapper.Map<JournalEntry>(request);
+            var ret = await _journalEntryService.Create(journalEntry);
 
             return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
@@ -107,7 +97,7 @@ namespace finance_app.Controllers.V1
         /// <summary>
         /// Updates a Transaction.
         /// </summary>
-        /// <param name="transactionId">The id of the Transaction you want to update</param>
+        /// <param name="journalId">The id of the Journal Entry you want to correct</param>
         /// <param name="request">A GetTransactionsRequest</param>
         /// <remarks> 
         /// Sample Request:
@@ -123,18 +113,16 @@ namespace finance_app.Controllers.V1
         /// </remarks>
         /// <returns>The Updated Transaction</returns>
         [HttpPatch]
-        [Route("/api/[controller]/{transactionId}")]
+        [Route("/api/[controller]/{journalEntryId}")]
         [UserAuthorizationFilter]
-        public async Task<IActionResult> UpdateTransaction([FromQuery]TransactionResourceIdentifier transactionId, UpdateTransactionRequest request)
+        public async Task<IActionResult> CorrectJournalEntry([FromQuery]JournalEntryResourceIdentifier journalId, [FromQuery]CorrectJournalEntryRequest request)
         {
-            var transaction = _mapper.Map<Transaction>(request);
-            transaction.Id = transactionId.Id;
-
-            var ret = await _transactionService.UpdateTransaction(transaction);
+            var journalEntry = _mapper.Map<JournalEntry>(request);
+            journalEntry.Id = journalId.Id;
+            var ret = await _journalEntryService.Correct(journalEntry);
 
             return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
-
       
 
     }
