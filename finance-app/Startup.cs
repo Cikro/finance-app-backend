@@ -97,6 +97,7 @@ namespace finance_app
             services.AddAutoMapper(
                 typeof(AccountProfile),
                 typeof(TransactionProfile),
+                typeof(JournalEntryProfile),
                 typeof(StatusCodeProfile)
             );
 

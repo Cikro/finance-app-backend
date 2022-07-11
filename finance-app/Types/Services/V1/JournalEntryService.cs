@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -81,7 +82,9 @@ namespace finance_app.Types.Services.V1
             //     - You need permission to see all accounts on the entry? else, filter
             //     - You can only access journal entries made by your account? else error
 
-            return new ApiResponse<ListResponse<JournalEntryDto>>(_mapper.Map<ListResponse<JournalEntryDto>>(journalEntries));
+            return new ApiResponse<ListResponse<JournalEntryDto>>(
+                new ListResponse<JournalEntryDto> (_mapper.Map<List<JournalEntryDto>>(journalEntries))
+            );
         }
 
         /// <inheritdoc cref="IJournalEntryService.Create"/>

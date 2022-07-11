@@ -32,6 +32,6 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// The Transactions the make up the Journal Entry
         /// </summary>
         /// <value></value>
-        public List<TransactionDto> Transaction { get; set; }
+        public List<TransactionDto> Transactions { get; set; }
     }
 }
