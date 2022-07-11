@@ -1,12 +1,14 @@
 using finance_app.Types.Repositories.Transaction;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace finance_app.Types.Repositories
 {
     public class FinanceAppContext : DbContext
     {
         private readonly IConfiguration _configuration;
+        private readonly ILoggerFactory _loggerFactory;
 
         public DbSet<Account.Account> Accounts { get; set; }
         public DbSet<Transaction.Transaction> Transactions { get; set; }
@@ -14,9 +16,12 @@ namespace finance_app.Types.Repositories
         
 
         public FinanceAppContext(DbContextOptions options) : base(options){}
+
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
+                options.UseLoggerFactory(_loggerFactory);
+                options.AddInterceptors();
             }
         }
 
@@ -26,7 +31,7 @@ namespace finance_app.Types.Repositories
             modelBuilder.Entity<JournalEntry.JournalEntry>().ToTable("journal_entries");
             modelBuilder.Entity<Transaction.Transaction>().ToTable("transactions")
                 .HasOne(p => p.JournalEntry)
-                .WithMany()
+                .WithMany(j => j.Transactions)
                 .HasForeignKey(t => t.JournalEntryId);
         }
     }

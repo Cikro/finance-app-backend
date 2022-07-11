@@ -93,6 +93,7 @@ namespace finance_app.Types.Services.V1
                 var message = $"Error creating account. Account with name '{account.Name}' already exists.";
                 return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource,message);
             };
+
             var newAccount = await _accountServiceDbo.CreateAccount(account);
 
 

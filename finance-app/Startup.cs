@@ -168,7 +168,7 @@ namespace finance_app
 
             #region Services
             services.AddSingleton<IAuthorizationHandler, DatabaseObjectAuthorizationHandler>();
-            services.AddTransient<IUserAuthorizationService, UserAuthorizationServiceService>();
+            services.AddTransient<IFinanceAppAuthorizationService, FinanceAppAuthorizationService>();
 
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountRepository, AccountRepository>();
