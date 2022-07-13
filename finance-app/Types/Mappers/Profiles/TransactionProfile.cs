@@ -14,7 +14,11 @@ namespace finance_app.Types.Mappers.Profiles
             
             SourceMemberNamingConvention  = new PascalUnderscoreNamingConvention();
             DestinationMemberNamingConvention  = new PascalCaseNamingConvention();
+
             CreateMap<Transaction, TransactionDto>()
+            .ReverseMap();
+
+            CreateMap<Transaction, TransactionWithJournalDto>()
             .ReverseMap();
 
             CreateMap<TransactionTypeEnum, TransactionTypeDtoEnum>().ReverseMap();

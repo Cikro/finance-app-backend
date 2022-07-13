@@ -48,10 +48,5 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// </summary>
         /// <value></value>
         public uint JournalEntryId { get; set; }
-
-        /// <summary>
-        /// The Journal Entry
-        /// </summary>
-        public JournalEntry JournalEntry { get; set; }
     }
 }

@@ -68,7 +68,7 @@ namespace finance_app.Types.Services.V1
             pageInfo ??= new PaginationInfo{ PageNumber = 1, ItemsPerPage = 10};
             var offset = (int) pageInfo.PageNumber - 1;
             var journalEntries = await _dbContext.JournalEntries
-                                    .Include("Transactions")
+                                    .Include(j => j.Transactions)
                                     .Where(j => j.UserId == userId.Id)
                                     .OrderByDescending(x => x.DateCreated)
                                     .Skip(offset * (int) pageInfo.ItemsPerPage)
