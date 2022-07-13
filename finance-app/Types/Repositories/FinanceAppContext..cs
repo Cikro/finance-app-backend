@@ -8,7 +8,6 @@ namespace finance_app.Types.Repositories
     public class FinanceAppContext : DbContext
     {
         private readonly IConfiguration _configuration;
-        private readonly ILoggerFactory _loggerFactory;
 
         public DbSet<Account.Account> Accounts { get; set; }
         public DbSet<Transaction.Transaction> Transactions { get; set; }
@@ -20,8 +19,6 @@ namespace finance_app.Types.Repositories
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
-                options.UseLoggerFactory(_loggerFactory);
-                options.AddInterceptors();
             }
         }
 

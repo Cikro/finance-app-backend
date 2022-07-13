@@ -18,6 +18,11 @@ namespace finance_app
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging => {
+                    // TODO: Figure out Logging to a file and more
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                })
                 .UseStartup<Startup>();
     }
 }
