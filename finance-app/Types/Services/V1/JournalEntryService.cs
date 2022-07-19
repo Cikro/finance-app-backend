@@ -94,24 +94,25 @@ namespace finance_app.Types.Services.V1
             //          - Use Getters and Setters on Journal Class
             //          - Map Transactions to Journal entry in mappers
             //          - Validate in Fluent Validation?
-            //          - 
-            // TODO: Ensure Date Created / Modified
-
-            // TODO: journal Entry Authorization
-            // TODO: Move Authorization into own service
+            
             // TODO: Figure out better return messaging object structure
 
 
-            
+            // Unique Account Ids of transactions being created
+            var accountIds = journalEntry.Transactions
+                .GroupBy(t => t.AccountId)
+                .Select(grp => grp.Key).ToList();
+
             // Fetch Accounts that will be modified
-            var accounts = _dbContext.Accounts.Select(a => new Account{
-                                UserId = a.UserId,
-                                Balance = a.Balance
-                            })
-                            .Join(journalEntry.Transactions,
-                                account => account.Id,
-                                transaction => transaction.AccountId,
-                                (account, transaction) => account);
+            var accounts = _dbContext.Accounts
+            .Select(a => new Account{
+                Id = a.Id,
+                Balance = a.Balance,
+                UserId = a.UserId,
+                Type = a.Type
+            })
+            .Where(a => accountIds.Contains((uint) a.Id))
+            .ToList();
 
 
             // Authorize that user can modify the accounts
@@ -123,21 +124,26 @@ namespace finance_app.Types.Services.V1
             foreach (var a in accounts) {
                 foreach (var t in journalEntry.Transactions)
                 {
-                    a.Balance += t.Amount; // TODO: Need to deal with debits and credits. Maybe Factor out into account obj.
+                    if(t.AccountId == a.Id)
+                    {
+                        a.ApplyTransaction(_dbContext, t);
+                    }
                 }
             }
 
             // Save to Database
-            _dbContext.JournalEntries.Add(journalEntry);
+            await _dbContext.JournalEntries.AddAsync(journalEntry);
             await _dbContext.SaveChangesAsync();
 
             return new ApiResponse<JournalEntryDto>(_mapper.Map<JournalEntryDto>(journalEntry));
         }
 
         /// <inheritdoc cref="IJournalEntryService.Correct"/>
-        public async Task<ApiResponse<JournalEntryDto>>Correct(JournalEntry journalEntry) {
+        public async Task<ApiResponse<JournalEntryDto>>Correct(JournalEntryResourceIdentifier toCorrectId,  JournalEntry journalEntry) {
 
-            var journalToCorrect = await _dbContext.JournalEntries.SingleOrDefaultAsync(x => x.Id == journalEntry.Id);
+            var journalToCorrect = await _dbContext.JournalEntries
+                .Include(x => x.Transactions)
+                .SingleOrDefaultAsync(x => x.Id == toCorrectId.Id);
             if(journalToCorrect == null) {
                 var message = $"Error correcting journal entry. Journal entry with id '{journalEntry.Id}' does not exist.";
                 return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
@@ -145,27 +151,36 @@ namespace finance_app.Types.Services.V1
             
             // TODO: Ensure Amount is correct
             // TODO: Ensure Date Created / Modified
-            journalEntry.Transactions.Concat(journalToCorrect.ReversedTransactions());
+            journalEntry.Transactions = journalEntry.Transactions.Concat(journalToCorrect.ReversedTransactions()).ToList();
             journalToCorrect.Corrected = true;
+            _dbContext.Entry(journalToCorrect).Property(x => x.Corrected).IsModified = true;
+
+            // Unique Account Ids of transactions being created
+            var accountIds = journalEntry.Transactions
+                .GroupBy(t => t.AccountId)
+                .Select(grp => grp.Key).ToList();
 
             // Fetch Accounts that will be modified
-            var accounts = _dbContext.Accounts.Select(a => new Account{
-                                UserId = a.UserId,
-                                Balance = a.Balance
-                            })
-                            .Join(journalEntry.Transactions,
-                                account => account.Id,
-                                transaction => transaction.AccountId,
-                                (account, transaction) => account);
+            var accounts = _dbContext.Accounts
+            .Select(a => new Account{
+                Id = a.Id,
+                Balance = a.Balance,
+                UserId = a.UserId,
+                Type = a.Type
+            })
+            .Where(a => accountIds.Contains((uint) a.Id))
+            .ToList();
                                 
             // Modify Account Balances
             foreach (var a in accounts) {
                 foreach (var t in journalEntry.Transactions)
                 {
-                    a.Balance += t.Amount; // TODO: Need to deal with debits and credits. Maybe Factor out into account obj.
+                    if(t.AccountId == a.Id)
+                    {
+                        a.ApplyTransaction(_dbContext, t);
+                    }
                 }
             }
-
 
             _dbContext.JournalEntries.Add(journalEntry);
             await _dbContext.SaveChangesAsync();

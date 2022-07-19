@@ -18,41 +18,47 @@ namespace finance_app.Types.Repositories.JournalEntry
         [Column("user_id")]
         public uint UserId { get; set; }
 
-        // private decimal _amount;
-
-        [Required]
-        public decimal Amount {get; set;}
+        private decimal _amount;
         
-        // /// <summary>
-        // /// The amount of all the debits and credits
-        // /// </summary>
-        // [Required]
-        // public decimal Amount 
-        // {
-        //      get {
+        /// <summary>
+        /// The amount of all the debits and credits
+        /// </summary>
+        [Required]
+        public decimal Amount 
+        {
+             get {
 
-        //         // Transactions Exist, ensure value is the same as the Debits / Credits
-        //         var groupedTransactions = GetGroupedTransactions();
+                // Transactions Exist, ensure value is the same as the Debits / Credits
+                var groupedTransactions = GetGroupedTransactions();
 
-        //         // No Transactions, set Value
-        //         if (groupedTransactions?.Count() != 0 &&
-        //             groupedTransactions[TransactionTypeEnum.Debit] == groupedTransactions[TransactionTypeEnum.Credit]) {
-        //             return groupedTransactions[TransactionTypeEnum.Debit];
-        //         }
+                // No Transactions, return value Value
+                if (groupedTransactions?.Count() == 0) 
+                {
+                    return _amount;
+                }
 
-        //         return _amount;
+                if (groupedTransactions[TransactionTypeEnum.Debit] != groupedTransactions[TransactionTypeEnum.Credit])
+                {
+                    //TODO: Do I want to throw here?
+                    // throw new Exception("Error getting journal amount: Debits != Credits");
+                    return -1;
+                }
 
-        //     }  set {
-        //         if (value < 0) {
-        //             throw new ArgumentException($"Error Setting JournalEntry Amount of {value}. Value must be greater than 0.", "value");
-        //         }
-        //         // FIXME: Could this be a problem is a mapper tries setting transactions first?
-        //         if (Transactions?.Count() == 0) {
-        //             throw new ArgumentException($"Error Setting JournalEntry Amount of {value}. Amount cannot be set if the Journal Entry has transactions.", "value");
-        //         }
-        //         _amount = value;
-        //     }
-        // }
+                return groupedTransactions[TransactionTypeEnum.Debit];
+
+                
+
+            }  set {
+                if (value < 0) {
+                    throw new ArgumentException($"Error Setting JournalEntry Amount of {value}. Value must be greater than 0.", "value");
+                }
+                // FIXME: Could this be a problem is a mapper tries setting transactions first?
+                if (Transactions?.Count() == 0) {
+                    throw new ArgumentException($"Error Setting JournalEntry Amount of {value}. Amount cannot be set if the Journal Entry has transactions.", "value");
+                }
+                _amount = value;
+            }
+        }
 
         /// <summary>
         /// If the journal entry has been corrected or not
@@ -71,9 +77,14 @@ namespace finance_app.Types.Repositories.JournalEntry
 
         #region HelperMethods
         public IEnumerable<Transaction.Transaction> ReversedTransactions() {
-            return Transactions.Select(t => {
-                t.Type = ReverseTransactionType(t.Type);
-                return t;
+            return Transactions.Select(t => new Transaction.Transaction {
+                Id = null,
+                AccountId = t.AccountId,
+                UserId = t.UserId,
+                TransactionDate = t.TransactionDate,
+                Amount = t.Amount,
+                Notes = $"Correcting transaction with notes: {t.Notes}",
+                Type = ReverseTransactionType(t.Type),
             });
         }
 

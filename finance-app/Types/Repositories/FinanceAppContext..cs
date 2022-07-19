@@ -25,11 +25,35 @@ namespace finance_app.Types.Repositories
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region JournalEntry
             modelBuilder.Entity<JournalEntry.JournalEntry>().ToTable("journal_entries");
+            modelBuilder.Entity<JournalEntry.JournalEntry>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<JournalEntry.JournalEntry>()
+                .Property(e => e.DateCreated)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<JournalEntry.JournalEntry>()
+                .Property(e => e.DateLastEdited)
+                .ValueGeneratedOnUpdate();
+            #endregion JournalEntry
+
+            #region Transactions
             modelBuilder.Entity<Transaction.Transaction>().ToTable("transactions")
                 .HasOne(p => p.JournalEntry)
                 .WithMany(j => j.Transactions)
                 .HasForeignKey(t => t.JournalEntryId);
+            modelBuilder.Entity<Transaction.Transaction>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Transaction.Transaction>()
+                .Property(e => e.DateCreated)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Transaction.Transaction>()
+                .Property(e => e.DateLastEdited)
+                .ValueGeneratedOnUpdate();
+            #endregion Transactions
         }
+        
     }
 }

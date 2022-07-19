@@ -13,7 +13,11 @@ namespace finance_app.Types.Repositories.Transaction
         /// </summary>
         [Required]
         [Column("account_id")]
-        public uint AccountId { get; set; }
+        public uint? AccountId { get; set; }
+
+        [Required]
+        [Column("user_id")]
+        public uint? UserId {get ;set; }
         
         /// <summary>
         /// The type of transaction

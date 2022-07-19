@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using finance_app.Types.Repositories;
@@ -14,11 +15,19 @@ namespace finance_app.Types.Services.V1.Authorization
                                                     UserOwnsResource requirement,
                                                    IUserIdResource resource)
         {
-            if (!int.TryParse(context.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value, out var userId)) 
+            // Parse suer's ID from claims
+            var userIdFromClaims = context.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+            var hasUserId = int.TryParse(userIdFromClaims, out var userId);
+            if (!hasUserId) 
             {
                 context.Fail();
 
             };
+
+            if (resource?.UserId <= 0) {
+                var message = "Could not Authorize Resource. Resource does not have UserId populated.";
+                throw new ArgumentException(message, nameof(resource));
+            }
 
             if (userId == resource.UserId)
             {

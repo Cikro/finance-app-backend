@@ -46,7 +46,6 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// <summary>
         /// The Id of the journal entry that the transaction belongs to.
         /// </summary>
-        /// <value></value>
         public uint JournalEntryId { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace finance_app.Types.Repositories.Transaction
         }
 
         /// <inheritdoc cref="ITransactionRepository.GetTransaction"/>
-        public async Task<Transaction> GetTransaction(uint transactionId) 
+        public async Task<Transaction> GetTransaction(uint? transactionId) 
         {
             var transaction = await _context.Transactions
                 .SelectTransaction()
@@ -34,7 +34,7 @@ namespace finance_app.Types.Repositories.Transaction
         }
 
         /// <inheritdoc cref="ITransactionRepository.GetTransactionWithJournal"/>
-        public async Task<Transaction> GetTransactionWithJournal(uint transactionId) 
+        public async Task<Transaction> GetTransactionWithJournal(uint? transactionId) 
         {
             var transaction = await _context.Transactions
                 .SelectTransactionWithJournal()
@@ -43,7 +43,7 @@ namespace finance_app.Types.Repositories.Transaction
         }
 
         /// <inheritdoc cref="ITransactionRepository.GetRecentTransactionsByAccountId"/>
-        public async Task<IEnumerable<Transaction>> GetRecentTransactionsByAccountId(uint accountId, int pageSize, int offset)
+        public async Task<IEnumerable<Transaction>> GetRecentTransactionsByAccountId(uint? accountId, int pageSize, int offset)
         {
             var transactions =  await _context.Transactions
                 .SelectTransaction()
@@ -57,7 +57,7 @@ namespace finance_app.Types.Repositories.Transaction
         }
 
         /// <inheritdoc cref="ITransactionRepository.GetRecentTransactionsWithJournalByAccountId"/>
-        public async Task<IEnumerable<Transaction>> GetRecentTransactionsWithJournalByAccountId(uint accountId, int pageSize, int offset) {
+        public async Task<IEnumerable<Transaction>> GetRecentTransactionsWithJournalByAccountId(uint? accountId, int pageSize, int offset) {
             var transactions = await _context.Transactions
                 .SelectTransactionWithJournal()
                 .Where(x => x.AccountId == accountId)

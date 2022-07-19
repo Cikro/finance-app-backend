@@ -40,7 +40,7 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// and the Transactions of the correct entry.
         /// </param>
         /// <returns> A JournalEntryDto of the corrected Journal Entry</returns>
-        Task<ApiResponse<JournalEntryDto>> Correct(JournalEntry journalEntry);
+        Task<ApiResponse<JournalEntryDto>> Correct(JournalEntryResourceIdentifier toCorrectId, JournalEntry journalEntry);
 
     }
     

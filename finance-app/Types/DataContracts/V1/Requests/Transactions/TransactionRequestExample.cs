@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 
 
-namespace CarfaxCanada.Dealer.Api.ContractExamples
+namespace finance_app.Types.DataContracts.ContractExamples
 {
     /// <summary>Provider for swagger examples used with GetAccountsRequest</summary>
     /// <remarks>See documentation for Swagger.AspNetCore.Filters, Manual Annotations, for details to use this example.</remarks>

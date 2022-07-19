@@ -170,7 +170,7 @@ namespace finance_app.Types.Services.V1
 
             var children = await GetChildren(accountId);
             if (children.Data.ExcludedItems > 0) {
-                message = $"Error closing account. Account with id '{accountId.Id}' has cildren that you don't have access to.";
+                message = $"Error closing account. Account with id '{accountId.Id}' has children that you don't have access to.";
                 return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.Unauthorized, message);
             }
 
@@ -188,7 +188,7 @@ namespace finance_app.Types.Services.V1
  
         }
 
-        private async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(uint accountId) {
+        private async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(uint? accountId) {
             // TODO: Consider fetching children of children in the future.
             var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId);
 

@@ -159,6 +159,7 @@ namespace finance_app
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
             services.AddDbContext<FinanceAppContext>(options => {
+                options.EnableSensitiveDataLogging();
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
 
