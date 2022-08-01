@@ -20,7 +20,7 @@ namespace finance_app.Types.Services.V1.Authorization
             _authorizationService = authorizationService;
         }
 
-        /// <inheritdoc cref="IFinanceAppAuthorizationService.Authorize"/>
+        /// <inheritdoc />
         public async Task<bool> Authorize(object resource, string policy) {
 
             var authorized = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User,
@@ -28,7 +28,7 @@ namespace finance_app.Types.Services.V1.Authorization
             return authorized;
         }
 
-        /// <inheritdoc cref="IFinanceAppAuthorizationService.Authorize"/>
+        /// <inheritdoc />
         public async Task<bool> Authorize(IEnumerable<object> resources, string policy) {
 
             // I don't really like how this looks. I'm awaiting each call one by one, 
@@ -51,7 +51,7 @@ namespace finance_app.Types.Services.V1.Authorization
             return allAuthorized;
         }
 
-        /// <inheritdoc cref="IFinanceAppAuthorizationService.FilterEnumerable"/>
+        /// <inheritdoc />
         public async Task<IEnumerable<T>> Filter<T>(IEnumerable<T> resources, string policy) {
             if (resources?.Count() == 0) { return resources; }
 

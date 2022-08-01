@@ -12,7 +12,7 @@ namespace finance_app.Types.Repositories.Account
         /// <summary>
         /// A Strategy to modify the Account balance
         /// </summary>
-        private IBalanceModifierStrategy BalanceModifierStrategy;
+        private IBalanceModifierStrategy _balanceModifierStrategy;
 
         [Required]
         public string Name { get; set; }
@@ -34,7 +34,7 @@ namespace finance_app.Types.Repositories.Account
             } 
             set {
                 _type = value;
-                BalanceModifierStrategy = GetBalanceModifierStrategy(value);
+                _balanceModifierStrategy = GetBalanceModifierStrategy(value);
             } 
         }
 
@@ -53,7 +53,7 @@ namespace finance_app.Types.Repositories.Account
             if (Id != transaction.AccountId ) { 
                 throw new ArgumentException ($"Will not apply transaction for AccountId {transaction.AccountId} to Account {Id}", nameof(transaction));
             }
-            Balance = BalanceModifierStrategy.GetModifiedBalance(Balance, transaction);
+            Balance = _balanceModifierStrategy.GetModifiedBalance(Balance, transaction);
             dbContext.Entry(this).Property(x => x.Balance).IsModified = true;
         }
 

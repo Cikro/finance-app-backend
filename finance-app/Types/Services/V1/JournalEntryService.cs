@@ -89,7 +89,7 @@ namespace finance_app.Types.Services.V1
             );
         }
 
-        /// <inheritdoc cref=0"IJournalEntryService.Create"/>
+        /// <inheritdoc cref="IJournalEntryService.Create"/>
         public async Task<ApiResponse<JournalEntryDto>> Create(JournalEntry journalEntry) {
             
             // TODO: Ensure Amount is correct
