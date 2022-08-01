@@ -44,7 +44,7 @@ namespace finance_app.Controllers.V1
         /// <param name="request">A GetJournalEntriesRequest</param>
         /// <remarks> 
         /// Sample Request:
-        ///     GET /api/user/{userId}/JournalEntries?pageNumber=1&itemsPerPage=10
+        ///     GET /api/user/{userId}/JournalEntries?pageNumber=1&amp;itemsPerPage=10
         /// </remarks>
         /// <returns>A List of Recent JournalEntries made by the user</returns>
         [HttpGet]

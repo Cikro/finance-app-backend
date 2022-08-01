@@ -97,22 +97,7 @@ namespace finance_app.Types.Services.V1
             
             // TODO: Figure out better return messaging object structure
 
-
-            // Unique Account Ids of transactions being created
-            var accountIds = journalEntry.Transactions
-                .GroupBy(t => t.AccountId)
-                .Select(grp => grp.Key).ToList();
-
-            // Fetch Accounts that will be modified
-            var accounts = _dbContext.Accounts
-            .Select(a => new Account{
-                Id = a.Id,
-                Balance = a.Balance,
-                UserId = a.UserId,
-                Type = a.Type
-            })
-            .Where(a => accountIds.Contains((uint) a.Id))
-            .ToList();
+            var accounts = _dbContext.Accounts.SelectAccountsForTransactions(journalEntry.Transactions);
 
 
             // Authorize that user can modify the accounts
@@ -155,21 +140,8 @@ namespace finance_app.Types.Services.V1
             journalToCorrect.Corrected = true;
             _dbContext.Entry(journalToCorrect).Property(x => x.Corrected).IsModified = true;
 
-            // Unique Account Ids of transactions being created
-            var accountIds = journalEntry.Transactions
-                .GroupBy(t => t.AccountId)
-                .Select(grp => grp.Key).ToList();
-
             // Fetch Accounts that will be modified
-            var accounts = _dbContext.Accounts
-            .Select(a => new Account{
-                Id = a.Id,
-                Balance = a.Balance,
-                UserId = a.UserId,
-                Type = a.Type
-            })
-            .Where(a => accountIds.Contains((uint) a.Id))
-            .ToList();
+            var accounts = _dbContext.Accounts.SelectAccountsForTransactions(journalEntry.Transactions);
                                 
             // Modify Account Balances
             foreach (var a in accounts) {
