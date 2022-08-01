@@ -7,7 +7,7 @@ namespace finance_app.Types.DataContracts.V1.Requests.JournalEntries
 {
     public class CorrectJournalEntryRequest
     {   
-        public List<TransactionDto> Transactions { get; set; }
+        public List<TransactionForJournalEntryRequests> Transactions { get; set; }
         
     }
 }

@@ -6,7 +6,8 @@ namespace finance_app.Types.DataContracts.V1.Requests.JournalEntries
     public class CreateJournalEntryRequest
     {   
         
-        public List<TransactionDto> Transactions { get; set; }
+        public List<TransactionForJournalEntryRequests> Transactions { get; set; }
         
     }
+
 }

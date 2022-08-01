@@ -38,9 +38,9 @@ namespace finance_app.Types.DataContracts.ContractExamples
         public CreateJournalEntryRequest GetExamples()
         {
             return new CreateJournalEntryRequest {
-                Transactions = new List<TransactionDto> {
+                Transactions = new List<TransactionForJournalEntryRequests> {
                     {
-                        new TransactionDto {
+                        new TransactionForJournalEntryRequests {
                             Amount = 100,
                             AccountId = 1,
                             Type = new EnumDto<TransactionTypeDtoEnum> {
@@ -50,7 +50,7 @@ namespace finance_app.Types.DataContracts.ContractExamples
                             Notes = "A test Debit"
                     }},
                     {
-                        new TransactionDto {
+                        new TransactionForJournalEntryRequests {
                             Amount = 100,
                             AccountId = 2,
                             Type = new EnumDto<TransactionTypeDtoEnum> {
@@ -74,9 +74,9 @@ namespace finance_app.Types.DataContracts.ContractExamples
         public CorrectJournalEntryRequest GetExamples()
         {
             return new CorrectJournalEntryRequest{
-                Transactions = new List<TransactionDto> {
+                Transactions = new List<TransactionForJournalEntryRequests> {
                     {
-                        new TransactionDto {
+                        new TransactionForJournalEntryRequests {
                             Amount = 100,
                             AccountId = 1,
                             Type = new EnumDto<TransactionTypeDtoEnum> {
@@ -86,7 +86,7 @@ namespace finance_app.Types.DataContracts.ContractExamples
                             Notes = "A test Debit"
                     }},
                     {
-                        new TransactionDto {
+                        new TransactionForJournalEntryRequests {
                             Amount = 100,
                             AccountId = 2,
                             Type = new EnumDto<TransactionTypeDtoEnum> {

@@ -25,6 +25,9 @@ namespace finance_app.Types.Mappers.Profiles
             .ForMember(d => d.Transactions, o => o.MapFrom(s => s.Transactions))
             .ForAllOtherMembers(d => d.Ignore());
 
+
+            CreateMap<TransactionForJournalEntryRequests, Transaction>();
+
             CreateMap<CorrectJournalEntryRequest, JournalEntry>()
             .ForMember(d => d.Transactions, o => o.MapFrom(s => s.Transactions))
             .ForAllOtherMembers(d => d.Ignore());
