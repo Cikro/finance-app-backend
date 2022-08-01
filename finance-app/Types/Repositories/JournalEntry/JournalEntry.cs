@@ -75,6 +75,7 @@ namespace finance_app.Types.Repositories.JournalEntry
 
         public IEnumerable<Transaction.Transaction> Transactions { get; set; }
 
+
         #region HelperMethods
         public IEnumerable<Transaction.Transaction> ReversedTransactions() {
             return Transactions.Select(t => new Transaction.Transaction {

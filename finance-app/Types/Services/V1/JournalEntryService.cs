@@ -97,23 +97,24 @@ namespace finance_app.Types.Services.V1
             
             // TODO: Figure out better return messaging object structure
 
-            var accounts = _dbContext.Accounts.SelectAccountsForTransactions(journalEntry.Transactions);
-
+            // Fetch Accounts that will be modified
+            var accounts = _dbContext.Accounts
+                .SelectAccountsForTransactions(journalEntry.Transactions);
 
             // Authorize that user can modify the accounts
-            if(!await _financeAppAuthorizationService.AuthorizeEnumerable(accounts, "CanAccessResourcePolicy")) {
+            if(!await _financeAppAuthorizationService.Authorize(accounts, "CanAccessResourcePolicy")) {
                 return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, "Error Creating Journal Entry. You are unauthorized to access some of the accounts that you are making transactions on.");
-            }
-
+            }                                
+            
+            var accountDict = accounts.ToDictionary(a => a.Id, a => a);
             // Modify Account Balances
-            foreach (var a in accounts) {
-                foreach (var t in journalEntry.Transactions)
-                {
-                    if(t.AccountId == a.Id)
-                    {
-                        a.ApplyTransaction(_dbContext, t);
-                    }
+            foreach (var t in journalEntry.Transactions)
+            {
+                if (!accountDict.ContainsKey(t.AccountId)) {
+                    var message = $"Error creating journal entry. Account with Id '{t.AccountId}' Not Found.";
+                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
                 }
+                accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
             }
 
             // Save to Database
@@ -134,24 +135,30 @@ namespace finance_app.Types.Services.V1
                 return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
             }
             
-            // TODO: Ensure Amount is correct
+
             // TODO: Ensure Date Created / Modified
             journalEntry.Transactions = journalEntry.Transactions.Concat(journalToCorrect.ReversedTransactions()).ToList();
             journalToCorrect.Corrected = true;
             _dbContext.Entry(journalToCorrect).Property(x => x.Corrected).IsModified = true;
 
             // Fetch Accounts that will be modified
-            var accounts = _dbContext.Accounts.SelectAccountsForTransactions(journalEntry.Transactions);
+            var accounts = _dbContext.Accounts
+                .SelectAccountsForTransactions(journalEntry.Transactions);
                                 
+            // Authorize that user can modify the accounts
+            if(!await _financeAppAuthorizationService.Authorize(accounts, "CanAccessResourcePolicy")) {
+                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, "Error Creating Journal Entry. You are unauthorized to access some of the accounts that you are making transactions on.");
+            }
+
+            var accountDict = accounts.ToDictionary(a => a.Id, a => a);
             // Modify Account Balances
-            foreach (var a in accounts) {
-                foreach (var t in journalEntry.Transactions)
-                {
-                    if(t.AccountId == a.Id)
-                    {
-                        a.ApplyTransaction(_dbContext, t);
-                    }
+            foreach (var t in journalEntry.Transactions)
+            {
+                if (!accountDict.ContainsKey(t.AccountId)) {
+                    var message = $"Error correcting journal entry. Account with Id '{t.AccountId}' Not Found.";
+                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
                 }
+                accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
             }
 
             _dbContext.JournalEntries.Add(journalEntry);

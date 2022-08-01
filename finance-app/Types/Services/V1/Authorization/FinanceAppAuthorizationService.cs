@@ -28,8 +28,8 @@ namespace finance_app.Types.Services.V1.Authorization
             return authorized;
         }
 
-        /// <inheritdoc cref="IFinanceAppAuthorizationService.AuthorizeEnumerable"/>
-        public async Task<bool> AuthorizeEnumerable(IEnumerable<object> resources, string policy) {
+        /// <inheritdoc cref="IFinanceAppAuthorizationService.Authorize"/>
+        public async Task<bool> Authorize(IEnumerable<object> resources, string policy) {
 
             // I don't really like how this looks. I'm awaiting each call one by one, 
             // rather than kicking all of the async calls off at once. 
@@ -52,7 +52,7 @@ namespace finance_app.Types.Services.V1.Authorization
         }
 
         /// <inheritdoc cref="IFinanceAppAuthorizationService.FilterEnumerable"/>
-        public async Task<IEnumerable<T>> FilterEnumerable<T>(IEnumerable<T> resources, string policy) {
+        public async Task<IEnumerable<T>> Filter<T>(IEnumerable<T> resources, string policy) {
             if (resources?.Count() == 0) { return resources; }
 
             var authorizedList = (await Task.WhenAll(resources?.Select(async (r) => {
