@@ -35,9 +35,12 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// Corrects a Journal Entry by marking it as corrected, and creating a new Journal entry 
         /// with the new provided transactions, and transactions to undo the original journal 
         /// </summary>
+        /// <param name="toCorrectId">
+        /// the Id of the Journal Entry to correct
+        /// </param>
         /// <param name="journalEntry">
         /// A Journal Entry with the id of the Journal you want corrected, 
-        /// and the Transactions of the correct entry.
+        /// and the Transactions of the correct entry
         /// </param>
         /// <returns> A JournalEntryDto of the corrected Journal Entry</returns>
         Task<ApiResponse<JournalEntryDto>> Correct(JournalEntryResourceIdentifier toCorrectId, JournalEntry journalEntry);

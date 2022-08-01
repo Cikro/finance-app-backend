@@ -77,22 +77,22 @@ namespace finance_app.Types.Services.V1
                                     .ToListAsync();
 
 
-            // TODO: figure out How I want to authorize these,
-            //     - You need permission to see all accounts on the entry? else, error
-            //     - You need permission to see all accounts on the entry? else, filter
-            //     - You can only access journal entries made by your account? else error
+            
+            // Authorize Journal Entries
+            // For now, you can only access journal entries made by your account.
+            // Maybe a bit redundant since the DB query sort of does this already
+            journalEntries = (await _financeAppAuthorizationService.Filter(journalEntries, "CanAccessResourcePolicy"))
+                            .ToList();
 
             return new ApiResponse<ListResponse<JournalEntryDto>>(
                 new ListResponse<JournalEntryDto> (_mapper.Map<List<JournalEntryDto>>(journalEntries))
             );
         }
 
-        /// <inheritdoc cref="IJournalEntryService.Create"/>
+        /// <inheritdoc cref=0"IJournalEntryService.Create"/>
         public async Task<ApiResponse<JournalEntryDto>> Create(JournalEntry journalEntry) {
             
             // TODO: Ensure Amount is correct
-            //          - Use Getters and Setters on Journal Class
-            //          - Map Transactions to Journal entry in mappers
             //          - Validate in Fluent Validation?
             
             // TODO: Figure out better return messaging object structure
