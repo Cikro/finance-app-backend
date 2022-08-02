@@ -10,7 +10,7 @@ namespace finance_app.Types.Repositories.Account.BalanceModifierStrategies
             return t.Type switch {
                 Transaction.TransactionTypeEnum.Debit => balance += t.Amount,
                 Transaction.TransactionTypeEnum.Credit => balance -= t.Amount,
-                _ => throw new ArgumentException($"Cannot Apply Transaction of type {t.Type} to Asset."),
+                _ => throw new ArgumentException($"Cannot Apply Transaction of type {t.Type} to Asset Account."),
             };
         }
     }

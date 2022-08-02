@@ -47,13 +47,13 @@ namespace finance_app
         public void ConfigureServices(IServiceCollection services)
         {
 
-            #region MVC Pipline
+            #region MVC Pipeline
             services.AddMvc(setup => {
 
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
                 if (_env.EnvironmentName == Environments.Development) {
-                    setup.Filters.Add(typeof(LocalAuthenticaionFilter));
+                    setup.Filters.Add(typeof(LocalAuthenticationFilter));
                 }
 
             })
@@ -71,6 +71,11 @@ namespace finance_app
 
                 // Transactions
                 fv.RegisterValidatorsFromAssemblyContaining<GetTransactionsRequestValidator>();
+
+                // Journal Entries
+                fv.RegisterValidatorsFromAssemblyContaining<GetRecentJournalEntriesRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<CorrectJournalEntryRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<CreateJournalEntryRequestValidator>();
             });
 
 
@@ -78,7 +83,7 @@ namespace finance_app
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            #endregion MVC Pipline
+            #endregion MVC Pipeline
 
             services.AddApiVersioning(cfg => {
                 cfg.DefaultApiVersion = new ApiVersion(1,0);

@@ -2,7 +2,7 @@
     using finance_app.Types.DataContracts.V1.Dtos;
     using finance_app.Types.DataContracts.V1.Dtos.Enums;
     
-    public class TransactionForJournalEntryRequests : BaseRequestObject
+    public class TransactionForJournalEntryRequests
     {
         /// <summary>
         /// The Id the transaction belongs to.
@@ -22,7 +22,7 @@
         /// <summary>
         /// The date of transaction. 
         /// NOTE: Different than when the transaction was added to the system
-        /// </summary>
+        /// </summary>v 
         public DateTime? TransactionDate { get; set; }
 
         /// <summary>
