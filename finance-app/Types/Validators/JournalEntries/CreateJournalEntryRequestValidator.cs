@@ -10,6 +10,7 @@ namespace finance_app.Types.Validators.Accounts
         public CreateJournalEntryRequestValidator()
         {
             RuleFor(request => request.Transactions)
+                .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotNull()
                 .NotEmpty()
                 .IsValidGroupOfTransactions();

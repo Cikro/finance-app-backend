@@ -25,7 +25,7 @@ namespace finance_app.Types.Validators {
         /// <returns></returns>
         public static IRuleBuilderOptions<T, string> ContainsOnlyValidCharacters<T>(this IRuleBuilder<T, string> ruleBuilder) {
             var re = new Regex(VALID_CHARACTERS_REGEX);
-            return ruleBuilder.Must(str => !re.IsMatch(str)).WithMessage($"{{Property name}} contains invalid characters. Valid characters are: {VALID_CHARACTERS_REGEX}");
+            return ruleBuilder.Must(str => !re.IsMatch(str)).WithMessage($"{{PropertyName}} contains invalid characters. Valid characters are: {VALID_CHARACTERS_REGEX}");
         }
 
         /// <summary>
@@ -36,8 +36,7 @@ namespace finance_app.Types.Validators {
         /// <returns></returns>
         public static IRuleBuilderOptions<T, IEnumerable<TransactionForJournalEntryRequests>> IsValidGroupOfTransactions<T>(this IRuleBuilder<T, IEnumerable<TransactionForJournalEntryRequests>> ruleBuilder) {
             var re = new Regex(VALID_CHARACTERS_REGEX);
-            string reason = "Unknown error validating {{Property name}}";
-            return ruleBuilder.Must(transactions => {
+            return ruleBuilder.Must((rootObject, transactions, context) => {
                     var groupedTransactions = transactions.GroupBy(
                         t => t.Type.Value,
                         t => t.Amount,
@@ -45,17 +44,21 @@ namespace finance_app.Types.Validators {
                             Key = key, Amount = group.Sum(x => x)
                         })
                         .ToDictionary(x => x.Key, x=> x.Amount);
+
                     if(groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Unknown)) {
-                        reason = $"Transactions in {{Property name}} cannot contain Transaction Type {TransactionTypeDtoEnum.Unknown}.";
+                        context.MessageFormatter.AppendArgument("Reason", $"A Transaction cannot contain Transaction Type {TransactionTypeDtoEnum.Unknown}.");
                         return false;
                     }
-                    if(groupedTransactions[TransactionTypeDtoEnum.Debit] != groupedTransactions[TransactionTypeDtoEnum.Credit]) {
-                        reason = $"Error in {{Property name}}. The sum of all transactions with type {TransactionTypeDtoEnum.Debit} must equal the sum of all transactions with type {TransactionTypeDtoEnum.Credit}.";
+
+                    if(!groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Debit) || groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Credit) ||
+                        groupedTransactions[TransactionTypeDtoEnum.Debit] != groupedTransactions[TransactionTypeDtoEnum.Credit]) {
+                        
+                        context.MessageFormatter.AppendArgument("Reason", $"The sum of all transactions with type {TransactionTypeDtoEnum.Debit} must equal the sum of all transactions with type {TransactionTypeDtoEnum.Credit}.");
                         return false;
                     }
 
                     return true;
-                }).WithMessage(reason);
+                }).WithMessage("Error in {PropertyName}. {Reason}");
         }
     }
 }

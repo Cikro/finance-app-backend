@@ -17,4 +17,20 @@ namespace finance_app.Types.Validators
             RuleFor(r => r.Id).IsValidDatabaseId();
         }
     }
+    
+    public class TransactionResourceIdentifierValidator : AbstractValidator<AccountResourceIdentifier>
+    {       
+        public TransactionResourceIdentifierValidator()
+        {
+            RuleFor(r => r.Id).IsValidDatabaseId();
+        }
+    }
+
+    public class JournalEntryResourceIdentifierValidator : AbstractValidator<AccountResourceIdentifier>
+    {       
+        public JournalEntryResourceIdentifierValidator()
+        {
+            RuleFor(r => r.Id).IsValidDatabaseId();
+        }
+    }
 }

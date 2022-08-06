@@ -62,17 +62,20 @@ namespace finance_app
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
 
                 fv.RegisterValidatorsFromAssemblyContaining<UserResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<PaginationInfoValidator>();
                 
                 // Accounts
-                // fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<PostAccountRequestValidator>();
 
                 // Transactions
+                fv.RegisterValidatorsFromAssemblyContaining<TransactionResourceIdentifierValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<GetTransactionsRequestValidator>();
 
                 // Journal Entries
+                fv.RegisterValidatorsFromAssemblyContaining<JournalEntryResourceIdentifierValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<GetRecentJournalEntriesRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<CorrectJournalEntryRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<CreateJournalEntryRequestValidator>();
@@ -94,10 +97,6 @@ namespace finance_app
                     new QueryStringApiVersionReader("v")
                 );
             });
-
-            #region Validators
-            services.AddTransient<PaginationInfoValidator>();
-            #endregion Validators
 
             services.AddAutoMapper(
                 typeof(AccountProfile),
