@@ -37,8 +37,6 @@ namespace finance_app.Middleware
             
             if (_hostingEnvironment.IsDevelopment())
             {
-                var dto = new ExceptionDto();
-
                 apiResponse.Data =  BuildExceptionDto(context.Exception);
             }
 

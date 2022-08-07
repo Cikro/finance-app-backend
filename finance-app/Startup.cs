@@ -47,13 +47,13 @@ namespace finance_app
         public void ConfigureServices(IServiceCollection services)
         {
 
-            #region MVC Pipline
+            #region MVC Pipeline
             services.AddMvc(setup => {
 
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
                 if (_env.EnvironmentName == Environments.Development) {
-                    setup.Filters.Add(typeof(LocalAuthenticaionFilter));
+                    setup.Filters.Add(typeof(LocalAuthenticationFilter));
                 }
 
             })
@@ -62,15 +62,23 @@ namespace finance_app
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
 
                 fv.RegisterValidatorsFromAssemblyContaining<UserResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<PaginationInfoValidator>();
                 
                 // Accounts
-                // fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<AccountResourceIdentifierValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<GetAccountsRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<PostAccountRequestValidator>();
 
                 // Transactions
+                fv.RegisterValidatorsFromAssemblyContaining<TransactionResourceIdentifierValidator>();
                 fv.RegisterValidatorsFromAssemblyContaining<GetTransactionsRequestValidator>();
+
+                // Journal Entries
+                fv.RegisterValidatorsFromAssemblyContaining<JournalEntryResourceIdentifierValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<GetRecentJournalEntriesRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<CorrectJournalEntryRequestValidator>();
+                fv.RegisterValidatorsFromAssemblyContaining<CreateJournalEntryRequestValidator>();
             });
 
 
@@ -78,7 +86,7 @@ namespace finance_app
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            #endregion MVC Pipline
+            #endregion MVC Pipeline
 
             services.AddApiVersioning(cfg => {
                 cfg.DefaultApiVersion = new ApiVersion(1,0);
@@ -90,13 +98,10 @@ namespace finance_app
                 );
             });
 
-            #region Validators
-            services.AddTransient<PaginationInfoValidator>();
-            #endregion Validators
-
             services.AddAutoMapper(
                 typeof(AccountProfile),
                 typeof(TransactionProfile),
+                typeof(JournalEntryProfile),
                 typeof(StatusCodeProfile)
             );
 
@@ -158,6 +163,7 @@ namespace finance_app
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
             services.AddDbContext<FinanceAppContext>(options => {
+                options.EnableSensitiveDataLogging();
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
 
@@ -168,13 +174,17 @@ namespace finance_app
 
             #region Services
             services.AddSingleton<IAuthorizationHandler, DatabaseObjectAuthorizationHandler>();
-            services.AddTransient<IUserAuthorizationService, UserAuthorizationServiceService>();
+            services.AddTransient<IFinanceAppAuthorizationService, FinanceAppAuthorizationService>();
 
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IAccountRepository, AccountRepository>();
 
             services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<IJournalEntryService, JournalEntryService>();
+
             services.AddTransient<ITransactionRepository, TransactionRepository>();
+
+
 
             services.AddHttpContextAccessor();
             #endregion Services

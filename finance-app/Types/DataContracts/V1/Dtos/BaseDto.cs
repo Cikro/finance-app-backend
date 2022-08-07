@@ -7,8 +7,8 @@ namespace finance_app.Types.DataContracts.V1.Dtos
 {
     public class BaseDto
     {
-        public uint Id { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime DateLastEdited { get; set; }
+        public uint? Id { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public DateTime? DateLastEdited { get; set; }
     }
 }

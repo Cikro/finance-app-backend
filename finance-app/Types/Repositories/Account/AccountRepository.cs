@@ -20,7 +20,7 @@ namespace finance_app.Types.Repositories.Account
             _context = context;
         }
 
-        public async Task<Account> GetAccountByAccountId(uint accountId) {
+        public async Task<Account> GetAccountByAccountId(uint? accountId) {
             Account account = null;
 
             var parameters = new object[]
@@ -48,17 +48,17 @@ namespace finance_app.Types.Repositories.Account
                 await connection.CloseAsync();
 
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             } 
 
             return account;
         }
 
-        public async Task<Account> GetAccountByAccountName(uint userId, string accountName) {
+        public async Task<Account> GetAccountByAccountName(uint? userId, string accountName) {
             
             Account account = null;
             
@@ -88,16 +88,16 @@ namespace finance_app.Types.Repositories.Account
                 await connection.CloseAsync();
 
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             } 
             return account;
         }
 
-        public async Task<IEnumerable<Account>> GetAllByUserId(uint userId) {
+        public async Task<IEnumerable<Account>> GetAllByUserId(uint? userId) {
             
             var accounts = new List<Account>();
 
@@ -124,17 +124,17 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             } 
 
             return accounts;
         }
 
-        public async Task<IEnumerable<Account>> GetPaginatedByUserId(uint userId, uint pageSize, uint offset)
+        public async Task<IEnumerable<Account>> GetPaginatedByUserId(uint? userId, uint pageSize, uint offset)
         {
             var accounts = new List<Account>();
 
@@ -170,16 +170,16 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             }
 
             return accounts;
         }
-        public async Task<IEnumerable<Account>> GetChildrenByAccountId(uint accountId) {
+        public async Task<IEnumerable<Account>> GetChildrenByAccountId(uint? accountId) {
             var accounts = new List<Account>();
 
             var parameters = new object[] {
@@ -205,11 +205,11 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             } 
 
             return accounts;
@@ -247,17 +247,17 @@ namespace finance_app.Types.Repositories.Account
                     }
                 }
                 await connection.CloseAsync();
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             }
 
             return newAccount;
         }
 
-        public async Task<IEnumerable<Account>> CloseAccount(uint accountId) {
+        public async Task<IEnumerable<Account>> CloseAccount(uint? accountId) {
             var accountsClosed = new List<Account>();;
 
             var parameters = new object[]
@@ -286,11 +286,11 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             }
 
             return accountsClosed;
@@ -329,11 +329,11 @@ namespace finance_app.Types.Repositories.Account
                 }
                 await connection.CloseAsync();
 
-            } catch (Exception e) {
+            } catch (Exception) {
                 if (connection?.State == ConnectionState.Open) {
                     await connection.CloseAsync();
                 }
-                throw e;
+                throw;
             }
 
             return updatedAccount;

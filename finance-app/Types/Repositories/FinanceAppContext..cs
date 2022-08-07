@@ -1,6 +1,7 @@
 using finance_app.Types.Repositories.Transaction;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace finance_app.Types.Repositories
 {
@@ -10,10 +11,11 @@ namespace finance_app.Types.Repositories
 
         public DbSet<Account.Account> Accounts { get; set; }
         public DbSet<Transaction.Transaction> Transactions { get; set; }
-        public DbSet<JournalEntry.JournalEntry> JournalEntry { get; set; }
+        public DbSet<JournalEntry.JournalEntry> JournalEntries { get; set; }
         
 
         public FinanceAppContext(DbContextOptions options) : base(options){}
+
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
@@ -23,11 +25,35 @@ namespace finance_app.Types.Repositories
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region JournalEntry
             modelBuilder.Entity<JournalEntry.JournalEntry>().ToTable("journal_entries");
+            modelBuilder.Entity<JournalEntry.JournalEntry>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<JournalEntry.JournalEntry>()
+                .Property(e => e.DateCreated)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<JournalEntry.JournalEntry>()
+                .Property(e => e.DateLastEdited)
+                .ValueGeneratedOnUpdate();
+            #endregion JournalEntry
+
+            #region Transactions
             modelBuilder.Entity<Transaction.Transaction>().ToTable("transactions")
                 .HasOne(p => p.JournalEntry)
-                .WithMany()
+                .WithMany(j => j.Transactions)
                 .HasForeignKey(t => t.JournalEntryId);
+            modelBuilder.Entity<Transaction.Transaction>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Transaction.Transaction>()
+                .Property(e => e.DateCreated)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Transaction.Transaction>()
+                .Property(e => e.DateLastEdited)
+                .ValueGeneratedOnUpdate();
+            #endregion Transactions
         }
+        
     }
 }

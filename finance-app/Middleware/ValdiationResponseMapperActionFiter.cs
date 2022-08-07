@@ -31,10 +31,10 @@ namespace finance_app.Middleware {
                 {
                     Key = v.Key,
                     Errors = v.Value.Errors.Select(v => v.ErrorMessage).ToList() 
-                });
+                }).ToList();
 
             var message = "There are errors in your input parameters";
-            var apiResponse = new ApiResponse<List<ValidationError>>(ApiResponseCodesEnum.BadRequest, message);
+            var apiResponse = new ApiResponse<List<ValidationError>>(errors, ApiResponseCodesEnum.BadRequest, message);
 
             var mapper = (IMapper)context.HttpContext
                     .RequestServices.GetService(typeof(IMapper));

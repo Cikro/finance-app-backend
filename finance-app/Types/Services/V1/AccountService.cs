@@ -31,7 +31,7 @@ namespace finance_app.Types.Services.V1
             _context = context;
         }
 
-        /// <inheritdoc cref="IAccountService.GetAccounts"/>
+    /// <inheritdoc cref="IAccountService.GetAccounts"/>
     public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId) {
             if (userId == null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
@@ -93,6 +93,7 @@ namespace finance_app.Types.Services.V1
                 var message = $"Error creating account. Account with name '{account.Name}' already exists.";
                 return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource,message);
             };
+
             var newAccount = await _accountServiceDbo.CreateAccount(account);
 
 
@@ -169,7 +170,7 @@ namespace finance_app.Types.Services.V1
 
             var children = await GetChildren(accountId);
             if (children.Data.ExcludedItems > 0) {
-                message = $"Error closing account. Account with id '{accountId.Id}' has cildren that you don't have access to.";
+                message = $"Error closing account. Account with id '{accountId.Id}' has children that you don't have access to.";
                 return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.Unauthorized, message);
             }
 
@@ -187,7 +188,7 @@ namespace finance_app.Types.Services.V1
  
         }
 
-        private async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(uint accountId) {
+        private async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(uint? accountId) {
             // TODO: Consider fetching children of children in the future.
             var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId);
 

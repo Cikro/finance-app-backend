@@ -13,7 +13,11 @@ namespace finance_app.Types.Repositories.Transaction
         /// </summary>
         [Required]
         [Column("account_id")]
-        public uint AccountId { get; set; }
+        public uint? AccountId { get; set; }
+
+        [Required]
+        [Column("user_id")]
+        public uint? UserId {get ;set; }
         
         /// <summary>
         /// The type of transaction
@@ -39,6 +43,7 @@ namespace finance_app.Types.Repositories.Transaction
         /// </summary>
         public string Notes { get; set; }
 
+        // TODO: Remove Corrected and Server Generated. Use Journal entry as source of truth?
         /// <summary>
         /// Did the user correct the transaction?
         /// </summary>

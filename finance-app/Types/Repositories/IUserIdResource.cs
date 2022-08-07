@@ -5,6 +5,6 @@ namespace finance_app.Types.Repositories
 {
     public interface IUserIdResource
     {
-        public uint UserId { get; set; }
+        public uint? UserId { get; set; }
     }
 }

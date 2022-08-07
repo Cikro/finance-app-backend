@@ -27,7 +27,7 @@ namespace finance_app.Controllers.V1
         private readonly ITransactionService _transactionService;
         private readonly IMapper _mapper;
 
-        public TransactionsController(ILogger<AccountsController> logger, 
+        public TransactionsController(ILogger<AccountsController> logger,
                                   ITransactionService transactionService,
                                   IMapper mapper)
         {
@@ -58,7 +58,7 @@ namespace finance_app.Controllers.V1
         [UserAuthorizationFilter]
         public async Task<IActionResult> GetTransactions([FromQuery]AccountResourceIdentifier accountId,  [FromQuery]GetTransactionsRequest request)
         {
-            ApiResponse<ListResponse<TransactionDto>> ret;
+            ApiResponse<ListResponse<TransactionWithJournalDto>> ret;
             if (request.PageInfo != null) {
                 
                  ret =  await _transactionService.GetRecentTransactions(accountId,

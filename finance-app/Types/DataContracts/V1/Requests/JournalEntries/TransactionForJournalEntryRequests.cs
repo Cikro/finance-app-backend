@@ -1,12 +1,9 @@
-using System;
-using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using finance_app.Types.Repositories.JournalEntry;
-
-namespace finance_app.Types.DataContracts.V1.Dtos 
-{
-    public class TransactionDto : BaseDto 
+    using System;
+    using finance_app.Types.DataContracts.V1.Dtos;
+    using finance_app.Types.DataContracts.V1.Dtos.Enums;
+    
+    public class TransactionForJournalEntryRequests
     {
-
         /// <summary>
         /// The Id the transaction belongs to.
         /// </summary>
@@ -25,7 +22,7 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// <summary>
         /// The date of transaction. 
         /// NOTE: Different than when the transaction was added to the system
-        /// </summary>
+        /// </summary>v 
         public DateTime? TransactionDate { get; set; }
 
         /// <summary>
@@ -33,19 +30,4 @@ namespace finance_app.Types.DataContracts.V1.Dtos
         /// </summary>
         public string Notes { get; set; }
 
-        /// <summary>
-        /// Did the user correct the transaction?
-        /// </summary>
-        public bool Corrected { get; set; }
-
-        /// <summary>
-        /// Did the server create this?
-        /// </summary>
-        public bool ServerGenerated { get; set; }
-
-        /// <summary>
-        /// The Id of the journal entry that the transaction belongs to.
-        /// </summary>
-        public uint JournalEntryId { get; set; }
     }
-}

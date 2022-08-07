@@ -17,8 +17,8 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// </summary>
         /// /// <param name="transactionId">The Id of the Transaction you want to get</param>
         /// <param name="includeJournals">An object represent information for paging</param>
-        /// <returns> A list of TransactionDtos</returns>
-        Task<ApiResponse<TransactionDto>> GetTransaction(TransactionResourceIdentifier transactionId, bool includeJournals = false);
+        /// <returns> A list of TransactionWithJournalDtos</returns>
+        Task<ApiResponse<TransactionWithJournalDto>> GetTransaction(TransactionResourceIdentifier transactionId, bool includeJournals = false);
 
         /// <summary>
         /// Gets a list of recent transactions 
@@ -27,7 +27,7 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// <param name="pageInfo">An object represent information for paging</param>
         /// <param name="includeJournals">An object represent information for paging</param>
         /// <returns> A list of TransactionDtos</returns>
-        Task<ApiResponse<ListResponse<TransactionDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals);
+        Task<ApiResponse<ListResponse<TransactionWithJournalDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals = false);
 
         /// <summary>
         /// Updates an transaction with values from an existing transaction.

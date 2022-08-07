@@ -45,38 +45,38 @@ namespace finance_app.Types.Services.V1
         }
 
         /// <inheritdoc cref="ITransactionService.GetTransaction"/>
-        public async Task<ApiResponse<TransactionDto>> GetTransaction(TransactionResourceIdentifier transactionId, bool includeJournals = false) {
+        public async Task<ApiResponse<TransactionWithJournalDto>> GetTransaction(TransactionResourceIdentifier transactionId, bool includeJournals = false) {
             // Fetch Transaction to update
             var transaction = await _transactionRepository.GetTransaction(transactionId.Id);
             if (transaction == null) 
             {
                 var message = $"Error getting transaction. Transaction with id '{transaction.Id}' does not exist.";
-                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.ResourceNotFound, message);
             }
 
             // Verify that the use can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transaction.AccountId);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
-                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+                return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
             }
 
-            var ret = _mapper.Map<TransactionDto>(transaction);
-            return new ApiResponse<TransactionDto>(ret);
+            var ret = _mapper.Map<TransactionWithJournalDto>(transaction);
+            return new ApiResponse<TransactionWithJournalDto>(ret);
 
 
         }
 
         /// <inheritdoc cref="ITransactionService.GetRecentTransactions"/>
-        public async Task<ApiResponse<ListResponse<TransactionDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals = false) {
+        public async Task<ApiResponse<ListResponse<TransactionWithJournalDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals = false) {
             if (accountId == null) { throw new ArgumentNullException(nameof(AccountResourceIdentifier)); }
-            if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<TransactionDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Page Number."); }
-            if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<TransactionDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Items Per Page.");; }
+            if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Page Number."); }
+            if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Items Per Page.");; }
 
             var account = await _accountRepository.GetAccountByAccountId(accountId.Id);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
-                return new ApiResponse<ListResponse<TransactionDto>>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+                return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
             }
 
             int offset = (int)pageInfo.PageNumber - 1;
@@ -84,9 +84,9 @@ namespace finance_app.Types.Services.V1
                 await _transactionRepository.GetRecentTransactionsWithJournalByAccountId(accountId.Id, (int)pageInfo.ItemsPerPage, (int)offset) :
                 await _transactionRepository.GetRecentTransactionsByAccountId(accountId.Id, (int)pageInfo.ItemsPerPage, (int)offset);
 
-            var ret = new ListResponse<TransactionDto>(_mapper.Map<List<TransactionDto>>(transactions));
+            var ret = new ListResponse<TransactionWithJournalDto>(_mapper.Map<List<TransactionWithJournalDto>>(transactions));
 
-            return new ApiResponse<ListResponse<TransactionDto>>(ret);
+            return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ret);
         }
 
         /// <inheritdoc cref="ITransactionService.UpdateTransaction"/>   
@@ -99,7 +99,7 @@ namespace finance_app.Types.Services.V1
                 return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.ResourceNotFound, message);
             }
 
-            // Verify that the use can access the transaction
+            // Verify that the user can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transactionToUpdate.AccountId);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {

@@ -25,7 +25,7 @@ namespace finance_app.Types.Repositories.Transaction
         }
 
         /// <inheritdoc cref="ITransactionRepository.GetTransaction"/>
-        public async Task<Transaction> GetTransaction(uint transactionId) 
+        public async Task<Transaction> GetTransaction(uint? transactionId) 
         {
             var transaction = await _context.Transactions
                 .SelectTransaction()
@@ -33,8 +33,17 @@ namespace finance_app.Types.Repositories.Transaction
             return transaction;
         }
 
+        /// <inheritdoc cref="ITransactionRepository.GetTransactionWithJournal"/>
+        public async Task<Transaction> GetTransactionWithJournal(uint? transactionId) 
+        {
+            var transaction = await _context.Transactions
+                .SelectTransactionWithJournal()
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
+            return transaction;
+        }
+
         /// <inheritdoc cref="ITransactionRepository.GetRecentTransactionsByAccountId"/>
-        public async Task<IEnumerable<Transaction>> GetRecentTransactionsByAccountId(uint accountId, int pageSize, int offset)
+        public async Task<IEnumerable<Transaction>> GetRecentTransactionsByAccountId(uint? accountId, int pageSize, int offset)
         {
             var transactions =  await _context.Transactions
                 .SelectTransaction()
@@ -48,7 +57,7 @@ namespace finance_app.Types.Repositories.Transaction
         }
 
         /// <inheritdoc cref="ITransactionRepository.GetRecentTransactionsWithJournalByAccountId"/>
-        public async Task<IEnumerable<Transaction>> GetRecentTransactionsWithJournalByAccountId(uint accountId, int pageSize, int offset) {
+        public async Task<IEnumerable<Transaction>> GetRecentTransactionsWithJournalByAccountId(uint? accountId, int pageSize, int offset) {
             var transactions = await _context.Transactions
                 .SelectTransactionWithJournal()
                 .Where(x => x.AccountId == accountId)
@@ -60,75 +69,34 @@ namespace finance_app.Types.Repositories.Transaction
             return transactions;
         }
 
-        
+        /// <summary>
+        /// Creates a new transaction
+        /// </summary>
+        /// <param name="transaction">The transaction to create</param>
+        /// <returns>The updated Transaction</returns>
+        public async Task<Transaction> CreateTransaction(Transaction transaction) {
+            transaction.DateCreated = DateTime.Now;
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
+            return transaction;
+        }
+
         /// <summary>
         /// Updates a transaction's updateable properties with 
         /// the provided transaction's properties.
-        /// Decided to use a Stored Procedure here since EF Core doesn't play nice
-        /// with SQL DB Update Triggers (used for Date Last Modified)
         /// </summary>
         /// <param name="transaction">The transaction to update</param>
         /// <returns>The updated Transaction</returns>
         public async Task<Transaction> UpdateTransaction(Transaction transaction) {
-            Transaction updatedTransaction = null;
-
-            var parameters = new object[]
-            {
-                new MySqlParameter("transactionId", transaction.Id),
-                new MySqlParameter("notes", transaction.Notes),
-            };
             
-            var connection = _context.Database.GetDbConnection();
+            transaction.DateLastEdited = DateTime.Now;
+            _context.Transactions.Attach(transaction);
+            _context.Entry(transaction).Property(x => x.Notes).IsModified = true;
+            _context.Entry(transaction).Property(x => x.DateLastEdited).IsModified = true;
+            await _context.SaveChangesAsync();
 
-            try {
-                await connection.OpenAsync();
-                var command = connection.CreateCommand();
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "UpdateTransaction";
-
-                foreach (var p in parameters)
-                {
-                    command.Parameters.Add(p);
-                }
-
-                
-                using (var reader = await command.ExecuteReaderAsync()) {
-                    while (await reader.ReadAsync()) {
-                        updatedTransaction = ReadTransaction(reader);
-                    }
-                }
-                await connection.CloseAsync();
-
-            } catch (Exception e) {
-                if (connection?.State == ConnectionState.Open) {
-                    await connection.CloseAsync();
-                }
-                throw e;
-            }
-
-            return updatedTransaction;
-        }
-
-        /// <summary>
-        /// Reads a transaction from a DBreader
-        /// </summary>
-        /// <param name="reader">A DB reader with a transaction</param>
-        /// <returns>A populated Transition</returns>
-        private Transaction ReadTransaction(DbDataReader reader) {
-
-            return new Transaction
-            {
-                Id = (uint)reader.GetInt32("id"),
-                Notes  = reader.IsDBNull("notes") ? "" : reader.GetString("notes"),
-                Amount = reader.IsDBNull("amount") ? 0 : reader.GetDecimal("amount"),
-                Type = Enum.IsDefined(typeof(TransactionTypeEnum), reader.GetByte("type")) ? (TransactionTypeEnum) reader.GetByte("type") : TransactionTypeEnum.Unknown,
-                Corrected = reader.IsDBNull("corrected") ? null : (bool?)reader.GetBoolean("corrected"),
-                ServerGenerated = reader.IsDBNull("server_generated") ? null : (bool?)reader.GetBoolean("server_generated"),
-                JournalEntryId =  (uint)reader.GetInt32("journal_entry_id"),
-                TransactionDate = reader.GetDateTime("transaction_date"),
-                DateCreated = reader.GetDateTime("date_created"),
-                DateLastEdited = reader.GetDateTime("date_last_edited")
-            };
+            return await GetTransactionWithJournal(transaction.Id);
+            
         }
     }
 }

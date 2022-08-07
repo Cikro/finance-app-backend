@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-public class LocalAuthenticaionFilter : Attribute, IAsyncActionFilter  
+public class LocalAuthenticationFilter : Attribute, IAsyncActionFilter  
 {
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context,
