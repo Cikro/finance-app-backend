@@ -91,11 +91,6 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IJournalEntryService.Create"/>
         public async Task<ApiResponse<JournalEntryDto>> Create(JournalEntry journalEntry) {
-            
-            // TODO: Ensure Amount is correct
-            //          - Validate in Fluent Validation?
-            
-            // TODO: Figure out better return messaging object structure
 
             // Fetch Accounts that will be modified
             var accounts = _dbContext.Accounts
