@@ -10,8 +10,8 @@ namespace finance_app.Types.DataContracts.V1.Responses.ResponseMessage
         private readonly IReasonMessage _reason;
         private readonly IResourceMessage _resource;
         public ErrorResponseMessage(IActionMessage action, 
-                                    IReasonMessage reason,
-                                    IResourceMessage resource) {
+                                    IResourceMessage resource,
+                                    IReasonMessage reason) {
             _action = action;
             _reason = reason;
             _resource = resource;

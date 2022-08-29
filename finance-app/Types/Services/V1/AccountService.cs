@@ -10,6 +10,12 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using System;
+using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
+using finance_app.Types.DataContracts.V1.Responses.ResponseMessage.Accounts;
+using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
+using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
+using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
+using finance_app.Types.DataContracts.V1.Responses.ReasonMessages.Accounts;
 
 namespace finance_app.Types.Services.V1
 {
@@ -62,8 +68,15 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.GetChildren"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId) {
-            // TODO: Consider fetching children of children in the future.
-            return await GetChildren(accountId.Id);
+            
+            var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
+            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
+
+            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
+                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
+            };
+
+            return new ApiResponse<ListResponse<AccountDto>>(ret);
 
         }
         
@@ -87,52 +100,73 @@ namespace finance_app.Types.Services.V1
         }
 
         /// <inheritdoc cref="IAccountService.CreateAccount"/>
-        public async Task<ApiResponse<AccountDto>> CreateAccount(Account account) {
+        public async Task<ApiResponse2<AccountDto>> CreateAccount(Account account) {
             var existingAccount = await _accountServiceDbo.GetAccountByAccountName(account.UserId, account.Name);
-            if (existingAccount != null) {   
-                var message = $"Error creating account. Account with name '{account.Name}' already exists.";
-                return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource,message);
-            };
+            if (existingAccount != null) {
+                var errorMessage = new ErrorResponseMessage(
+                    new CreatingActionMessage(account),
+                    new ResourceWithPropertyMessage(existingAccount, existingAccount.Name),
+                    new PropertyAlreadyExistsReason());
+                return new ApiResponse2<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, errorMessage);
+            }
 
             var newAccount = await _accountServiceDbo.CreateAccount(account);
 
 
-            return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(newAccount));
+            return new ApiResponse2<AccountDto>(_mapper.Map<AccountDto>(newAccount));
         }
 
 
         /// <inheritdoc cref="IAccountService.UpdateAccount"/>
-        public async Task<ApiResponse<AccountDto>> UpdateAccount(Account account) {
+        public async Task<ApiResponse2<AccountDto>> UpdateAccount(Account account) {
 
             var existingAccount = await _accountServiceDbo.GetAccountByAccountId(account.Id);
             if (existingAccount == null) {    
-                var message = $"Error updating account. Account with id '{account.Id}' does not exist.";
-                return new ApiResponse<AccountDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                var errorMessage = new ErrorResponseMessage(
+                    new UpdatingActionMessage(account),
+                    new ResourceWithPropertyMessage(existingAccount, existingAccount.Id),
+                    new PropertyAlreadyExistsReason());
+                return new ApiResponse2<AccountDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             }
 
             if (existingAccount.Name != account.Name) {
                 var duplicateName = await _accountServiceDbo.GetAccountByAccountName(existingAccount.UserId, account.Name);
                 if (duplicateName != null) {
-                    var message = $"Error updating account. Account with name '{duplicateName.Name}' already Exists.";
-                    return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(duplicateName), ApiResponseCodesEnum.DuplicateResource, message);
+                    var errorMessage = new ErrorResponseMessage(
+                        new UpdatingActionMessage(account),
+                        new ResourceWithPropertyMessage(duplicateName, duplicateName.Name),
+                        new PropertyAlreadyExistsReason());
+                    return new ApiResponse2<AccountDto>(_mapper.Map<AccountDto>(duplicateName), ApiResponseCodesEnum.DuplicateResource, errorMessage);
                 }
             }
 
+            // If the 'Closed' Status is changing.
             if (existingAccount.Closed != account.Closed) {
 
-                // If you are trying to close an account, all of it's children need to be closed
+                // If you are trying to close an account
                 if (account.Closed == true) {
 
-                    var children = await GetChildren(account.Id);
-                    if (children.Data.ExcludedItems > 0) {
-                        var message = $"Error updating account. Account with id '{account.Id}' has children that you don't have access to.";
-                        return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, message);
+                    // You need access to all of it's children all of it's children need to be closed.
+                    var children = await _accountServiceDbo.GetChildrenByAccountId(account.Id);
+
+                    var accessibleChildren = await FilterAccessibleAccounts(children);
+
+                    if (accessibleChildren.Count() != children.Count()) {
+                        var errorMessage = new ErrorResponseMessage(
+                            new UpdatingActionMessage(account),
+                            new ResourceWithPropertyMessage(account, account.Id),
+                            new UnauthorizedToAccessChildrenReason());
+                        return new ApiResponse2<AccountDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
                     }
 
-                    // If any children accounts are open
-                    if (children?.Data?.Items.Any(child => child.Closed == true) == true) {
-                        var message = $"Error updating account. Cannot close an account when it has child accounts that are not closed.";
-                        return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, message);
+                    // And all of it's children need to be closed already
+                    var openChildren = children.Where(child => child.Closed == false).ToList();
+                    if (openChildren.Count > 0) {
+                        var errorMessage = new ErrorResponseMessage(
+                            new UpdatingActionMessage(account),
+                            new ResourceWithPropertyMessage(account, account.Id),
+                            new ChildAccountsNotClosedReason(openChildren));
+                        return new ApiResponse2<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, errorMessage);
                     }
 
                 }
@@ -141,8 +175,11 @@ namespace finance_app.Types.Services.V1
                 if (account.Closed == false && existingAccount.ParentAccountId != null) {
                     var parent = await _accountServiceDbo.GetAccountByAccountId((uint) existingAccount.ParentAccountId);
                     if (parent?.Closed == true) {
-                        var message = $"Error updating account. Cannot open an account when its parent is closed.";
-                        return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, message);
+                        var errorMessage = new ErrorResponseMessage(
+                            new UpdatingActionMessage(account),
+                            new ResourceWithPropertyMessage(account, account.Id),
+                            new ParentAccountIsClosedReason(parent));
+                        return new ApiResponse2<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, errorMessage);
                     }
                 }
 
@@ -150,56 +187,53 @@ namespace finance_app.Types.Services.V1
 
             var updatedAccount = await _accountServiceDbo.UpdateAccount(account);
 
-            return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(updatedAccount));
+            return new ApiResponse2<AccountDto>(_mapper.Map<AccountDto>(updatedAccount));
         }
 
         /// <inheritdoc cref="IAccountService.CloseAccount"/>
-        public async Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) {
-            
-            string message;
+        public async Task<ApiResponse2<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) 
+        {
             var accountToClose = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
             if (accountToClose == null) {    
-                message = $"Error closing account. Account with id '{accountId.Id}' could not be found.";
-                return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.ResourceNotFound, message);
+                var errorMessage = new ErrorResponseMessage(
+                            new ClosingActionMessage(accountToClose),
+                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new NotFoundReason());
+                return new ApiResponse2<ListResponse<AccountDto>>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             };
 
             if (accountToClose.Closed == true) {
-                message = $"The Account with id {accountToClose.Id} is already closed.";
-                return new ApiResponse<ListResponse<AccountDto>>(new ListResponse<AccountDto>(new List<AccountDto> {{_mapper.Map<AccountDto>(accountToClose)}}), ApiResponseCodesEnum.InternalError, message);
+                var errorMessage = new ErrorResponseMessage(
+                            new ClosingActionMessage(accountToClose),
+                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new AlreadyClosedReason());
+                return new ApiResponse2<ListResponse<AccountDto>>(new ListResponse<AccountDto>(new List<AccountDto> {{_mapper.Map<AccountDto>(accountToClose)}}), ApiResponseCodesEnum.InternalError, errorMessage);
             }
 
-            var children = await GetChildren(accountId);
-            if (children.Data.ExcludedItems > 0) {
-                message = $"Error closing account. Account with id '{accountId.Id}' has children that you don't have access to.";
-                return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.Unauthorized, message);
+            var children = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
+            var accessibleChildren = await FilterAccessibleAccounts(children);
+            if (accessibleChildren.Count() != children.Count()) {
+                var errorMessage = new ErrorResponseMessage(
+                            new ClosingActionMessage(accountToClose),
+                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new UnauthorizedToAccessChildrenReason());
+                return new ApiResponse2<ListResponse<AccountDto>>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
             var accountsClosed = await _accountServiceDbo.CloseAccount(accountId.Id);
             if (!accountsClosed.Any()) {
-                message = $"Error closing account. Account with id '{accountId.Id}' found, but not closed.";
-                return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.InternalError, message );
+                var errorMessage = new ErrorResponseMessage(
+                            new ClosingActionMessage(accountToClose),
+                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new NotClosedReason());
+                return new ApiResponse2<ListResponse<AccountDto>>(ApiResponseCodesEnum.InternalError, errorMessage );
             }
 
-            message = $"{accountsClosed.Count()} accounts closed.";
-            return new ApiResponse<ListResponse<AccountDto>>(
+            return new ApiResponse2<ListResponse<AccountDto>>(
                 new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accountsClosed)),
                 ApiResponseCodesEnum.Success,
-                message);
+                new AccountsClosedResponseMessage(accountsClosed));
  
-        }
-
-        private async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(uint? accountId) {
-            // TODO: Consider fetching children of children in the future.
-            var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId);
-
-            var accessibleAccounts = await FilterAccessibleAccounts(accounts);
-
-            var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
-                ExcludedItems = accounts.Count() - accessibleAccounts.Count()
-            };
-
-            return new ApiResponse<ListResponse<AccountDto>>(ret);
-
         }
 
         private async Task<IEnumerable<Account>> FilterAccessibleAccounts(IEnumerable<Account> accounts) {

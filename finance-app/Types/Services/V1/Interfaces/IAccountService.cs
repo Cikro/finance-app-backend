@@ -45,21 +45,21 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// </summary>
         /// <param name="account">A populated account object</param>
         /// <returns> An AccountDto of the created account</returns>
-        Task<ApiResponse<AccountDto>> CreateAccount(Account account);
+        Task<ApiResponse2<AccountDto>> CreateAccount(Account account);
 
         /// <summary>
         /// Updates an account with values from an existing account
         /// </summary>
         /// <param name="account">A populated account object</param>
         /// <returns> An AccountDto of the updated account</returns>
-        Task<ApiResponse<AccountDto>> UpdateAccount(Account account);
+        Task<ApiResponse2<AccountDto>> UpdateAccount(Account account);
 
         /// <summary>
         /// Closes an account that has the provided Id.
         /// </summary>
         /// <param name="accountId">An Identifier for the account you are closing</param>
         /// <returns>AccountDtos of the closed accounts</returns>
-        Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId);
+        Task<ApiResponse2<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId);
         
     }
 }

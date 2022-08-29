@@ -15,7 +15,7 @@ namespace finance_app.Types.DataContracts.V1.Responses.ErrorResponses
 
         public string GetMessage()
         {
-            return $"{_verb} {nameof(_resource)}";
+            return $"{_verb} {_resource.GetType().Name}";
         }
     }
 }
