@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
@@ -11,7 +12,8 @@ namespace finance_app.Types.Services.V1.ResponseMessages {
         /// <param name="user">The User trying to access the rout</param>
         /// <param name="attemptedUser">The user who's data you are trying to access</param>
         public UnauthorizedToAccessRouteByUserId(ClaimsPrincipal user, UserResourceIdentifier attemptedUser) {
-            _message = $"As userId ${user},  you are not authorized to access data belonging to user with Id {attemptedUser?.Id}";
+            var userIdFromClaims = user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+            _message = $"As userId {userIdFromClaims},  you are not authorized to access data belonging to user with Id {attemptedUser?.Id}";
         }
 
         public string GetMessage() {
