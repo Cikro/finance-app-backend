@@ -58,12 +58,12 @@ namespace finance_app.Types.Services.V1.Authorization
             var authorizedList = (await Task.WhenAll(resources?.Select(async (r) => {
                     return new ResourceWithAccess<T> {
                         Resource = r,
-                        HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, r, policy )).Succeeded
+                        HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, r, policy)).Succeeded
                     };
                     })
                 ))
-                ?.Where(r => r.HasAccess == true)
-                ?.Select(r => r.Resource);
+                .Where(r => r.HasAccess == true)
+                .Select(r => r.Resource);
             return authorizedList;
         }
 

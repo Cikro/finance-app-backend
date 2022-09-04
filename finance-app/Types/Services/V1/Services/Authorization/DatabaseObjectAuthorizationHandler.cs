@@ -15,7 +15,7 @@ namespace finance_app.Types.Services.V1.Authorization
                                                     UserOwnsResource requirement,
                                                    IUserIdResource resource)
         {
-            // Parse suer's ID from claims
+            // Parse user's ID from claims
             var userIdFromClaims = context.User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
             var hasUserId = int.TryParse(userIdFromClaims, out var userId);
             if (!hasUserId) 
