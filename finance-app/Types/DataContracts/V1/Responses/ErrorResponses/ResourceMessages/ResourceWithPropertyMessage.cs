@@ -1,3 +1,5 @@
+using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
+
 namespace finance_app.Types.DataContracts.V1.Responses.ResourceMessages
 {
     public class ResourceWithPropertyMessage : IResourceMessage
@@ -16,7 +18,7 @@ namespace finance_app.Types.DataContracts.V1.Responses.ResourceMessages
 
         public string GetMessage()
         {
-            return $"{_resource.GetType().Name} with {_propertyDisplay} '{_property}'";
+            return $"Issue with {_resource.GetType().Name} with {_propertyDisplay} '{_property}'.";
         }
     }
 }

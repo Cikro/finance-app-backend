@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using System;
+using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
 
 namespace finance_app.Middleware
 {
@@ -32,7 +33,8 @@ namespace finance_app.Middleware
 
         public void OnException(ExceptionContext context)
         {
-            var message = "Exceptional Failure!";
+            
+             var message = new ExceptionResponseMessage();
             var apiResponse = new ApiResponse<ExceptionDto>(ApiResponseCodesEnum.InternalError, message);
             
             if (_hostingEnvironment.IsDevelopment())

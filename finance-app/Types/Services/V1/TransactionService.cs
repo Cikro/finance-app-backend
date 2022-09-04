@@ -11,6 +11,10 @@ using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using System;
 using finance_app.Types.Repositories.Transaction;
+using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
+using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
+using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
+using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
 
 namespace finance_app.Types.Services.V1
 {
@@ -50,15 +54,22 @@ namespace finance_app.Types.Services.V1
             var transaction = await _transactionRepository.GetTransaction(transactionId.Id);
             if (transaction == null) 
             {
-                var message = $"Error getting transaction. Transaction with id '{transaction.Id}' does not exist.";
-                return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                var errorMessage = new ErrorResponseMessage(
+                    new GettingActionMessage(transaction),
+                    new ResourceWithPropertyMessage(transaction, transaction.Id),
+                    new NotFoundReason());
+                return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             }
 
             // Verify that the use can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transaction.AccountId);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
-                return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+                var errorMessage = new ErrorResponseMessage(
+                    new UpdatingActionMessage(transaction),
+                    new ResourceWithPropertyMessage(transaction, transaction.Id),
+                    new UnauthorizedToAccessResourceReason(transaction));
+                return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
             var ret = _mapper.Map<TransactionWithJournalDto>(transaction);
@@ -70,13 +81,15 @@ namespace finance_app.Types.Services.V1
         /// <inheritdoc cref="ITransactionService.GetRecentTransactions"/>
         public async Task<ApiResponse<ListResponse<TransactionWithJournalDto>>> GetRecentTransactions(AccountResourceIdentifier accountId, PaginationInfo pageInfo, bool includeJournals = false) {
             if (accountId == null) { throw new ArgumentNullException(nameof(AccountResourceIdentifier)); }
-            if (!(pageInfo?.PageNumber != null) || pageInfo?.PageNumber <= 0) { return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Page Number."); }
-            if (!(pageInfo?.ItemsPerPage!= null) || pageInfo?.ItemsPerPage <= 0) { return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.BadRequest, "Invalid Items Per Page.");; }
 
             var account = await _accountRepository.GetAccountByAccountId(accountId.Id);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
-                return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+                var errorMessage = new ErrorResponseMessage(
+                    new GettingActionMessage(typeof(Transaction)),
+                    new ResourceWithPropertyMessage(account, account.Id),
+                    new UnauthorizedToAccessResourceReason(account));
+                return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
             int offset = (int)pageInfo.PageNumber - 1;
@@ -95,15 +108,22 @@ namespace finance_app.Types.Services.V1
             var transactionToUpdate = await _transactionRepository.GetTransaction(transaction.Id);
             if (transactionToUpdate == null) 
             {
-                var message = $"Error updating transaction. Transaction with id '{transaction.Id}' does not exist.";
-                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                var errorMessage = new ErrorResponseMessage(
+                    new UpdatingActionMessage(transaction),
+                    new ResourceWithPropertyMessage(transaction, transaction.Id),
+                    new NotFoundReason());
+                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             }
 
             // Verify that the user can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transactionToUpdate.AccountId);
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
             {
-                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+                var errorMessage = new ErrorResponseMessage(
+                    new UpdatingActionMessage(transaction),
+                    new ResourceWithPropertyMessage(transaction, transaction.Id),
+                    new UnauthorizedToAccessResourceReason(account));
+                return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
             // Currently can only update the notes on a transaction

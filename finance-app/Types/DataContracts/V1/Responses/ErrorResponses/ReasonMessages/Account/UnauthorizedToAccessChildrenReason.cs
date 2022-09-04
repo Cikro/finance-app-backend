@@ -5,7 +5,7 @@ namespace finance_app.Types.DataContracts.V1.Responses.ReasonMessages.Accounts
     {   
         public string GetMessage()
         {
-            return $"has children that you are not authorized to access.";
+            return $"has children that you are not authorized to access";
         }
     }
 }

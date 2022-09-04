@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
+using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
+using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
+using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
+using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Account;
@@ -50,13 +54,20 @@ namespace finance_app.Types.Services.V1
                         .FirstOrDefaultAsync();
 
             if(journalEntry == null) {
-                var message = $"Error getting journal entry. Journal entry with id '{journalEntry.Id}' does not exist.";
-                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                var errorMessage = new ErrorResponseMessage(
+                    new GettingActionMessage(journalEntry),
+                    new ResourceWithPropertyMessage(journalEntry, journalEntry.Id),
+                    new NotFoundReason());
+                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             }
             
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User,
                            journalEntry, "CanAccessResourcePolicy" )).Succeeded) {
-                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, "Unauthorized");
+                var errorMessage = new ErrorResponseMessage(
+                    new GettingActionMessage(journalEntry),
+                    new ResourceWithPropertyMessage(journalEntry, journalEntry.Id),
+                    new UnauthorizedToAccessResourceReason(journalEntry));
+                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
             return new ApiResponse<JournalEntryDto>(_mapper.Map<JournalEntryDto>(journalEntry));
@@ -98,7 +109,12 @@ namespace finance_app.Types.Services.V1
 
             // Authorize that user can modify the accounts
             if(!await _financeAppAuthorizationService.Authorize(accounts, "CanAccessResourcePolicy")) {
-                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, "Error Creating Journal Entry. You are unauthorized to access some of the accounts that you are making transactions on.");
+                // FIXME: When creating a resource, does it have an id to display?
+                var errorMessage = new ErrorResponseMessage(
+                        new CreatingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(journalEntry, journalEntry.Id),
+                        new UnauthorizedAccessToAccountsReason());
+                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }                                
             
             var accountDict = accounts.ToDictionary(a => a.Id, a => a);
@@ -106,8 +122,11 @@ namespace finance_app.Types.Services.V1
             foreach (var t in journalEntry.Transactions)
             {
                 if (!accountDict.ContainsKey(t.AccountId)) {
-                    var message = $"Error creating journal entry. Account with Id '{t.AccountId}' Not Found.";
-                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                    var errorMessage = new ErrorResponseMessage(
+                        new CreatingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(t, t.AccountId),
+                        new NotFoundReason());
+                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
                 }
                 accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
             }
@@ -126,8 +145,11 @@ namespace finance_app.Types.Services.V1
                 .Include(x => x.Transactions)
                 .SingleOrDefaultAsync(x => x.Id == toCorrectId.Id);
             if(journalToCorrect == null) {
-                var message = $"Error correcting journal entry. Journal entry with id '{journalEntry.Id}' does not exist.";
-                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                var errorMessage = new ErrorResponseMessage(
+                        new CorrectingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(journalEntry, journalEntry.Id),
+                        new NotFoundReason());
+                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             }
             
 
@@ -142,7 +164,11 @@ namespace finance_app.Types.Services.V1
                                 
             // Authorize that user can modify the accounts
             if(!await _financeAppAuthorizationService.Authorize(accounts, "CanAccessResourcePolicy")) {
-                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, "Error Creating Journal Entry. You are unauthorized to access some of the accounts that you are making transactions on.");
+                var errorMessage = new ErrorResponseMessage(
+                        new CorrectingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(journalEntry, journalEntry.Id),
+                        new UnauthorizedAccessToAccountsReason());
+                return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
             var accountDict = accounts.ToDictionary(a => a.Id, a => a);
@@ -150,8 +176,11 @@ namespace finance_app.Types.Services.V1
             foreach (var t in journalEntry.Transactions)
             {
                 if (!accountDict.ContainsKey(t.AccountId)) {
-                    var message = $"Error correcting journal entry. Account with Id '{t.AccountId}' Not Found.";
-                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, message);
+                    var errorMessage = new ErrorResponseMessage(
+                        new CorrectingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(t, t.AccountId),
+                        new NotFoundReason());
+                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
                 }
                 accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
             }
