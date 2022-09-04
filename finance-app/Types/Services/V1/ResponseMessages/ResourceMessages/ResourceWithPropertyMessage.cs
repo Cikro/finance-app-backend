@@ -1,23 +1,30 @@
 
-namespace finance_app.Types.DataContracts.V1.Responses.ResourceMessages
+namespace finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages
 {
     public class ResourceWithPropertyMessage : IResourceMessage
     {
-        private readonly dynamic _resource;
-        private readonly object _property;
-        private readonly string _propertyDisplay;
-        
 
+        /// <summary>
+        /// The Message to display.
+        /// </summary>
+        private readonly string _message;
+        
+        /// <summary>
+        /// Constructor for the ResourceWithPropertyMessage.
+        /// Creates a message similar to "{resource} with {propertyName} {propertyValue}"
+        /// </summary>
+        /// <param name="resource">The resource you resource</param>
+        /// <param name="propertyDisplay">A string representation of the property. ex. "Name"</param>
+        /// <param name="property">The property itself</param>
         public ResourceWithPropertyMessage(object resource, string propertyDisplay, object property)
         {
-            _resource = resource;
-            _property = property;
-            _propertyDisplay = propertyDisplay;
+            _message =  $"{resource.GetType().Name} with {propertyDisplay} '{property}'";
+        
         }
-
+        /// <inheritdoc cref="IResourceMessage.GetMessage"/>
         public string GetMessage()
         {
-            return $"{_resource.GetType().Name} with {_propertyDisplay} '{_property}'";
+            return _message;
         }
     }
 }

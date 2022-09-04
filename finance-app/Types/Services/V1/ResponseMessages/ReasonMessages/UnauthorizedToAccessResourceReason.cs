@@ -1,15 +1,15 @@
 
-namespace finance_app.Types.DataContracts.V1.Responses.ReasonMessages
+namespace finance_app.Types.Services.V1.ResponseMessages.ReasonMessages 
 {
+    /// <summary>
+    /// You are not authorized to access something
+    /// </summary>
     public class UnauthorizedToAccessResourceReason : IReasonMessage
     {   
-        private readonly object _resource;
-        public UnauthorizedToAccessResourceReason(object resource) {
-            _resource = resource;
-        }
+        /// <inheritdoc cref="IReasonMessage.GetMessage"/>
         public string GetMessage()
         {
-            return $"requires authorization";
+            return $"requires authorization that you do not have";
         }
     }
 }

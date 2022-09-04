@@ -1,6 +1,6 @@
 
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
 using finance_app.Types.Repositories.Account;
+using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 
 namespace finance_app.Types.Services.V1.Services.Accounts.ResponseMessages.Reasons {
     public class ParentAccountIsClosedReason : IReasonMessage {

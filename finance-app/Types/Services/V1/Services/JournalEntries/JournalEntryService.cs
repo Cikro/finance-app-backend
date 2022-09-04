@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
-using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
-using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Repositories.JournalEntry; 
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1.ResponseMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +64,7 @@ namespace finance_app.Types.Services.V1.JournalEntries {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(journalEntry),
                     new ResourceWithPropertyMessage(journalEntry, "Id",  journalEntry.Id),
-                    new UnauthorizedToAccessResourceReason(journalEntry));
+                    new UnauthorizedToAccessResourceReason());
                 return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 

@@ -4,9 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Responses;
-using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
-using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Account;
@@ -37,7 +34,7 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
         if (!unauthorized) {
             await next();
         } else {
-            var errorMessage = new UnauthorizedToAccessRouteByUserId(context?.HttpContext?.User, userResourceId);
+            var errorMessage = new UnauthorizedToAccessRouteByUserIdMessage(context?.HttpContext?.User, userResourceId);
             var response = new ApiResponse<string>(ApiResponseCodesEnum.Unauthorized, errorMessage);
 
             var mapper = (IMapper)context.HttpContext

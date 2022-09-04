@@ -1,14 +1,15 @@
 using finance_app.Types.DataContracts.V1.Responses;
-using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
-using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
 
 namespace finance_app.Types.Services.V1.ResponseMessages {
-    public class SuccessResponseMessage : IResponseMessage {
-        public SuccessResponseMessage() { }
 
+    /// <summary>
+    /// A Message for when something is successful.
+    /// </summary>
+    public class SuccessResponseMessage : IResponseMessage {
+
+        /// <inheritdoc cref="IResponseMessage.GetMessage"/>s
         public string GetMessage() {
-            return $"Success";
+            return $"Success.";
         }
     }
 }

@@ -11,10 +11,10 @@ using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using System;
 using finance_app.Types.Repositories.Transaction;
-using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
-using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
 using finance_app.Types.Services.V1.ResponseMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 
 namespace finance_app.Types.Services.V1.Transactions {
     public class TransactionService : ITransactionService {
@@ -64,7 +64,7 @@ namespace finance_app.Types.Services.V1.Transactions {
                 var errorMessage = new ErrorResponseMessage(
                     new UpdatingActionMessage(transaction),
                     new ResourceWithPropertyMessage(transaction, "Id",  transaction.Id),
-                    new UnauthorizedToAccessResourceReason(transaction));
+                    new UnauthorizedToAccessResourceReason());
                 return new ApiResponse<TransactionWithJournalDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
@@ -83,7 +83,7 @@ namespace finance_app.Types.Services.V1.Transactions {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(typeof(Transaction)),
                     new ResourceWithPropertyMessage(account, "Id",  account.Id),
-                    new UnauthorizedToAccessResourceReason(account));
+                    new UnauthorizedToAccessResourceReason());
                 return new ApiResponse<ListResponse<TransactionWithJournalDto>>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
@@ -115,7 +115,7 @@ namespace finance_app.Types.Services.V1.Transactions {
                 var errorMessage = new ErrorResponseMessage(
                     new UpdatingActionMessage(transaction),
                     new ResourceWithPropertyMessage(transaction, "Id",  transaction.Id),
-                    new UnauthorizedToAccessResourceReason(account));
+                    new UnauthorizedToAccessResourceReason());
                 return new ApiResponse<TransactionDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 

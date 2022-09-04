@@ -10,12 +10,12 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using System;
-using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
-using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
 using finance_app.Types.Services.V1.ResponseMessages;
 using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages.Reasons;
 using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 
 namespace finance_app.Types.Services.V1.Accounts {
     public class AccountService : IAccountService {
@@ -60,7 +60,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(account),
                     new ResourceWithPropertyMessage(account, "Id",  account.Id),
-                    new UnauthorizedToAccessResourceReason(account));
+                    new UnauthorizedToAccessResourceReason());
                 return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
 
