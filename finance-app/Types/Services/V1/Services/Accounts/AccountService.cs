@@ -10,22 +10,20 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using System;
-using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
-using finance_app.Types.DataContracts.V1.Responses.ResponseMessage.Accounts;
 using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
 using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
 using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
-using finance_app.Types.DataContracts.V1.Responses.ReasonMessages.Accounts;
+using finance_app.Types.Services.V1.ResponseMessages;
+using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages.Reasons;
+using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages;
 
-namespace finance_app.Types.Services.V1
-{
-    public class AccountService : IAccountService
-    {
+namespace finance_app.Types.Services.V1.Accounts {
+    public class AccountService : IAccountService {
         private readonly IAccountRepository _accountServiceDbo;
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _context;
-        
+
 
         public AccountService(IMapper mapper, IAccountRepository accountServiceDbo,
                              IAuthorizationService authorizationService,
@@ -37,8 +35,8 @@ namespace finance_app.Types.Services.V1
             _context = context;
         }
 
-    /// <inheritdoc cref="IAccountService.GetAccounts"/>
-    public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId) {
+        /// <inheritdoc cref="IAccountService.GetAccounts"/>
+        public async Task<ApiResponse<ListResponse<AccountDto>>> GetAccounts(UserResourceIdentifier userId) {
             if (userId == null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
             var accounts = await _accountServiceDbo.GetAllByUserId(userId.Id);
 
@@ -58,11 +56,10 @@ namespace finance_app.Types.Services.V1
             if (accountId == null) { throw new ArgumentNullException(nameof(AccountResourceIdentifier)); }
             var account = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
 
-            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded) 
-            {
+            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy")).Succeeded) {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(account),
-                    new ResourceWithPropertyMessage(account, account.Id),
+                    new ResourceWithPropertyMessage(account, "Id",  account.Id),
                     new UnauthorizedToAccessResourceReason(account));
                 return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
@@ -72,7 +69,7 @@ namespace finance_app.Types.Services.V1
 
         /// <inheritdoc cref="IAccountService.GetChildren"/>
         public async Task<ApiResponse<ListResponse<AccountDto>>> GetChildren(AccountResourceIdentifier accountId) {
-            
+
             var accounts = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
             var accessibleAccounts = await FilterAccessibleAccounts(accounts);
 
@@ -83,19 +80,18 @@ namespace finance_app.Types.Services.V1
             return new ApiResponse<ListResponse<AccountDto>>(ret);
 
         }
-        
+
         /// <inheritdoc cref="IAccountService.GetPaginatedAccounts"/>
-        public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo)
-        {
-            if (userId== null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
+        public async Task<ApiResponse<ListResponse<AccountDto>>> GetPaginatedAccounts(UserResourceIdentifier userId, PaginationInfo pageInfo) {
+            if (userId == null) { throw new ArgumentNullException(nameof(UserResourceIdentifier)); }
 
             uint offset = (uint)pageInfo.PageNumber - 1;
-            
+
             var accounts = await _accountServiceDbo.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, offset);
             var accessibleAccounts = await FilterAccessibleAccounts(accounts);
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
-                ExcludedItems = (accounts?.Count() - accessibleAccounts?.Count()) ?? 0
+                ExcludedItems = accounts?.Count() - accessibleAccounts?.Count() ?? 0
             };
 
             return new ApiResponse<ListResponse<AccountDto>>(ret);
@@ -107,7 +103,7 @@ namespace finance_app.Types.Services.V1
             if (existingAccount != null) {
                 var errorMessage = new ErrorResponseMessage(
                     new CreatingActionMessage(account),
-                    new ResourceWithPropertyMessage(existingAccount, existingAccount.Name),
+                    new ResourceWithPropertyMessage(existingAccount, "Name",  existingAccount.Name),
                     new PropertyAlreadyExistsReason());
                 return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, errorMessage);
             }
@@ -123,10 +119,10 @@ namespace finance_app.Types.Services.V1
         public async Task<ApiResponse<AccountDto>> UpdateAccount(Account account) {
 
             var existingAccount = await _accountServiceDbo.GetAccountByAccountId(account.Id);
-            if (existingAccount == null) {    
+            if (existingAccount == null) {
                 var errorMessage = new ErrorResponseMessage(
                     new UpdatingActionMessage(account),
-                    new ResourceWithPropertyMessage(existingAccount, existingAccount.Id),
+                    new ResourceWithPropertyMessage(existingAccount, "Id",  existingAccount.Id),
                     new PropertyAlreadyExistsReason());
                 return new ApiResponse<AccountDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             }
@@ -136,7 +132,7 @@ namespace finance_app.Types.Services.V1
                 if (duplicateName != null) {
                     var errorMessage = new ErrorResponseMessage(
                         new UpdatingActionMessage(account),
-                        new ResourceWithPropertyMessage(duplicateName, duplicateName.Name),
+                        new ResourceWithPropertyMessage(duplicateName, "Name",  duplicateName.Name),
                         new PropertyAlreadyExistsReason());
                     return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(duplicateName), ApiResponseCodesEnum.DuplicateResource, errorMessage);
                 }
@@ -156,7 +152,7 @@ namespace finance_app.Types.Services.V1
                     if (accessibleChildren.Count() != children.Count()) {
                         var errorMessage = new ErrorResponseMessage(
                             new UpdatingActionMessage(account),
-                            new ResourceWithPropertyMessage(account, account.Id),
+                            new ResourceWithPropertyMessage(account, "Id",  account.Id),
                             new UnauthorizedToAccessChildrenReason());
                         return new ApiResponse<AccountDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
                     }
@@ -166,7 +162,7 @@ namespace finance_app.Types.Services.V1
                     if (openChildren.Count > 0) {
                         var errorMessage = new ErrorResponseMessage(
                             new UpdatingActionMessage(account),
-                            new ResourceWithPropertyMessage(account, account.Id),
+                            new ResourceWithPropertyMessage(account, "Id",  account.Id),
                             new ChildAccountsNotClosedReason(openChildren));
                         return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, errorMessage);
                     }
@@ -175,11 +171,11 @@ namespace finance_app.Types.Services.V1
 
                 // If you are opening an account, its parent must be open
                 if (account.Closed == false && existingAccount.ParentAccountId != null) {
-                    var parent = await _accountServiceDbo.GetAccountByAccountId((uint) existingAccount.ParentAccountId);
+                    var parent = await _accountServiceDbo.GetAccountByAccountId((uint)existingAccount.ParentAccountId);
                     if (parent?.Closed == true) {
                         var errorMessage = new ErrorResponseMessage(
                             new UpdatingActionMessage(account),
-                            new ResourceWithPropertyMessage(account, account.Id),
+                            new ResourceWithPropertyMessage(account, "Id",  account.Id),
                             new ParentAccountIsClosedReason(parent));
                         return new ApiResponse<AccountDto>(_mapper.Map<AccountDto>(existingAccount), ApiResponseCodesEnum.DuplicateResource, errorMessage);
                     }
@@ -193,13 +189,12 @@ namespace finance_app.Types.Services.V1
         }
 
         /// <inheritdoc cref="IAccountService.CloseAccount"/>
-        public async Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) 
-        {
+        public async Task<ApiResponse<ListResponse<AccountDto>>> CloseAccount(AccountResourceIdentifier accountId) {
             var accountToClose = await _accountServiceDbo.GetAccountByAccountId(accountId.Id);
-            if (accountToClose == null) {    
+            if (accountToClose == null) {
                 var errorMessage = new ErrorResponseMessage(
                             new ClosingActionMessage(accountToClose),
-                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new ResourceWithPropertyMessage(accountToClose, "Id",  accountToClose.Id),
                             new NotFoundReason());
                 return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
             };
@@ -207,9 +202,9 @@ namespace finance_app.Types.Services.V1
             if (accountToClose.Closed == true) {
                 var errorMessage = new ErrorResponseMessage(
                             new ClosingActionMessage(accountToClose),
-                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new ResourceWithPropertyMessage(accountToClose, "Id",  accountToClose.Id),
                             new AlreadyClosedReason());
-                return new ApiResponse<ListResponse<AccountDto>>(new ListResponse<AccountDto>(new List<AccountDto> {{_mapper.Map<AccountDto>(accountToClose)}}), ApiResponseCodesEnum.InternalError, errorMessage);
+                return new ApiResponse<ListResponse<AccountDto>>(new ListResponse<AccountDto>(new List<AccountDto> { { _mapper.Map<AccountDto>(accountToClose) } }), ApiResponseCodesEnum.InternalError, errorMessage);
             }
 
             var children = await _accountServiceDbo.GetChildrenByAccountId(accountId.Id);
@@ -217,7 +212,7 @@ namespace finance_app.Types.Services.V1
             if (accessibleChildren.Count() != children.Count()) {
                 var errorMessage = new ErrorResponseMessage(
                             new ClosingActionMessage(accountToClose),
-                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new ResourceWithPropertyMessage(accountToClose, "Id",  accountToClose.Id),
                             new UnauthorizedToAccessChildrenReason());
                 return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
@@ -226,16 +221,16 @@ namespace finance_app.Types.Services.V1
             if (!accountsClosed.Any()) {
                 var errorMessage = new ErrorResponseMessage(
                             new ClosingActionMessage(accountToClose),
-                            new ResourceWithPropertyMessage(accountToClose, accountToClose.Id),
+                            new ResourceWithPropertyMessage(accountToClose, "Id",  accountToClose.Id),
                             new NotClosedReason());
-                return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.InternalError, errorMessage );
+                return new ApiResponse<ListResponse<AccountDto>>(ApiResponseCodesEnum.InternalError, errorMessage);
             }
 
             return new ApiResponse<ListResponse<AccountDto>>(
                 new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accountsClosed)),
                 ApiResponseCodesEnum.Success,
                 new AccountsClosedResponseMessage(accountsClosed));
- 
+
         }
 
         private async Task<IEnumerable<Account>> FilterAccessibleAccounts(IEnumerable<Account> accounts) {
@@ -244,14 +239,14 @@ namespace finance_app.Types.Services.V1
                 await Task.WhenAll(accounts?.Select(async (account) => {
                     return new AccountsWithAccess {
                         Account = account,
-                        HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy" )).Succeeded
+                        HasAccess = (await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy")).Succeeded
                     };
-                    })
+                })
                 ))
                 ?.Where(account => account.HasAccess == true)
                 ?.Select(a => a.Account);
         }
-    
+
     }
     public class AccountsWithAccess {
         public Account Account { get; set; }

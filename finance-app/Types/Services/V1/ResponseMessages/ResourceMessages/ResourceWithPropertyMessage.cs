@@ -1,4 +1,3 @@
-using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
 
 namespace finance_app.Types.DataContracts.V1.Responses.ResourceMessages
 {
@@ -9,16 +8,16 @@ namespace finance_app.Types.DataContracts.V1.Responses.ResourceMessages
         private readonly string _propertyDisplay;
         
 
-        public ResourceWithPropertyMessage(object resource, object property)
+        public ResourceWithPropertyMessage(object resource, string propertyDisplay, object property)
         {
             _resource = resource;
             _property = property;
-            _propertyDisplay = property?.GetType().Name;
+            _propertyDisplay = propertyDisplay;
         }
 
         public string GetMessage()
         {
-            return $"Issue with {_resource.GetType().Name} with {_propertyDisplay} '{_property}'.";
+            return $"{_resource.GetType().Name} with {_propertyDisplay} '{_property}'";
         }
     }
 }

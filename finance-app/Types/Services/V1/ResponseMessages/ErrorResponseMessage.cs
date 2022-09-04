@@ -1,15 +1,14 @@
+using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Responses.ErrorResponses;
 using finance_app.Types.DataContracts.V1.Responses.ReasonMessages;
 using finance_app.Types.DataContracts.V1.Responses.ResourceMessages;
 
-namespace finance_app.Types.DataContracts.V1.Responses.ResponseMessage
-{
-    public class ErrorResponseMessage : IResponseMessage
-    {
+namespace finance_app.Types.Services.V1.ResponseMessages {
+    public class ErrorResponseMessage : IResponseMessage {
         private readonly IActionMessage _action;
         private readonly IReasonMessage _reason;
         private readonly IResourceMessage _resource;
-        public ErrorResponseMessage(IActionMessage action, 
+        public ErrorResponseMessage(IActionMessage action,
                                     IResourceMessage resource,
                                     IReasonMessage reason) {
             _action = action;
@@ -17,8 +16,7 @@ namespace finance_app.Types.DataContracts.V1.Responses.ResponseMessage
             _resource = resource;
         }
 
-        public string GetMessage()
-        {
+        public string GetMessage() {
             return $"Error {_action.GetMessage()}. {_resource.GetMessage()} {_reason.GetMessage()}.";
 
         }

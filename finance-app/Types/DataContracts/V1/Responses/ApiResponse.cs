@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
+using finance_app.Types.Services.V1.ResponseMessages;
 
-namespace finance_app.Types.DataContracts.V1.Responses
-{
+namespace finance_app.Types.DataContracts.V1.Responses {
     public class ApiResponse<T>
     {
         /// <summary>

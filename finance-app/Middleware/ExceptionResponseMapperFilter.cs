@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using System;
-using finance_app.Types.DataContracts.V1.Responses.ResponseMessage;
+using finance_app.Types.Services.V1.ResponseMessages;
 
 namespace finance_app.Middleware
 {
