@@ -3,7 +3,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories.Account;
-using finance_app.Types.Services.V1;
+using finance_app.Types.Services.V1.Accounts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

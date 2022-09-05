@@ -7,6 +7,7 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Account;
+using finance_app.Types.Services.V1.ResponseMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -33,8 +34,8 @@ public class UserAuthorizationFilter : Attribute, IAsyncActionFilter  {
         if (!unauthorized) {
             await next();
         } else {
-            var message =  $"Unauthorized: You are not authorized to access user with Id {userResourceId?.Id}";
-            var response = new ApiResponse<string>(ApiResponseCodesEnum.BadRequest, message);
+            var errorMessage = new UnauthorizedToAccessRouteByUserIdMessage(context?.HttpContext?.User, userResourceId);
+            var response = new ApiResponse<string>(ApiResponseCodesEnum.Unauthorized, errorMessage);
 
             var mapper = (IMapper)context.HttpContext
                     .RequestServices.GetService(typeof(IMapper));

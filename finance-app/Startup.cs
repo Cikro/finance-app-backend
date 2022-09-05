@@ -19,7 +19,6 @@ using finance_app.Types.Validators.Accounts;
 using finance_app.Middleware;
 using finance_app.Types.Repositories.Account;
 using finance_app.Types.Services.V1.Interfaces;
-using finance_app.Types.Services.V1;
 using finance_app.Types.Mappers.Profiles;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
@@ -28,9 +27,11 @@ using Microsoft.AspNetCore.Authorization;
 using finance_app.Types.Configurations;
 using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Transaction;
+using finance_app.Types.Services.V1.Accounts;
+using finance_app.Types.Services.V1.JournalEntries;
+using finance_app.Types.Services.V1.Transactions;
 
-namespace finance_app
-{
+namespace finance_app {
     public class Startup
     {
 

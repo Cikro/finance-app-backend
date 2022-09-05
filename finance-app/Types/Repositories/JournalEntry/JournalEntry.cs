@@ -9,14 +9,14 @@ using finance_app.Types.Repositories.Transaction;
 namespace finance_app.Types.Repositories.JournalEntry
 {
     [Table("journal_entries")]
-    public class JournalEntry : DatabaseObject
+    public class JournalEntry : DatabaseObject, IUserIdResource
     {
         /// <summary>
         /// The user that create the journal entry.
         /// </summary>
         [Required]
         [Column("user_id")]
-        public uint UserId { get; set; }
+        public uint? UserId { get; set; }
 
         private decimal _amount;
         

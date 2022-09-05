@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using finance_app.Types;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
+using finance_app.Types.Services.V1.ResponseMessages;
 using Microsoft.AspNetCore.Mvc; 
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -33,8 +31,7 @@ namespace finance_app.Middleware {
                     Errors = v.Value.Errors.Select(v => v.ErrorMessage).ToList() 
                 }).ToList();
 
-            var message = "There are errors in your input parameters";
-            var apiResponse = new ApiResponse<List<ValidationError>>(errors, ApiResponseCodesEnum.BadRequest, message);
+            var apiResponse = new ApiResponse<List<ValidationError>>(errors, ApiResponseCodesEnum.BadRequest, new BadRequestErrorMessage());
 
             var mapper = (IMapper)context.HttpContext
                     .RequestServices.GetService(typeof(IMapper));
