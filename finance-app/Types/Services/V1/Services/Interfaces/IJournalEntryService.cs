@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
-using finance_app.Types.Repositories.JournalEntry;
+using finance_app.Types.Repositories.JournalEntries;
 
 namespace finance_app.Types.Services.V1.Interfaces 
 {

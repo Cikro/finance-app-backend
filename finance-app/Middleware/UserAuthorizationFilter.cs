@@ -6,7 +6,7 @@ using AutoMapper;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
-using finance_app.Types.Repositories.Account;
+using finance_app.Types.Repositories.Accounts;
 using finance_app.Types.Services.V1.ResponseMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

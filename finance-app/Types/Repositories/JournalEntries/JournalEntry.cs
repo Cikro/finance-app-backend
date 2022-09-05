@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
-using finance_app.Types.Repositories.Transaction;
+using finance_app.Types.Repositories.Transactions;
 
-namespace finance_app.Types.Repositories.JournalEntry
+namespace finance_app.Types.Repositories.JournalEntries
 {
     [Table("journal_entries")]
     public class JournalEntry : DatabaseObject, IUserIdResource
@@ -73,12 +73,12 @@ namespace finance_app.Types.Repositories.JournalEntry
         [Column("server_generated")]
         public bool ServerGenerated { get; set; }
 
-        public IEnumerable<Transaction.Transaction> Transactions { get; set; }
+        public IEnumerable<Transaction> Transactions { get; set; }
 
 
         #region HelperMethods
-        public IEnumerable<Transaction.Transaction> ReversedTransactions() {
-            return Transactions.Select(t => new Transaction.Transaction {
+        public IEnumerable<Transaction> ReversedTransactions() {
+            return Transactions.Select(t => new Transaction {
                 Id = null,
                 AccountId = t.AccountId,
                 UserId = t.UserId,

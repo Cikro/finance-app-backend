@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace finance_app.Types.Repositories.JournalEntry
+namespace finance_app.Types.Repositories.JournalEntries
 {
     public interface IJournalEntryRepository 
     {

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 
-namespace finance_app.Types.Repositories.Account
+namespace finance_app.Types.Repositories.Accounts
 {
     public class AccountContext : DbContext
     {

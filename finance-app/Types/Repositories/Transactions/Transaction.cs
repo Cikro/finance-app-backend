@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using finance_app.Types.Repositories.JournalEntry;
+using finance_app.Types.Repositories.JournalEntries;
 
-namespace finance_app.Types.Repositories.Transaction
+namespace finance_app.Types.Repositories.Transactions
 {
     [Table("transactions")]
     public class Transaction : DatabaseObject
@@ -64,7 +64,7 @@ namespace finance_app.Types.Repositories.Transaction
         /// <summary>
         /// The Journal Entry
         /// </summary>
-        public JournalEntry.JournalEntry JournalEntry { get; set; }
+        public JournalEntry JournalEntry { get; set; }
         
     }
 

@@ -1,9 +1,10 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using finance_app.Types.Repositories.JournalEntries;
+using finance_app.Types.Repositories.Transactions;
 
-
-namespace finance_app.Types.Repositories.Account
+namespace finance_app.Types.Repositories.Accounts
 {
     public static class AccountExtensions
     {
@@ -32,7 +33,7 @@ namespace finance_app.Types.Repositories.Account
         /// <param name="accounts">The Accounts DbSet</param>
         /// <param name="transactions">A list of Transactions with accounts</param>
         /// <returns>A Query to fetch the accounts</returns>
-        public static IQueryable<Account> SelectAccountsForTransactions(this DbSet<Account> accounts, IEnumerable<Transaction.Transaction> transactions) {
+        public static IQueryable<Account> SelectAccountsForTransactions(this DbSet<Account> accounts, IEnumerable<Transaction> transactions) {
             // Unique Account Ids of transactions being created
             var accountIds = transactions
                 .GroupBy(t => (uint) t.AccountId)
@@ -48,7 +49,7 @@ namespace finance_app.Types.Repositories.Account
         /// <param name="accounts">The Accounts DbSet</param>
         /// <param name="journalEntry">A Journal Entry with Transactions</param>
         /// <returns>A Query to fetch the accounts</returns>
-        public static IQueryable<Account> SelectAccountsForTransactions(this DbSet<Account> accounts, JournalEntry.JournalEntry journalEntry) {
+        public static IQueryable<Account> SelectAccountsForTransactions(this DbSet<Account> accounts, JournalEntry journalEntry) {
             return accounts.SelectAccountsForTransactions(journalEntry.Transactions);
         }
     }

@@ -1,17 +1,12 @@
 using System;
-using System.Linq;
-using System.Data.Entity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using finance_app.Types.Repositories.Account;
-using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Data.Common;
 
-namespace finance_app.Types.Repositories.Account
+namespace finance_app.Types.Repositories.Accounts
 {
     public class AccountRepository: IAccountRepository
     {

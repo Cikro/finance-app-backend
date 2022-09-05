@@ -1,6 +1,6 @@
 using System;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using finance_app.Types.Repositories.JournalEntry;
+using finance_app.Types.Repositories.JournalEntries;
 
 namespace finance_app.Types.DataContracts.V1.Dtos 
 {

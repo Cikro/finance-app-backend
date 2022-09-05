@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
-namespace finance_app.Types.Repositories.Transaction
+namespace finance_app.Types.Repositories.Transactions
 {
     public class TransactionRepository : ITransactionRepository {
 

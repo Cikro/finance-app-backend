@@ -1,4 +1,4 @@
-namespace finance_app.Types.Repositories.Transaction {
+namespace finance_app.Types.Repositories.Transactions {
 
     public enum TransactionTypeEnum : byte
     {

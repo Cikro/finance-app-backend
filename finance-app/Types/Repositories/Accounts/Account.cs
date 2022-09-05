@@ -2,9 +2,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using finance_app.Types.Repositories.Account.BalanceModifierStrategies;
+using finance_app.Types.Repositories.Accounts.BalanceModifierStrategies;
+using finance_app.Types.Repositories.Transactions;
 
-namespace finance_app.Types.Repositories.Account
+namespace finance_app.Types.Repositories.Accounts
 {
     [Table("accounts")]
     public class Account : DatabaseObject, IUserIdResource
@@ -48,7 +49,7 @@ namespace finance_app.Types.Repositories.Account
 
         public bool? Closed { get; set; }
 
-        public void ApplyTransaction(DbContext dbContext, Transaction.Transaction transaction) 
+        public void ApplyTransaction(DbContext dbContext, Transaction transaction) 
         {
             if (Id != transaction.AccountId ) { 
                 throw new ArgumentException ($"Will not apply transaction for AccountId {transaction.AccountId} to Account {Id}", nameof(transaction));

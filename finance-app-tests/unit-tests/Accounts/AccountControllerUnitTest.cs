@@ -7,7 +7,7 @@ using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Dtos.Enums;
-using finance_app.Types.Repositories.Account;
+finance_app.Types.Repositories.Accounts;
 using finance_app.Types.Models.ResourceIdentifiers;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;

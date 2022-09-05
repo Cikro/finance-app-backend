@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
-namespace finance_app.Types.Repositories.JournalEntry
+namespace finance_app.Types.Repositories.JournalEntries
 {
     public class JournalEntryRepository : IJournalEntryRepository {
         

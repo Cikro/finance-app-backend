@@ -6,7 +6,7 @@ using finance_app.Types.DataContracts.V1.Dtos.Enums;
 using finance_app.Types.DataContracts.V1.Requests.Accounts;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Mappers.Converters;
-using finance_app.Types.Repositories.Account;
+using finance_app.Types.Repositories.Accounts;
 
 namespace finance_app.Types.Mappers.Profiles
 {
@@ -16,7 +16,7 @@ namespace finance_app.Types.Mappers.Profiles
         public StatusCodeProfile()
         {
 
-            CreateMap<ApiResponseCodesEnum, int>().ConvertUsing(responsseCode => MapResponseCodeToHttpStatusCode(responsseCode));
+            CreateMap<ApiResponseCodesEnum, int>().ConvertUsing(responseCode => MapResponseCodeToHttpStatusCode(responseCode));
         }
 
         private int MapResponseCodeToHttpStatusCode (ApiResponseCodesEnum responseCode)

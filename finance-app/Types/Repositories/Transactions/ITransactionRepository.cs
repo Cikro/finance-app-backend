@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace finance_app.Types.Repositories.Transaction
+namespace finance_app.Types.Repositories.Transactions
 {
     public interface ITransactionRepository 
     {

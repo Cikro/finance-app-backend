@@ -12,7 +12,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.Models.ResourceIdentifiers;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Requests.Transactions;
-using finance_app.Types.Repositories.Transaction;
+using finance_app.Types.Repositories.Transactions;
 
 namespace finance_app.Controllers.V1
 {

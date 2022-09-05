@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using finance_app.Types.Repositories.Account;
+using finance_app.Types.Repositories.Accounts;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Dtos;

@@ -1,5 +1,5 @@
 
-using finance_app.Types.Repositories.Account;
+using finance_app.Types.Repositories.Accounts;
 using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 
 namespace finance_app.Types.Services.V1.Services.Accounts.ResponseMessages.Reasons {

@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace finance_app.Types.Repositories.Transaction
+namespace finance_app.Types.Repositories.Transactions
 {
     public static class TransactionExtensions {
             public static IQueryable<Transaction> SelectTransaction(this DbSet<Transaction> transactions) {
