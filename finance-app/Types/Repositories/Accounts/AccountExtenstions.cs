@@ -21,7 +21,8 @@ namespace finance_app.Types.Repositories.Accounts
                     Id = a.Id,
                     Balance = a.Balance,
                     UserId = a.UserId,
-                    Type = a.Type
+                    Type = a.Type,
+                    Closed = a.Closed
                 })
                 .Where(a => accountIds.Contains((uint) a.Id));
         }

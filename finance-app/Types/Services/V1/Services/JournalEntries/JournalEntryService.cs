@@ -14,6 +14,7 @@ using finance_app.Types.Services.V1.ResponseMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
+using finance_app.Types.Services.V1.Services.JournalEntries.ResponseMessages.Reasons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -125,6 +126,13 @@ namespace finance_app.Types.Services.V1.JournalEntries {
                         new NotFoundReason());
                     return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
                 }
+                if (accountDict[t.AccountId].Closed == true) {
+                    var errorMessage = new ErrorResponseMessage(
+                        new CreatingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(accountDict[t.AccountId], "AccountId",  t.AccountId),
+                        new AccountClosedReason());
+                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
+                }
                 accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
             }
 
@@ -176,6 +184,13 @@ namespace finance_app.Types.Services.V1.JournalEntries {
                         new CorrectingActionMessage(journalEntry),
                         new ResourceWithPropertyMessage(t, "AccountId",  t.AccountId),
                         new NotFoundReason());
+                    return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
+                }
+                if (accountDict[t.AccountId].Closed == true) {
+                    var errorMessage = new ErrorResponseMessage(
+                        new CreatingActionMessage(journalEntry),
+                        new ResourceWithPropertyMessage(accountDict[t.AccountId], "AccountId",  t.AccountId),
+                        new AccountClosedReason());
                     return new ApiResponse<JournalEntryDto>(ApiResponseCodesEnum.ResourceNotFound, errorMessage);
                 }
                 accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
