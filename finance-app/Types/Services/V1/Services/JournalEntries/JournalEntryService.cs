@@ -181,7 +181,7 @@ namespace finance_app.Types.Services.V1.JournalEntries {
                 accountDict[t.AccountId].ApplyTransaction(_dbContext, t);
             }
 
-            _dbContext.JournalEntries.Add(journalEntry);
+            await _dbContext.JournalEntries.AddAsync(journalEntry);
             await _dbContext.SaveChangesAsync();
             return new ApiResponse<JournalEntryDto>(_mapper.Map<JournalEntryDto>(journalEntry));
         }

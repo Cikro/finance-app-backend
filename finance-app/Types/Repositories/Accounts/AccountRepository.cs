@@ -351,7 +351,7 @@ namespace finance_app.Types.Repositories.Accounts
                 Type = Enum.IsDefined(typeof(AccountTypeEnum), reader.GetByte("type")) ? (AccountTypeEnum) reader.GetByte("type") : AccountTypeEnum.Unknown,
                 CurrencyCode = reader.IsDBNull("currency_code") ? "" : reader.GetString("currency_code"),
                 ParentAccountId = reader.IsDBNull("parent_account") ? null : (uint?)reader.GetInt32("parent_account"),
-                Closed = reader.IsDBNull("closed") ? null : (bool?)reader.GetBoolean("closed"),
+                Closed = reader.GetBoolean("closed"),
                 DateCreated = reader.GetDateTime("date_created"),
                 DateLastEdited = reader.GetDateTime("date_last_edited")
             };

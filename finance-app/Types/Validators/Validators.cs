@@ -50,7 +50,7 @@ namespace finance_app.Types.Validators {
                         return false;
                     }
 
-                    if(!groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Debit) || groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Credit) ||
+                    if(!groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Debit) || !groupedTransactions.ContainsKey(TransactionTypeDtoEnum.Credit) ||
                         groupedTransactions[TransactionTypeDtoEnum.Debit] != groupedTransactions[TransactionTypeDtoEnum.Credit]) {
                         
                         context.MessageFormatter.AppendArgument("Reason", $"The sum of all transactions with type {TransactionTypeDtoEnum.Debit} must equal the sum of all transactions with type {TransactionTypeDtoEnum.Credit}.");

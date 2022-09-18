@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using finance_app.Types.Repositories.Accounts.BalanceModifierStrategies;
 using finance_app.Types.Repositories.Transactions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace finance_app.Types.Repositories.Accounts
 {
@@ -47,7 +48,8 @@ namespace finance_app.Types.Repositories.Accounts
         [Column("Parent_Account")]
         public uint? ParentAccountId { get; set; }
 
-        public bool? Closed { get; set; }
+        [NotNull]
+        public bool Closed { get; set; }
 
         public void ApplyTransaction(DbContext dbContext, Transaction transaction) 
         {

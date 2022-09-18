@@ -27,6 +27,19 @@ namespace finance_app.Types.Repositories
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Account
+            modelBuilder.Entity<Account>().ToTable("accounts");
+            modelBuilder.Entity<Account>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<JournalEntry>()
+                .Property(e => e.DateCreated)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<JournalEntry>()
+                .Property(e => e.DateLastEdited)
+                .ValueGeneratedOnUpdate();
+            #endregion Account
+
             #region JournalEntry
             modelBuilder.Entity<JournalEntry>().ToTable("journal_entries");
             modelBuilder.Entity<JournalEntry>()

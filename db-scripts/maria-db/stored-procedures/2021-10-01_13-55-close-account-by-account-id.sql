@@ -10,9 +10,7 @@ CREATE PROCEDURE
             UNION DISTINCT
             SELECT a.* 
             FROM accounts AS a, allRelatedAccounts AS r
-            WHERE 
-                a.parent_account != accountId 
-                and 
+            WHERE
                 (
                     a.closed = false 
                     and 

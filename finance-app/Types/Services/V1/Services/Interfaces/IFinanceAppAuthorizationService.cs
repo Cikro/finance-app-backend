@@ -29,7 +29,7 @@ namespace finance_app.Types.Services.V1.Interfaces
         /// </summary>
         /// <param name="resources">An enumerable of resources to authorize</param>
         /// <param name="policy">The policy to authorize against</param>
-        /// <returns>True if the user is authorized for ALL resources</returns>
+        /// <returns>A list containing only authorized resources</returns>
         public Task<IEnumerable<T>> Filter<T>(IEnumerable<T> resources, string policy);
 
     }

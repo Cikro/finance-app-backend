@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS accounts
     type tinyint unsigned NOT NULL,
     currency_code char(3) NOT NULL,
     parent_account int unsigned default NULL,
-    closed BOOLEAN default FALSE, 
+    closed BOOLEAN default FALSE NOT NULL, 
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
