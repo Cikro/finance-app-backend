@@ -15,6 +15,7 @@ using finance_app.Types.Services.V1.ResponseMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
+using finance_app.Types.Services.V1.Authorization;
 
 namespace finance_app.Types.Services.V1.Transactions {
     public class TransactionService : ITransactionService {
@@ -60,7 +61,7 @@ namespace finance_app.Types.Services.V1.Transactions {
 
             // Verify that the use can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transaction.AccountId);
-            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy")).Succeeded) {
+            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, AuthorizationPolicies.CanAccessResource)).Succeeded) {
                 var errorMessage = new ErrorResponseMessage(
                     new UpdatingActionMessage(transaction),
                     new ResourceWithPropertyMessage(transaction, "Id",  transaction.Id),
@@ -79,7 +80,7 @@ namespace finance_app.Types.Services.V1.Transactions {
             if (accountId == null) { throw new ArgumentNullException(nameof(AccountResourceIdentifier)); }
 
             var account = await _accountRepository.GetAccountByAccountId(accountId.Id);
-            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy")).Succeeded) {
+            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, AuthorizationPolicies.CanAccessResource)).Succeeded) {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(typeof(Transaction)),
                     new ResourceWithPropertyMessage(account, "Id",  account.Id),
@@ -111,7 +112,7 @@ namespace finance_app.Types.Services.V1.Transactions {
 
             // Verify that the user can access the transaction
             var account = await _accountRepository.GetAccountByAccountId(transactionToUpdate.AccountId);
-            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, "CanAccessResourcePolicy")).Succeeded) {
+            if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User, account, AuthorizationPolicies.CanAccessResource)).Succeeded) {
                 var errorMessage = new ErrorResponseMessage(
                     new UpdatingActionMessage(transaction),
                     new ResourceWithPropertyMessage(transaction, "Id",  transaction.Id),

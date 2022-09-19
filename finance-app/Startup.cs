@@ -118,7 +118,7 @@ namespace finance_app {
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("CanAccessResourcePolicy", policy =>
+                options.AddPolicy(AuthorizationPolicies.CanAccessResource, policy =>
                     policy.Requirements.Add(new UserOwnsResource()));
             });
 

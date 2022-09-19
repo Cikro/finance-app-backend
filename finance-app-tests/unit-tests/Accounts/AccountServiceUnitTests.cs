@@ -4,6 +4,7 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories.Accounts;
 using finance_app.Types.Services.V1.Accounts;
+using finance_app.Types.Services.V1.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -84,7 +85,7 @@ namespace unit_tests.Accounts
         {
             // Arrange
             var accountId = new AccountResourceIdentifier(77);
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
 
             var account = new Account() {
                 Id = 1337,
@@ -117,7 +118,7 @@ namespace unit_tests.Accounts
         {
             // Arrange
             var accountId = new AccountResourceIdentifier(77);
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
 
             var account = new Account();
             var accountDto = new AccountDto();
@@ -145,7 +146,7 @@ namespace unit_tests.Accounts
         {
             // Arrange
             var accountId = new AccountResourceIdentifier(77);
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
 
             var account = new Account();
             var accountDto = new AccountDto();
@@ -204,7 +205,7 @@ namespace unit_tests.Accounts
         {
             // Arrange
             var userId = new UserResourceIdentifier(77);
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
 
             var accounts = new List<Account>
             {
@@ -277,7 +278,7 @@ namespace unit_tests.Accounts
         {
             // Arrange
             var userId = new UserResourceIdentifier(77);
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
 
             var accounts = new List<Account>
             {
@@ -452,7 +453,7 @@ namespace unit_tests.Accounts
                 x.GetPaginatedByUserId(userId.Id, (uint) pageInfo.ItemsPerPage, (uint) 3))
                 .ReturnsAsync(accounts).Verifiable();
 
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
             _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[0], policy))
                 .ReturnsAsync(AuthorizationResult.Failed()).Verifiable();
             _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[1], policy))
@@ -493,7 +494,7 @@ namespace unit_tests.Accounts
                 x.GetPaginatedByUserId(userId.Id, (uint)pageInfo.ItemsPerPage, (uint)3))
                 .ReturnsAsync(accounts).Verifiable();
 
-            var policy = "CanAccessResourcePolicy";
+            var policy = AuthorizationPolicies.CanAccessResource;
             _authorizationService.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), accounts[0], policy))
                 .ReturnsAsync(AuthorizationResult.Success()).Verifiable();
 

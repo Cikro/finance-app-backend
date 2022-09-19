@@ -18,6 +18,7 @@ using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 using finance_app.Types.Repositories;
 using Microsoft.EntityFrameworkCore;
+using finance_app.Types.Services.V1.Authorization;
 
 namespace finance_app.Types.Services.V1.Accounts {
     public class AccountService : IAccountService {
@@ -52,7 +53,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                                 .ToListAsync();
 
             var accessibleAccounts = (await _financeAppAuthorizationService
-                                        .Filter(accounts, "CanAccessResourcePolicy"))
+                                        .Filter(accounts, AuthorizationPolicies.CanAccessResource))
                                         .ToList();
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
@@ -72,7 +73,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync();
 
-            if (await _financeAppAuthorizationService.Authorize(account, "CanAccessResourcePolicy")) {
+            if (await _financeAppAuthorizationService.Authorize(account, AuthorizationPolicies.CanAccessResource)) {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(account),
                     new ResourceWithPropertyMessage(account, "Id",  account.Id),
@@ -92,7 +93,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                                     .ToListAsync();
 
             var accessibleAccounts = (await _financeAppAuthorizationService
-                                        .Filter(accounts, "CanAccessResourcePolicy"))
+                                        .Filter(accounts, AuthorizationPolicies.CanAccessResource))
                                         .ToList();
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
@@ -118,7 +119,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                                     .ToListAsync();
 
             var accessibleAccounts = (await _financeAppAuthorizationService
-                                        .Filter(accounts, "CanAccessResourcePolicy"))
+                                        .Filter(accounts, AuthorizationPolicies.CanAccessResource))
                                         .ToList();
 
             var ret = new ListResponse<AccountDto>(_mapper.Map<List<AccountDto>>(accessibleAccounts)) {
@@ -205,7 +206,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                                     .ToListAsync();
 
                     var accessibleChildren = (await _financeAppAuthorizationService
-                                                .Filter(children, "CanAccessResourcePolicy"))
+                                                .Filter(children, AuthorizationPolicies.CanAccessResource))
                                                 .ToList();
 
                     // Cannot Close. 
@@ -286,7 +287,7 @@ namespace finance_app.Types.Services.V1.Accounts {
                                     .ToListAsync();
 
             var accessibleChildren = (await _financeAppAuthorizationService
-                                        .Filter(children, "CanAccessResourcePolicy"))
+                                        .Filter(children, AuthorizationPolicies.CanAccessResource))
                                         .ToList();
 
             // Cannot Close account, you don't have access to it's children                      

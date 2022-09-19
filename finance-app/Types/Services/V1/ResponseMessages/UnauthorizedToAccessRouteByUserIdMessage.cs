@@ -21,8 +21,8 @@ namespace finance_app.Types.Services.V1.ResponseMessages {
         /// <param name="user">The User trying to access the rout</param>
         /// <param name="attemptedUser">The user who's data you are trying to access</param>
         public UnauthorizedToAccessRouteByUserIdMessage(ClaimsPrincipal user, UserResourceIdentifier attemptedUser) {
-            var userIdFromClaims = user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-            _message = $"As userId {userIdFromClaims},  you are not authorized to access data belonging to user with Id {attemptedUser?.Id}";
+            var userIdFromClaims = user.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "Unknown";
+            _message = $"As userId '{userIdFromClaims}',  you are not authorized to access data belonging to user with Id {attemptedUser?.Id}";
         }
 
         /// <inheritdoc cref="IResponseMessage.GetMessage"/>

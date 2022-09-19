@@ -8,7 +8,8 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
 using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Accounts;
-using finance_app.Types.Repositories.JournalEntries; 
+using finance_app.Types.Repositories.JournalEntries;
+using finance_app.Types.Services.V1.Authorization;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1.ResponseMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
@@ -61,7 +62,7 @@ namespace finance_app.Types.Services.V1.JournalEntries {
             }
 
             if (!(await _authorizationService.AuthorizeAsync(_context.HttpContext.User,
-                           journalEntry, "CanAccessResourcePolicy")).Succeeded) {
+                           journalEntry, AuthorizationPolicies.CanAccessResource)).Succeeded) {
                 var errorMessage = new ErrorResponseMessage(
                     new GettingActionMessage(journalEntry),
                     new ResourceWithPropertyMessage(journalEntry, "Id",  journalEntry.Id),
@@ -91,7 +92,7 @@ namespace finance_app.Types.Services.V1.JournalEntries {
             // Authorize Journal Entries
             // For now, you can only access journal entries made by your account.
             // Maybe a bit redundant since the DB query sort of does this already
-            journalEntries = (await _financeAppAuthorizationService.Filter(journalEntries, "CanAccessResourcePolicy"))
+            journalEntries = (await _financeAppAuthorizationService.Filter(journalEntries, AuthorizationPolicies.CanAccessResource))
                             .ToList();
 
             return new ApiResponse<ListResponse<JournalEntryDto>>(
@@ -107,7 +108,7 @@ namespace finance_app.Types.Services.V1.JournalEntries {
                 .SelectAccountsForTransactions(journalEntry.Transactions);
 
             // Authorize that user can modify the accounts
-            if (!await _financeAppAuthorizationService.Authorize(accounts, "CanAccessResourcePolicy")) {
+            if (!await _financeAppAuthorizationService.Authorize(accounts, AuthorizationPolicies.CanAccessResource)) {
                 // FIXME: When creating a resource, does it have an id to display?
                 var errorMessage = new ErrorResponseMessage(
                         new CreatingActionMessage(journalEntry),
@@ -168,7 +169,7 @@ namespace finance_app.Types.Services.V1.JournalEntries {
                 .SelectAccountsForTransactions(journalEntry.Transactions);
 
             // Authorize that user can modify the accounts
-            if (!await _financeAppAuthorizationService.Authorize(accounts, "CanAccessResourcePolicy")) {
+            if (!await _financeAppAuthorizationService.Authorize(accounts, AuthorizationPolicies.CanAccessResource)) {
                 var errorMessage = new ErrorResponseMessage(
                         new CorrectingActionMessage(journalEntry),
                         new ResourceWithPropertyMessage(journalEntry, "Id",  journalEntry.Id),
