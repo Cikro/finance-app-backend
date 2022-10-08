@@ -25,11 +25,11 @@ using Microsoft.OpenApi.Models;
 using finance_app.Types.Services.V1.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using finance_app.Types.Configurations;
-using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Transactions;
 using finance_app.Types.Services.V1.Accounts;
 using finance_app.Types.Services.V1.JournalEntries;
 using finance_app.Types.Services.V1.Transactions;
+using finance_app.Types.Repositories.FinanceApp;
 
 namespace finance_app {
     public class Startup
@@ -163,7 +163,7 @@ namespace finance_app {
             services.AddDbContext<AccountContext>(options => {
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
-            services.AddDbContext<FinanceAppContext>(options => {
+            services.AddDbContext<AuthenticationContext>(options => {
                 options.EnableSensitiveDataLogging();
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });

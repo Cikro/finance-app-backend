@@ -6,8 +6,8 @@ using AutoMapper;
 using finance_app.Types.DataContracts.V1.Dtos;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Models.ResourceIdentifiers;
-using finance_app.Types.Repositories;
 using finance_app.Types.Repositories.Accounts;
+using finance_app.Types.Repositories.FinanceApp;
 using finance_app.Types.Repositories.JournalEntries;
 using finance_app.Types.Services.V1.Authorization;
 using finance_app.Types.Services.V1.Interfaces;
@@ -29,14 +29,14 @@ namespace finance_app.Types.Services.V1.JournalEntries {
         private readonly IFinanceAppAuthorizationService _financeAppAuthorizationService;
 
         private readonly IHttpContextAccessor _context;
-        private readonly FinanceAppContext _dbContext;
+        private readonly AuthenticationContext _dbContext;
 
         public JournalEntryService(IMapper mapper,
                                     IAccountRepository accountRepository,
                                     IAuthorizationService authorizationService,
                                     IFinanceAppAuthorizationService financeAppAuthorizationService,
                                     IHttpContextAccessor context,
-                                    FinanceAppContext dbContext) {
+                                    AuthenticationContext dbContext) {
             _mapper = mapper;
             _accountRepository = accountRepository;
             _authorizationService = authorizationService;

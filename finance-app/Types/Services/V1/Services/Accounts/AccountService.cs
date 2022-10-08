@@ -16,14 +16,14 @@ using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
-using finance_app.Types.Repositories;
 using Microsoft.EntityFrameworkCore;
 using finance_app.Types.Services.V1.Authorization;
+using finance_app.Types.Repositories.FinanceApp;
 
 namespace finance_app.Types.Services.V1.Accounts {
     public class AccountService : IAccountService {
         private readonly IAccountRepository _accountRepository;
-        private readonly  FinanceAppContext _dbContext;
+        private readonly  AuthenticationContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IAuthorizationService _authorizationService;
         private readonly IFinanceAppAuthorizationService _financeAppAuthorizationService;
@@ -33,7 +33,7 @@ namespace finance_app.Types.Services.V1.Accounts {
         public AccountService(IMapper mapper, IAccountRepository accountRepository,
                              IAuthorizationService authorizationService,
                              IFinanceAppAuthorizationService financeAppAuthorizationService,
-                             FinanceAppContext dbContext,
+                             AuthenticationContext dbContext,
                              IHttpContextAccessor context) {
 
             _accountRepository = accountRepository;

@@ -4,16 +4,16 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using finance_app.Types.Repositories.FinanceApp;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
-namespace finance_app.Types.Repositories.JournalEntries
-{
+namespace finance_app.Types.Repositories.JournalEntries {
     public class JournalEntryRepository : IJournalEntryRepository {
         
-        private readonly FinanceAppContext _context;
+        private readonly AuthenticationContext _context;
 
-        public JournalEntryRepository(FinanceAppContext context) {
+        public JournalEntryRepository(AuthenticationContext context) {
             _context = context;
         }
 

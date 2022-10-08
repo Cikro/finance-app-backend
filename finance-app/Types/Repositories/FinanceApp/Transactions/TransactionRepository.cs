@@ -4,21 +4,21 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
+using finance_app.Types.Repositories.FinanceApp;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
-namespace finance_app.Types.Repositories.Transactions
-{
+namespace finance_app.Types.Repositories.Transactions {
     public class TransactionRepository : ITransactionRepository {
 
-        private readonly FinanceAppContext _context;
+        private readonly AuthenticationContext _context;
 
         /// <summary>
         /// An object for accessing Persisted Transactions from 
         /// a MariaDb Data Store
         /// </summary>
         /// <param name="context"></param>
-        public TransactionRepository(FinanceAppContext context) 
+        public TransactionRepository(AuthenticationContext context) 
         {
             _context = context;
 
