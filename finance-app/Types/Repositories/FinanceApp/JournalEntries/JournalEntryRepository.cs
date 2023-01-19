@@ -11,9 +11,9 @@ using MySql.Data.MySqlClient;
 namespace finance_app.Types.Repositories.JournalEntries {
     public class JournalEntryRepository : IJournalEntryRepository {
         
-        private readonly AuthenticationContext _context;
+        private readonly FinanceAppContext _context;
 
-        public JournalEntryRepository(AuthenticationContext context) {
+        public JournalEntryRepository(FinanceAppContext context) {
             _context = context;
         }
 

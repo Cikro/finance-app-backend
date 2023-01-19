@@ -16,7 +16,7 @@ namespace finance_app.Types.Repositories.Authentication
         public DbSet<AuthenticationUserInfo> UserInfo { get; set; }
         
 
-        public AuthenticationContext(DbContextOptions options) : base(options){}
+        public AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options){}
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                

@@ -6,8 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace finance_app.Types.Repositories.FinanceApp {
-    public class AuthenticationContext : DbContext {
+namespace finance_app.Types.Repositories.FinanceApp 
+{
+    public class FinanceAppContext : DbContext 
+        {
+
         private readonly IConfiguration _configuration;
 
         public DbSet<Account> Accounts { get; set; }
@@ -17,7 +20,7 @@ namespace finance_app.Types.Repositories.FinanceApp {
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
 
-        public AuthenticationContext(DbContextOptions options) : base(options) { }
+        public FinanceAppContext(DbContextOptions options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured) {

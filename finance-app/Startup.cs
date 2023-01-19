@@ -30,6 +30,16 @@ using finance_app.Types.Services.V1.Accounts;
 using finance_app.Types.Services.V1.JournalEntries;
 using finance_app.Types.Services.V1.Transactions;
 using finance_app.Types.Repositories.FinanceApp;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using finance_app.Types.Repositories.Authentication;
+using finance_app.Types.Services.V1.Services.Interfaces;
+using finance_app.Types.Services.V1.Services.Authentication;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
+using finance_app.Types.ModleBinders;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using finance_app.Types.Requests;
+using finance_app.Types.Requests.Authenticaiton;
 
 namespace finance_app {
     public class Startup
@@ -47,15 +57,16 @@ namespace finance_app {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             #region MVC Pipeline
             services.AddMvc(setup => {
-
+                
                 setup.Filters.Add(typeof(ExceptionResponseMapperFilter));
                 setup.Filters.Add(typeof(ValidationResponseMapperFilter));
                 if (_env.EnvironmentName == Environments.Development) {
                     setup.Filters.Add(typeof(LocalAuthenticationFilter));
                 }
+               
+                setup.ModelBinderProviders.Insert(0, new RequestModelBinderProvider());
 
             })
             .AddFluentValidation( fv =>
@@ -103,18 +114,22 @@ namespace finance_app {
                 typeof(AccountProfile),
                 typeof(TransactionProfile),
                 typeof(JournalEntryProfile),
+                typeof(AuthenticationProfile),
                 typeof(StatusCodeProfile)
             );
 
 
-            services.AddControllersWithViews(); 
+            services.AddControllersWithViews();
 
-            services.AddAuthentication()
-            .AddCookie(options =>
-            {
-                options.LoginPath = "/Account/Unauthorized/";
-                options.AccessDeniedPath = "/Account/Forbidden/";
-            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => {
+                    options.LoginPath = "/Account/Unauthorized/";
+                    options.AccessDeniedPath = "/Account/Forbidden/";
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.Cookie.Name = "FinanceAppAuthCookie";
+                });
 
             services.AddAuthorization(options =>
             {
@@ -164,6 +179,9 @@ namespace finance_app {
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
             services.AddDbContext<AuthenticationContext>(options => {
+                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+            });
+            services.AddDbContext<FinanceAppContext>(options => {
                 options.EnableSensitiveDataLogging();
                 options.UseMySql(_configuration.GetConnectionString("MainDB"));
             });
@@ -186,8 +204,22 @@ namespace finance_app {
             services.AddTransient<ITransactionRepository, TransactionRepository>();
 
 
+            services.AddTransient<IPasswordService, PasswordService>();
+            services.AddTransient<CreateAuthenticationUserRequest>();
 
             services.AddHttpContextAccessor();
+            services.AddCookieManager(options =>
+            {
+                //allow cookie data to encrypt by default it allow encryption
+                options.AllowEncryption = false;
+                //Throw if not all chunks of a cookie are available on a request for re-assembly.
+                options.ThrowForPartialCookies = true;
+                // set null if not allow to devide in chunks
+                options.ChunkSize = null;
+                //Default Cookie expire time if expire time set to null of cookie
+                //default time is 1 day to expire cookie 
+                options.DefaultExpireTimeInDays = 10;
+            });
             #endregion Services
 
         }

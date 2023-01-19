@@ -11,14 +11,14 @@ using MySql.Data.MySqlClient;
 namespace finance_app.Types.Repositories.Transactions {
     public class TransactionRepository : ITransactionRepository {
 
-        private readonly AuthenticationContext _context;
+        private readonly FinanceAppContext _context;
 
         /// <summary>
         /// An object for accessing Persisted Transactions from 
         /// a MariaDb Data Store
         /// </summary>
         /// <param name="context"></param>
-        public TransactionRepository(AuthenticationContext context) 
+        public TransactionRepository(FinanceAppContext context) 
         {
             _context = context;
 

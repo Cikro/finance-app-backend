@@ -29,14 +29,14 @@ namespace finance_app.Types.Services.V1.JournalEntries {
         private readonly IFinanceAppAuthorizationService _financeAppAuthorizationService;
 
         private readonly IHttpContextAccessor _context;
-        private readonly AuthenticationContext _dbContext;
+        private readonly FinanceAppContext _dbContext;
 
         public JournalEntryService(IMapper mapper,
                                     IAccountRepository accountRepository,
                                     IAuthorizationService authorizationService,
                                     IFinanceAppAuthorizationService financeAppAuthorizationService,
                                     IHttpContextAccessor context,
-                                    AuthenticationContext dbContext) {
+                                    FinanceAppContext dbContext) {
             _mapper = mapper;
             _accountRepository = accountRepository;
             _authorizationService = authorizationService;

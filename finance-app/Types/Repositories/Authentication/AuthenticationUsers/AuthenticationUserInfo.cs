@@ -19,7 +19,7 @@ namespace finance_app.Types.Repositories.Authentication
         /// </summary>
         [Required]
         [Column("authentication_user_id")]
-        public string AuthenticationUserId { get; set; }
+        public uint AuthenticationUserId { get; set; }
 
         /// <summary>
         /// Foreign Key to Authentication Users 

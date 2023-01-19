@@ -28,6 +28,11 @@ namespace finance_app.Types.Services.V1.ResponseMessages {
             _message = $"Error {action.GetMessage()}. {resource.GetMessage()} {reason.GetMessage()}.";
         }
 
+        public ErrorResponseMessage(IActionMessage action,
+                                    IReasonMessage reason) {
+            _message = $"Error {action.GetMessage()}. {reason.GetMessage()}.";
+        }
+
 
         /// <inheritdoc cref="IResponseMessage.GetMessage"/>
         public string GetMessage() {
