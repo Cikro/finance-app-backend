@@ -7,6 +7,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Requests.Authentication;
 
+
 namespace finance_app.Controllers.V1
 {
     [ApiController]
@@ -17,46 +18,50 @@ namespace finance_app.Controllers.V1
     {
         
         private readonly ILogger<AuthenticationController> _logger;
+        private readonly IAuthenticationService _authencationService;
+        
         private readonly IMapper _mapper;
 
         public AuthenticationController(ILogger<AuthenticationController> logger,
-                                  IMapper mapper)
+                                  IMapper mapper, IAuthenticationService authenticationService
+                                  )
         {
             _logger = logger;
             _mapper = mapper;
+            _authencationService = authenticationService;
         }
 
         /// <summary>
         /// Logs a user into the system
         /// </summary>
-        /// <param name="request">A Login request</param>
+        /// <param name="loginRequest">A Login request</param>
         /// <remarks> 
         /// </remarks>
         /// <returns>A Logged in user</returns>
         [HttpPost]
         [Route("api/Login")]
         [UserAuthorizationFilter]
-        public async Task<IActionResult> Login([FromBody] Types.Requests.Authenticaiton.LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            request.SetUpRequest(HttpContext);
-            await request.ProcessRequest();
-            return StatusCode(_mapper.Map<int>(request.GetResponse<AuthenticationUserDto>(_mapper)));
+
+            var ret = await _authencationService.Login(loginRequest, HttpContext);
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 
         /// <summary>
         /// Creates a user
         /// </summary>
-        /// <param name="request">A Login request</param>
+        /// <param name="createUserRequest">A Create User request</param>
         /// <remarks> 
         /// </remarks>
         /// <returns>A Logged in user</returns>
         [HttpPost]
         [Route("api/Create")]
         [UserAuthorizationFilter]
-        public async Task<IActionResult> Create([FromBody] Types.Requests.Authenticaiton.CreateAuthenticationUserRequest request) {
-
-            await request.ProcessRequest();
-            return  StatusCode(_mapper.Map<int>(request.GetResponse<AuthenticationUserDto>(_mapper)));
+        public async Task<IActionResult> Create(CreateAuthenticationUserRequest createUserRequest) {
+            var ret = await _authencationService.CreateAuthUser(createUserRequest);
+            
+            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
 
         }
 

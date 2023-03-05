@@ -19,7 +19,7 @@ namespace finance_app.Types.Repositories.ApplicationAccounts {
             builder.HasOne(x => x.ApplicationAccount)
                 .WithMany(x => x.ApplicationUsers)
                 .HasForeignKey(x => x.ApplicationAccountId);
-            builder.HasMany(x => x.ApplicationRoles)
+            builder.HasMany(x => x.ApplicationUserRoles)
                 .WithOne(x => x.ApplicationUser)
                 .HasForeignKey(x => x.ApplicationUserId);
 
@@ -41,9 +41,10 @@ namespace finance_app.Types.Repositories.ApplicationAccounts {
         new public void Configure(EntityTypeBuilder<ApplicationUserRole> builder) {
             base.Configure(builder);
             builder.HasOne(x => x.ApplicationUser)
-                .WithMany(x => x.ApplicationRoles)
+                .WithMany(x => x.ApplicationUserRoles)
                 .HasForeignKey(x => x.ApplicationUserId);
             builder.HasOne(x => x.ApplicationRole);
+
         }
     }
 }

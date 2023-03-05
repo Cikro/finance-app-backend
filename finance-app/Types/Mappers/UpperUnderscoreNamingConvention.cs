@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 using AutoMapper;
 
@@ -15,5 +16,7 @@ namespace finance_app.Types.Mappers
         {
         return match.Value.Equals("I") ? "ı" : match.Value.ToLowerInvariant();           
         }
+
+        public string[] Split(string input) => input.Split('_', StringSplitOptions.RemoveEmptyEntries);
     }
 }

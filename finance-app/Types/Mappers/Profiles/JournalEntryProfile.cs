@@ -22,15 +22,13 @@ namespace finance_app.Types.Mappers.Profiles
             .ReverseMap();
 
             CreateMap<CreateJournalEntryRequest, JournalEntry>()
-            .ForMember(d => d.Transactions, o => o.MapFrom(s => s.Transactions))
-            .ForAllOtherMembers(d => d.Ignore());
+            .ForMember(d => d.Transactions, o => o.MapFrom(s => s.Transactions));
 
 
             CreateMap<TransactionForJournalEntryRequests, Transaction>();
 
             CreateMap<CorrectJournalEntryRequest, JournalEntry>()
-            .ForMember(d => d.Transactions, o => o.MapFrom(s => s.Transactions))
-            .ForAllOtherMembers(d => d.Ignore());
+            .ForMember(d => d.Transactions, o => o.MapFrom(s => s.Transactions));
 
             
             // CreateMap<CreateAccountRequest, Account>();

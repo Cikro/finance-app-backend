@@ -30,8 +30,7 @@ namespace finance_app.Types.Mappers.Profiles
             .ConvertUsing(new EnumDtoToEnumConverter<TransactionTypeDtoEnum, TransactionTypeEnum>());
 
             CreateMap<UpdateTransactionRequest, Transaction>()
-            .ForMember(d => d.Notes, o => o.MapFrom(s => s.Notes))
-            .ForAllOtherMembers(d => d.Ignore());
+            .ForMember(d => d.Notes, o => o.MapFrom(s => s.Notes));
         }
     }
 

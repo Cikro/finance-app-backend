@@ -2,6 +2,7 @@ using finance_app.Types.Repositories.Authentication;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Security.Claims;
 
 namespace finance_app.Types.Repositories.ApplicationAccounts
@@ -26,7 +27,7 @@ namespace finance_app.Types.Repositories.ApplicationAccounts
         /// </summary>
         [Required]
         [Column("authentication_user_id")]
-        public IEnumerable<ApplicationUserRole> ApplicationRoles { get; set; }
+        public IEnumerable<ApplicationUserRole> ApplicationUserRoles { get; set; }
 
 
         /// <summary>
@@ -39,11 +40,15 @@ namespace finance_app.Types.Repositories.ApplicationAccounts
         // TODO: Insead of using a concrete class... Might want to change input to an interface of type Aiuthetication user...
         public List<Claim> GetClaims(AuthenticationUser authenticationUser) 
         {
-            return new List<Claim> {
+            var claims = new List<Claim> { 
                 new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
-                new Claim(ClaimTypes.Email, authenticationUser.AuthenticationUserInfo.Email),
-                new Claim(ClaimTypes.Name, authenticationUser.UserName)
+                new Claim(ClaimTypes.Email, authenticationUser.AuthenticationUserInfo?.Email),
+                new Claim(ClaimTypes.Name, authenticationUser.UserName),
             };
+
+            claims.AddRange(ApplicationUserRoles.Select(x => new Claim(ClaimTypes.Role, x.ApplicationRoleId.ToString())));
+
+            return claims;
 
         }
     }

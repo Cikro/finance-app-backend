@@ -12,7 +12,7 @@ namespace finance_app.Types.Repositories.ApplicationAccounts
         /// </summary>
         [Required]
         [Column("role_name")]
-        public string roleName{ get; set; }
+        public string RoleName{ get; set; }
         
     }
 }

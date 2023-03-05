@@ -9,6 +9,7 @@ namespace finance_app.Types.Services.V1.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<ApiResponse<AuthenticationUserDto>> Login(LoginRequest loginRequest, HttpContext httpContext);   
-    }
+        Task<ApiResponse<AuthenticationUserDto>> Login(LoginRequest loginRequest, HttpContext httpContext);
+        Task<ApiResponse<AuthenticationUserDto>> CreateAuthUser(CreateAuthenticationUserRequest createUserRequest);
+        }
 }

@@ -18,6 +18,9 @@ namespace finance_app.Types.Repositories.FinanceApp
         public DbSet<JournalEntry> JournalEntries { get; set; }
         public DbSet<ApplicationAccount> ApplicationAccounts { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; }
+
+        public DbSet<ApplicationRole> ApplicationRoles{ get; set; }
 
 
         public FinanceAppContext(DbContextOptions options) : base(options) { }
@@ -35,6 +38,8 @@ namespace finance_app.Types.Repositories.FinanceApp
             new TransactionEntityConfig().Configure(modelBuilder.Entity<Transaction>());
             new ApplicationAccountEntityConfig().Configure(modelBuilder.Entity<ApplicationAccount>());
             new ApplicationUserEntityConfig().Configure(modelBuilder.Entity<ApplicationUser>());
+            new ApplicationUserRoleConfig().Configure(modelBuilder.Entity<ApplicationUserRole>());
+
         }
 
     }

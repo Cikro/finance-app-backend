@@ -32,16 +32,7 @@ namespace finance_app.Types.Repositories.Authentication
 
         public AuthenticationUserInfo AuthenticationUserInfo { get; set; }
 
-        public AuthenticationUser(IPasswordService passwordService, string username, string password, string email) {
-            var salt = passwordService.CreateSalt();
-            UserName = username;
-            PasswordSalt = salt;
-            PasswordHash = passwordService.HashPassword(password, salt);
-            DateCreated = DateTime.UtcNow;
-            AuthenticationUserInfo = new AuthenticationUserInfo {
-                Email = email
-            };
-        }
+        public AuthenticationUser() { }
 
         public bool VerifyPassword(IPasswordService passwordService, string password) {
             return passwordService.VerifyHash(password, PasswordSalt, PasswordHash);

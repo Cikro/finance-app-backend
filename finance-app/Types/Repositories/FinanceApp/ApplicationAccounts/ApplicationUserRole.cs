@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace finance_app.Types.Repositories.ApplicationAccounts
 {
-    [Table("application_users_roles")]
+    [Table("application_user_roles")]
     public class ApplicationUserRole : DatabaseObject
     {
         /// <summary>
@@ -26,7 +26,7 @@ namespace finance_app.Types.Repositories.ApplicationAccounts
         /// </summary>
         [Required]
         [Column("role_id")]
-        public uint RoleId { get; set; }
+        public uint ApplicationRoleId { get; set; }
 
         /// <summary>
         /// The ApplciationRole the user has

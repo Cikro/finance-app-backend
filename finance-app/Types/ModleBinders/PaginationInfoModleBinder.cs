@@ -9,7 +9,7 @@ namespace finance_app.Types
 {
     public class PaginationInfoModelBinder : IModelBinder
     {
-        public Task BindModelAsync(ModelBindingContext bindingContext!!)
+        public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             var modelName = bindingContext.ModelName;
 

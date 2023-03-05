@@ -1,45 +1,38 @@
-using System;
-using System.IO;
-using System.Reflection;
-
+using finance_app.Middleware;
+using finance_app.Types.Configurations;
+using finance_app.Types.Mappers.Profiles;
+using finance_app.Types.Repositories.Accounts;
+using finance_app.Types.Repositories.Authentication;
+using finance_app.Types.Repositories.FinanceApp;
+using finance_app.Types.Repositories.Transactions;
+using finance_app.Types.Services.V1;
+using finance_app.Types.Services.V1.Accounts;
+using finance_app.Types.Services.V1.Authorization;
+using finance_app.Types.Services.V1.Interfaces;
+using finance_app.Types.Services.V1.JournalEntries;
+using finance_app.Types.Services.V1.Services.Authentication;
+using finance_app.Types.Services.V1.Services.Interfaces;
+using finance_app.Types.Services.V1.Transactions;
+using finance_app.Types.Validators;
+using finance_app.Types.Validators.Accounts;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FluentValidation.AspNetCore;
-
-using finance_app.Types.Validators;
-using finance_app.Types.Validators.Accounts;
-using finance_app.Middleware;
-using finance_app.Types.Repositories.Accounts;
-using finance_app.Types.Services.V1.Interfaces;
-using finance_app.Types.Mappers.Profiles;
-using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
-using finance_app.Types.Services.V1.Authorization;
-using Microsoft.AspNetCore.Authorization;
-using finance_app.Types.Configurations;
-using finance_app.Types.Repositories.Transactions;
-using finance_app.Types.Services.V1.Accounts;
-using finance_app.Types.Services.V1.JournalEntries;
-using finance_app.Types.Services.V1.Transactions;
-using finance_app.Types.Repositories.FinanceApp;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using finance_app.Types.Repositories.Authentication;
-using finance_app.Types.Services.V1.Services.Interfaces;
-using finance_app.Types.Services.V1.Services.Authentication;
-using Microsoft.AspNetCore.Http;
-using System.Linq;
-using finance_app.Types.ModleBinders;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using finance_app.Types.Requests;
-using finance_app.Types.Requests.Authenticaiton;
+using Swashbuckle.AspNetCore.Filters;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace finance_app {
     public class Startup
@@ -65,8 +58,6 @@ namespace finance_app {
                 if (_env.EnvironmentName == Environments.Development) {
                     setup.Filters.Add(typeof(LocalAuthenticationFilter));
                 }
-               
-                setup.ModelBinderProviders.Insert(0, new RequestModelBinderProvider());
 
             })
             .AddFluentValidation( fv =>
@@ -203,9 +194,9 @@ namespace finance_app {
 
             services.AddTransient<ITransactionRepository, TransactionRepository>();
 
-
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
+            services.AddTransient<IApplciationAccountService, ApplciationAccountService>();
             services.AddTransient<IPasswordService, PasswordService>();
-            services.AddTransient<CreateAuthenticationUserRequest>();
 
             services.AddHttpContextAccessor();
             services.AddCookieManager(options =>
