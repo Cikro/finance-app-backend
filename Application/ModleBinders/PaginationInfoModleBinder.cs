@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using finance_app.Types.DataContracts.V1.Dtos;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using finance_app.Types.DataContracts.V1.Dtos;
 
 namespace finance_app.Types
 {
@@ -17,7 +13,8 @@ namespace finance_app.Types
             var pageNumberProvider = bindingContext.ValueProvider.GetValue("pageNumber");
             var itemsPerPageProvider = bindingContext.ValueProvider.GetValue("itemsPerPage");
 
-            if (pageNumberProvider == null && itemsPerPageProvider == null) {
+            if (pageNumberProvider == null && itemsPerPageProvider == null)
+            {
                 return Task.CompletedTask;
             }
 
@@ -29,7 +26,8 @@ namespace finance_app.Types
             var itemsPerPage = itemsPerPageProvider.FirstValue;
 
             // Check if the argument value is null or empty
-            if (string.IsNullOrEmpty(pageNumber) && string.IsNullOrEmpty(itemsPerPage)) {
+            if (string.IsNullOrEmpty(pageNumber) && string.IsNullOrEmpty(itemsPerPage))
+            {
                 // Clear required to set ModelState.IsValid to true.
                 // Otherwise it defaults to false and returns an Http 400 with no errors.
                 bindingContext.ModelState.Clear();
@@ -39,21 +37,31 @@ namespace finance_app.Types
             int? iPageNumber = null;
             int? iItemsPerPage = null;
             int parseVal;
-            if (string.IsNullOrEmpty(pageNumber)) {
+            if (string.IsNullOrEmpty(pageNumber))
+            {
                 iPageNumber = null;
-            } else if (int.TryParse(pageNumber, out parseVal)) {
+            }
+            else if (int.TryParse(pageNumber, out parseVal))
+            {
                 iPageNumber = parseVal;
-            } else {
+            }
+            else
+            {
                 // Non-integer arguments result in model state errors
                 bindingContext.ModelState.TryAddModelError(
                     modelName, "PageNumber must be an integer.");
             }
 
-            if (string.IsNullOrEmpty(itemsPerPage)) {
+            if (string.IsNullOrEmpty(itemsPerPage))
+            {
                 iItemsPerPage = null;
-            } else if (int.TryParse(itemsPerPage, out parseVal)) { 
+            }
+            else if (int.TryParse(itemsPerPage, out parseVal))
+            {
                 iItemsPerPage = parseVal;
-            } else {
+            }
+            else
+            {
                 // Non-integer arguments result in model state errors
                 bindingContext.ModelState.TryAddModelError(
                     modelName, "ItemsPerPage must be an integer.");
@@ -64,7 +72,8 @@ namespace finance_app.Types
                 return Task.CompletedTask;
             }
 
-            bindingContext.Result = ModelBindingResult.Success(new PaginationInfo { 
+            bindingContext.Result = ModelBindingResult.Success(new PaginationInfo
+            {
                 PageNumber = iPageNumber,
                 ItemsPerPage = iItemsPerPage
             });

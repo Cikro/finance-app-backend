@@ -1,11 +1,10 @@
 ﻿using finance_app.Types.Services.V1.Services.Interfaces;
 using Konscious.Security.Cryptography;
-using System;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace finance_app.Types.Services.V1.Services.Authentication {
+namespace finance_app.Types.Services.V1.Services.Authentication
+{
     public class PasswordService : IPasswordService
     {
         public Byte[] HashPassword(string password, byte[] salt) {

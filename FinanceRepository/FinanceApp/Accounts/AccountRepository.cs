@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System.Data;
 using System.Data.Common;
 

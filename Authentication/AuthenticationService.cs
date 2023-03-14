@@ -1,50 +1,39 @@
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Dtos;
-using finance_app.Types.DataContracts.V1.Requests.ApplicationAccounts;
 using finance_app.Types.DataContracts.V1.Requests.Authentication;
 using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.Repositories.Authentication;
-using finance_app.Types.Repositories.FinanceApp;
 using finance_app.Types.Services.V1.Interfaces;
 using finance_app.Types.Services.V1.ResponseMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
 using finance_app.Types.Services.V1.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace finance_app.Types.Services.V1 {
+namespace finance_app.Types.Services.V1
+{
     public class  AuthenticationService: IAuthenticationService {
 
 
         private readonly AuthenticationContext _authenticationDbContext;
         private readonly IPasswordService _passwordService;
         private readonly Microsoft.AspNetCore.Authentication.IAuthenticationService _microsfotAuthService;
-        private readonly FinanceAppContext _financeAppDbContext;
+        //private readonly FinanceAppContext _financeAppDbContext;
         private readonly IMapper _mapper;
-
-        private readonly CookieManager.ICookieManager _cookieManager;
 
 
         public AuthenticationService(
                     AuthenticationContext authenticationDbContext,
                     IPasswordService passwordService,
                     Microsoft.AspNetCore.Authentication.IAuthenticationService microsfotAuthService,
-                    FinanceAppContext financeAppDbContext,
-                    CookieManager.ICookieManager cookieManager,
                     IMapper mapper) {
 
             _authenticationDbContext = authenticationDbContext;
             _passwordService = passwordService;
             _microsfotAuthService = microsfotAuthService;
-            _financeAppDbContext = financeAppDbContext;
-            _cookieManager = cookieManager;
+            //_financeAppDbContext = financeAppDbContext;
             _mapper = mapper;
         }
 
@@ -74,38 +63,39 @@ namespace finance_app.Types.Services.V1 {
                         new UnauthorizedToAccessResourceReason());
                 return new ApiResponse<AuthenticationUserDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
             }
+            var ret = new ApiResponse<AuthenticationUserDto>(_mapper.Map<AuthenticationUserDto>(authenticationUser));
+            return ret;
 
             // TODO: Get Roles, Set Claims
 
-            var appUser = _financeAppDbContext.ApplicationUsers
-                .Include(x => x.ApplicationUserRoles)
-                .Where(x => x.AuthenticationUserId == authenticationUser.Id)
-                .FirstOrDefault();
+            //var appUser = _financeAppDbContext.ApplicationUsers
+            //    .Include(x => x.ApplicationUserRoles)
+            //    .Where(x => x.AuthenticationUserId == authenticationUser.Id)
+            //    .FirstOrDefault();
 
-            if (appUser == null) {
-                // TODO: Fix Response to avoid givving information to a user;
-                var errorMessage = new ErrorResponseMessage(
-                        new LogginInActionMessage(loginRequest.Username),
-                        new ResourceWithPropertyMessage(authenticationUser, "Username", loginRequest.Username),
-                        new UnauthorizedToAccessResourceReason());
-                return new ApiResponse<AuthenticationUserDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
-            }
+            //if (appUser == null) {
+            //    // TODO: Fix Response to avoid givving information to a user;
+            //    var errorMessage = new ErrorResponseMessage(
+            //            new LogginInActionMessage(loginRequest.Username),
+            //            new ResourceWithPropertyMessage(authenticationUser, "Username", loginRequest.Username),
+            //            new UnauthorizedToAccessResourceReason());
+            //    return new ApiResponse<AuthenticationUserDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
+            //}
 
 
+            //var claimsIdentity = new ClaimsIdentity(appUser.GetClaims(authenticationUser), CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var claimsIdentity = new ClaimsIdentity(appUser.GetClaims(authenticationUser), CookieAuthenticationDefaults.AuthenticationScheme);
+            //await _microsfotAuthService.SignInAsync(httpContext, null, new ClaimsPrincipal(claimsIdentity), null);
 
-            await _microsfotAuthService.SignInAsync(httpContext, null, new ClaimsPrincipal(claimsIdentity), null);
+            //// Create Cooke to tell SPA that it is logged in
+            //_cookieManager.Set("LoggedIn", true.ToString(), new CookieOptions {
+            //    Secure = true,
+            //    HttpOnly = false,
+            //    SameSite = SameSiteMode.None
+            //});
 
-            // Create Cooke to tell SPA that it is logged in
-            _cookieManager.Set("LoggedIn", true.ToString(), new CookieOptions {
-                Secure = true,
-                HttpOnly = false,
-                SameSite = SameSiteMode.None
-            });
-
-            var ret = new ApiResponse<AuthenticationUserDto>(_mapper.Map<AuthenticationUserDto>(authenticationUser));
-            return ret;
+            //var ret = new ApiResponse<AuthenticationUserDto>(_mapper.Map<AuthenticationUserDto>(authenticationUser));
+            //return ret;
 
         }
         public async Task<ApiResponse<AuthenticationUserDto>> CreateAuthUser(CreateAuthenticationUserRequest createUserRequest) {

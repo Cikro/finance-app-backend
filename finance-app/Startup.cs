@@ -167,14 +167,14 @@ namespace finance_app {
             }
 
             services.AddDbContext<AccountContext>(options => {
-                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
             });
             services.AddDbContext<AuthenticationContext>(options => {
-                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
             });
             services.AddDbContext<FinanceAppContext>(options => {
                 options.EnableSensitiveDataLogging();
-                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
             });
 
 

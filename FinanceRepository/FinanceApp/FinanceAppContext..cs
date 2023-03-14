@@ -27,7 +27,7 @@ namespace finance_app.Types.Repositories.FinanceApp
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured) {
-                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null) ;
             }
         }
 

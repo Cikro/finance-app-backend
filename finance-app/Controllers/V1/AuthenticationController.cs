@@ -6,6 +6,8 @@ using finance_app.Types.DataContracts.V1.Responses;
 using finance_app.Types.DataContracts.V1.Dtos;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Requests.Authentication;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 
 namespace finance_app.Controllers.V1
@@ -45,6 +47,28 @@ namespace finance_app.Controllers.V1
         {
 
             var ret = await _authencationService.Login(loginRequest, HttpContext);
+
+            // TODO: Get Roles, Set Claims
+
+            //var appUser = _financeAppDbContext.ApplicationUsers
+            //    .Include(x => x.ApplicationUserRoles)
+            //    .Where(x => x.AuthenticationUserId == authenticationUser.Id)
+            //    .FirstOrDefault();
+
+            //if (appUser == null) {
+            //    // TODO: Fix Response to avoid givving information to a user;
+            //    var errorMessage = new ErrorResponseMessage(
+            //            new LogginInActionMessage(loginRequest.Username),
+            //            new ResourceWithPropertyMessage(authenticationUser, "Username", loginRequest.Username),
+            //            new UnauthorizedToAccessResourceReason());
+            //    return new ApiResponse<AuthenticationUserDto>(ApiResponseCodesEnum.Unauthorized, errorMessage);
+            //}
+
+
+            //var claimsIdentity = new ClaimsIdentity(appUser.GetClaims(authenticationUser), CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //await _microsfotAuthService.SignInAsync(httpContext, null, new ClaimsPrincipal(claimsIdentity), null);
+
             return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
         }
 

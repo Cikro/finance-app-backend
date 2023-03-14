@@ -1,10 +1,5 @@
-using finance_app.Types.Repositories.Authentication;
-using finance_app.Types.Repositories;
-
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace finance_app.Types.Repositories.Authentication
 {
@@ -20,7 +15,7 @@ namespace finance_app.Types.Repositories.Authentication
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                
-                options.UseMySql(_configuration.GetConnectionString("MainDB"));
+                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
             }
         }
 

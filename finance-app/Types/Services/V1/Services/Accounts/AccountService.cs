@@ -1,24 +1,24 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
+using AutoMapper;
+using finance_app.Types.DataContracts.V1.Dtos;
+using finance_app.Types.DataContracts.V1.Responses;
+using finance_app.Types.Models.ResourceIdentifiers;
+using finance_app.Types.Repositories.Accounts;
+using finance_app.Types.Repositories.FinanceApp;
+using finance_app.Types.Services.V1.Authorization;
+using finance_app.Types.Services.V1.Interfaces;
+using finance_app.Types.Services.V1.ResponseMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
+using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
+using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages;
+using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages.Reasons;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using finance_app.Types.Repositories.Accounts;
-using finance_app.Types.Services.V1.Interfaces;
-using finance_app.Types.DataContracts.V1.Responses;
-using finance_app.Types.DataContracts.V1.Dtos;
-using finance_app.Types.Models.ResourceIdentifiers;
-using AutoMapper;
-using System;
-using finance_app.Types.Services.V1.ResponseMessages;
-using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages.Reasons;
-using finance_app.Types.Services.V1.Services.Accounts.ResponseMessages;
-using finance_app.Types.Services.V1.ResponseMessages.ActionMessages;
-using finance_app.Types.Services.V1.ResponseMessages.ResourcesMessages;
-using finance_app.Types.Services.V1.ResponseMessages.ReasonMessages;
 using Microsoft.EntityFrameworkCore;
-using finance_app.Types.Services.V1.Authorization;
-using finance_app.Types.Repositories.FinanceApp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace finance_app.Types.Services.V1.Accounts {
     public class AccountService : IAccountService {

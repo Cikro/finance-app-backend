@@ -1,12 +1,3 @@
-
-using System.Threading.Tasks;
-using AutoMapper;
-using finance_app.Controllers.V1;
-using finance_app.Types.Services.V1.Interfaces;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-
 namespace FinanceApp.Unit_Tests.Authentication
 {
     [TestClass]
