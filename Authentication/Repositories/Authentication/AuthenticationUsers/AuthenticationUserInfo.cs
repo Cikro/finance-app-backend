@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace finance_app.Types.Repositories.Authentication
 {
     [Table("authentication_users_info")]
-    public class AuthenticationUserInfo : DatabaseObject
+    internal class AuthenticationUserInfo : DatabaseObject
     {
         /// <summary>
         /// The Authentication User's email

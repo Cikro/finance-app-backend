@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace finance_app.Types.Repositories.Authentication
 {
     [Table("authentication_users")]
-    public class AuthenticationUser : DatabaseObject
+    internal class AuthenticationUser : DatabaseObject
     {
         /// <summary>
         /// The username used to authenticate the uer
@@ -32,11 +32,6 @@ namespace finance_app.Types.Repositories.Authentication
 
         public AuthenticationUserInfo AuthenticationUserInfo { get; set; }
 
-        public AuthenticationUser() { }
-
-        public bool VerifyPassword(IPasswordService passwordService, string password) {
-            return passwordService.VerifyHash(password, PasswordSalt, PasswordHash);
-        }
 
     }
 }
