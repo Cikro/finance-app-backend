@@ -1,10 +1,11 @@
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 
 namespace finance_app.Types.Repositories.Authentication
 {
-    internal class AuthenticationContext : DbContext
+    public class AuthenticationContext : DbContext
     {
         private readonly IConfiguration _configuration;
 
@@ -12,8 +13,8 @@ namespace finance_app.Types.Repositories.Authentication
         internal DbSet<AuthenticationUserInfo> UserInfo { get; set; }
 
 
-        internal AuthenticationContext() : base() { }
-        internal AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options){}
+        public  AuthenticationContext() : base() { }
+        public AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options){}
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured){                

@@ -42,13 +42,13 @@
     <Folder Include="Types\Services\V1\Services\Authentication\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries.Application\Libraries.Application.csproj" />
+    <ProjectReference Include="..\FinanceApplicationUsers\FinanceApplicationUsers.csproj" />
     <ProjectReference Include="..\Authentication\Authentication.csproj" />
+    <ProjectReference Include="..\Libraries.Application\Libraries.Application.csproj" />
     <ProjectReference Include="..\Libraries.Repository\Libraries.Repository.csproj" />
-    <ProjectReference Include="..\FinanceRepository\FinanceRepository.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Update="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Update="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

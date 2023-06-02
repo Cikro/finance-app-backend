@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using finance_app.Types.Models;
-
 namespace finance_app.Types.Repositories.Accounts
 {
     public interface IAccountRepository

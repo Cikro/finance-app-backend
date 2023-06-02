@@ -7,6 +7,7 @@ using finance_app.Types.DataContracts.V1.Dtos;
 using AutoMapper;
 using finance_app.Types.DataContracts.V1.Requests.Authentication;
 using finance_app.Types.DataContracts.V1.Requests.ApplicationAccounts;
+using Authentication;
 
 namespace finance_app.Controllers.V1
 {
@@ -18,17 +19,10 @@ namespace finance_app.Controllers.V1
     {
         
         private readonly ILogger<ApplicationAccountsController> _logger;
-        private readonly IApplciationAccountService _applciationAccountService;
         
-        private readonly IMapper _mapper;
-
-        public ApplicationAccountsController(ILogger<ApplicationAccountsController> logger,
-                                  IMapper mapper, IApplciationAccountService applciationAccountService
-                                  )
+        public ApplicationAccountsController(ILogger<ApplicationAccountsController> logger)
         {
             _logger = logger;
-            _mapper = mapper;
-            _applciationAccountService = applciationAccountService;
         }
 
         /// <summary>
@@ -43,9 +37,8 @@ namespace finance_app.Controllers.V1
         [UserAuthorizationFilter]
         public async Task<IActionResult> CreateApplicationUser([FromBody] CreateApplicationAccountRequest request)
         {
-            var ret = await _applciationAccountService.CreateApplicationUser(request);
 
-            return StatusCode(_mapper.Map<int>(ret?.ResponseCode), ret);
+            return StatusCode(500);
         }
 
     }

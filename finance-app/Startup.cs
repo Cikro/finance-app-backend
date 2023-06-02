@@ -1,3 +1,4 @@
+using Authentication;
 using finance_app.Middleware;
 using finance_app.Types.Configurations;
 using finance_app.Types.Mappers.Profiles;
@@ -105,7 +106,6 @@ namespace finance_app {
                 typeof(AccountProfile),
                 typeof(TransactionProfile),
                 typeof(JournalEntryProfile),
-                typeof(AuthenticationProfile),
                 typeof(StatusCodeProfile)
             );
 
@@ -118,7 +118,6 @@ namespace finance_app {
                     options.AccessDeniedPath = "/Account/Forbidden/";
                     options.Cookie.HttpOnly = true;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    options.Cookie.SameSite = SameSiteMode.None;
                     options.Cookie.Name = "FinanceAppAuthCookie";
                 });
 
@@ -169,9 +168,7 @@ namespace finance_app {
             services.AddDbContext<AccountContext>(options => {
                 options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
             });
-            services.AddDbContext<AuthenticationContext>(options => {
-                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
-            });
+            
             services.AddDbContext<FinanceAppContext>(options => {
                 options.EnableSensitiveDataLogging();
                 options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
@@ -183,6 +180,10 @@ namespace finance_app {
             #endregion
 
             #region Services
+            services.AddAuthenticationUsers(new SetupOptions {
+                AuthencationDatabaseConnectionString = _configuration.GetConnectionString("AuthDB")
+            });
+
             services.AddSingleton<IAuthorizationHandler, DatabaseObjectAuthorizationHandler>();
             services.AddTransient<IFinanceAppAuthorizationService, FinanceAppAuthorizationService>();
 
@@ -194,9 +195,6 @@ namespace finance_app {
 
             services.AddTransient<ITransactionRepository, TransactionRepository>();
 
-            services.AddTransient<IAuthenticationService, AuthenticationService>();
-            services.AddTransient<IApplciationAccountService, ApplciationAccountService>();
-            services.AddTransient<IPasswordService, PasswordService>();
 
             services.AddHttpContextAccessor();
             services.AddCookieManager(options =>

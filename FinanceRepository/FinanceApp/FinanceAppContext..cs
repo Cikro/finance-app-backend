@@ -23,7 +23,8 @@ namespace finance_app.Types.Repositories.FinanceApp
         public DbSet<ApplicationRole> ApplicationRoles{ get; set; }
 
 
-        public FinanceAppContext(DbContextOptions options) : base(options) { }
+        public FinanceAppContext() : base() { }
+        public FinanceAppContext(DbContextOptions<FinanceAppContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured) {
