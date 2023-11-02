@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS currencies
 
 CREATE TABLE IF NOT EXISTS account_types 
 (
-    id tinyint unsigned PRIMARY KEY AUTO_INCREMENT,
+    id tinyint PRIMARY KEY AUTO_INCREMENT,
     name varchar(50) NOT NULL,
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP
@@ -17,14 +17,14 @@ CREATE TABLE IF NOT EXISTS account_types
 
 CREATE TABLE IF NOT EXISTS accounts 
 (
-    id int unsigned PRIMARY KEY AUTO_INCREMENT,
-    user_id int unsigned NOT NULL,
+    id int PRIMARY KEY AUTO_INCREMENT,
+    user_id int NOT NULL,
     name varchar(50) NOT NULL UNIQUE,
     description varchar(255),
     balance DECIMAL(15,2) default 0,
-    type tinyint unsigned NOT NULL,
+    type tinyint NOT NULL,
     currency_code char(3) NOT NULL,
-    parent_account int unsigned default NULL,
+    parent_account int default NULL,
     closed BOOLEAN default FALSE NOT NULL, 
     date_created TIMESTAMP NOT NULL default CURRENT_TIMESTAMP,
     date_last_edited TIMESTAMP on update CURRENT_TIMESTAMP,

@@ -7,21 +7,11 @@ namespace finance_app.Types.Repositories.Authentication
 {
     public class AuthenticationContext : DbContext
     {
-        private readonly IConfiguration _configuration;
-
         internal DbSet<AuthenticationUser> Users { get; set; }
         internal DbSet<AuthenticationUserInfo> UserInfo { get; set; }
 
-
         public  AuthenticationContext() : base() { }
         public AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options){}
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options) {
-            if (!options.IsConfigured){                
-                options.UseMySql(_configuration.GetConnectionString("MainDB"), ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDB")), null);
-            }
-        }
-
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -22,19 +22,18 @@ namespace Authentication.AuthenticationUsers
         public uint AuthenticationUserId { get; set; }
 
 
-        public AuthenticationUser(IPasswordService passwordService, AuthenticationContext context, string username)
+        public AuthenticationUser(IPasswordService passwordService, AuthenticationContext context)
         {
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _context = context;
-            UserName = username;
         }
-
-        public AuthenticationUser(IPasswordService passwordService, AuthenticationContext context, byte[] passwordHash, byte[] passwordSalt, uint AuthencationUserId)
+        public AuthenticationUser(IPasswordService passwordService, AuthenticationContext context, byte[] passwordHash, byte[] passwordSalt)
         {
             _passwordService = passwordService ?? throw new ArgumentNullException(nameof(passwordService));
             _context = context;
             PasswordHash = passwordHash;
             PasswordSalt = passwordSalt;
+            
         }
 
 

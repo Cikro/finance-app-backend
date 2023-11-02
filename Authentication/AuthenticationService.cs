@@ -26,7 +26,7 @@ namespace Authentication
 
             if (user == null) { return null;  }
 
-            return _authenticationUserFactory.CreateUser(user.PasswordHash, user.PasswordSalt);
+            return _authenticationUserFactory.CreateUser(user);
 
         }
 
